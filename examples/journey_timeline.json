@@ -1,0 +1,419 @@
+{
+  "scene": {
+    "scene_id": "journey",
+    "title": "From code to memory",
+    "start": 0.0,
+    "end": 70.0,
+    "notes": "One program window. Beats below are chapters, not a second clock."
+  },
+  "beats": [
+    {
+      "scene_id": "beat-title",
+      "title": "Title",
+      "start": 0.0,
+      "end": 12.0
+    },
+    {
+      "scene_id": "beat-model",
+      "title": "Simple model",
+      "start": 12.0,
+      "end": 22.4
+    },
+    {
+      "scene_id": "beat-code",
+      "title": "Source line",
+      "start": 22.4,
+      "end": 44.0
+    },
+    {
+      "scene_id": "beat-memory",
+      "title": "Memory table",
+      "start": 44.0,
+      "end": 58.5
+    },
+    {
+      "scene_id": "beat-recap",
+      "title": "Recap",
+      "start": 58.5,
+      "end": 70.0
+    }
+  ],
+  "events": [
+    {
+      "id": "ev-title-in",
+      "scene_id": "beat-title",
+      "motion_id": "motion.appearance.fade_in",
+      "kind": "motion",
+      "start": 0.4,
+      "end": 8.0,
+      "play_duration": 1.2,
+      "overlap_ok": false,
+      "depends_on": [],
+      "pause_after": 0,
+      "params": {},
+      "cue_ids": [
+        "cue-001"
+      ]
+    },
+    {
+      "id": "ev-title-to-model",
+      "scene_id": "beat-title",
+      "motion_id": "transition.story.title_to_explanation",
+      "kind": "transition",
+      "start": 9.2,
+      "end": 12.0,
+      "play_duration": 1.8,
+      "source_id": "ev-title-in",
+      "destination_id": "ev-write-heading",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-title-in"
+      ],
+      "pause_after": 0.2,
+      "params": {},
+      "cue_ids": [
+        "cue-002"
+      ]
+    },
+    {
+      "id": "ev-write-heading",
+      "scene_id": "beat-model",
+      "motion_id": "motion.appearance.write",
+      "kind": "motion",
+      "start": 12.8,
+      "end": 16.0,
+      "play_duration": 1.4,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-title-to-model"
+      ],
+      "pause_after": 0,
+      "params": {},
+      "cue_ids": [
+        "cue-003"
+      ]
+    },
+    {
+      "id": "ev-mark-card",
+      "scene_id": "beat-model",
+      "motion_id": "motion.emphasis.circumscribe",
+      "kind": "motion",
+      "start": 16.4,
+      "end": 19.5,
+      "play_duration": 1.2,
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-title-to-model"
+      ],
+      "pause_after": 0,
+      "params": {},
+      "cue_ids": [
+        "cue-003"
+      ]
+    },
+    {
+      "id": "ev-example-to-code",
+      "scene_id": "beat-code",
+      "motion_id": "transition.story.example_to_code",
+      "kind": "transition",
+      "start": 22.4,
+      "end": 28.0,
+      "play_duration": 1.8,
+      "source_id": "ev-mark-card",
+      "destination_id": "ev-code-to-memory",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-mark-card"
+      ],
+      "pause_after": 0.3,
+      "params": {},
+      "cue_ids": [
+        "cue-004",
+        "cue-005"
+      ]
+    },
+    {
+      "id": "ev-code-to-memory",
+      "scene_id": "journey",
+      "motion_id": "transition.story.code_to_memory",
+      "kind": "transition",
+      "start": 40.4,
+      "end": 46.2,
+      "play_duration": 2.0,
+      "source_id": "ev-example-to-code",
+      "destination_id": "ev-zoom-value",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-example-to-code"
+      ],
+      "pause_after": 0.2,
+      "params": {},
+      "cue_ids": [
+        "cue-007",
+        "cue-008"
+      ]
+    },
+    {
+      "id": "ev-zoom-value",
+      "scene_id": "beat-memory",
+      "motion_id": "transition.camera.zoom_in",
+      "kind": "transition",
+      "start": 48.4,
+      "end": 52.0,
+      "play_duration": 1.6,
+      "source_id": "ev-code-to-memory",
+      "destination_id": "ev-zoom-full",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-code-to-memory"
+      ],
+      "pause_after": 0.4,
+      "params": {
+        "margin": 2.2
+      },
+      "cue_ids": [
+        "cue-009"
+      ]
+    },
+    {
+      "id": "ev-zoom-full",
+      "scene_id": "beat-memory",
+      "motion_id": "transition.camera.closeup_to_full",
+      "kind": "transition",
+      "start": 53.2,
+      "end": 57.5,
+      "play_duration": 1.6,
+      "source_id": "ev-zoom-value",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-zoom-value"
+      ],
+      "pause_after": 0.2,
+      "params": {},
+      "cue_ids": [
+        "cue-010"
+      ]
+    },
+    {
+      "id": "ev-to-recap",
+      "scene_id": "beat-recap",
+      "motion_id": "transition.story.explanation_to_recap",
+      "kind": "transition",
+      "start": 59.2,
+      "end": 63.0,
+      "play_duration": 1.4,
+      "source_id": "ev-zoom-full",
+      "destination_id": "ev-closing",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-zoom-full"
+      ],
+      "pause_after": 0.2,
+      "params": {},
+      "cue_ids": [
+        "cue-011"
+      ]
+    },
+    {
+      "id": "ev-closing",
+      "scene_id": "beat-recap",
+      "motion_id": "transition.story.closing_preview",
+      "kind": "transition",
+      "start": 64.4,
+      "end": 68.5,
+      "play_duration": 1.5,
+      "source_id": "ev-to-recap",
+      "overlap_ok": false,
+      "depends_on": [
+        "ev-to-recap"
+      ],
+      "pause_after": 0.4,
+      "params": {},
+      "cue_ids": [
+        "cue-011"
+      ]
+    }
+  ],
+  "cues": [
+    {
+      "id": "cue-001",
+      "scene_id": "journey",
+      "sequence": 1,
+      "text": "A variable is a named place that holds a value while a program runs.",
+      "start_time": 0.0,
+      "end_time": 5.88,
+      "event_ids": [
+        "ev-title-in"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-002",
+      "scene_id": "journey",
+      "sequence": 2,
+      "text": "We start with a simple picture: a box labeled score that currently holds ten.",
+      "start_time": 5.88,
+      "end_time": 11.76,
+      "event_ids": [
+        "ev-title-to-model"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-003",
+      "scene_id": "journey",
+      "sequence": 3,
+      "text": "That picture is useful, but it is not how the computer actually sees the assignment.",
+      "start_time": 11.76,
+      "end_time": 18.04,
+      "event_ids": [
+        "ev-write-heading",
+        "ev-mark-card"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-004",
+      "scene_id": "journey",
+      "sequence": 4,
+      "text": "In source code, the same idea is written as score equals ten.",
+      "start_time": 18.04,
+      "end_time": 23.12,
+      "event_ids": [
+        "ev-example-to-code"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-005",
+      "scene_id": "journey",
+      "sequence": 5,
+      "text": "The identifier on the left is the name we chose; the number on the right is the value we stored.",
+      "start_time": 23.12,
+      "end_time": 29.62,
+      "event_ids": [
+        "ev-example-to-code"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-006",
+      "scene_id": "journey",
+      "sequence": 6,
+      "text": "When this line runs, the language runtime looks up that name in memory.",
+      "start_time": 29.62,
+      "end_time": 35.1,
+      "event_ids": [],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-007",
+      "scene_id": "journey",
+      "sequence": 7,
+      "text": "Memory is just a table of slots: an address, a name, and the value that lives there.",
+      "start_time": 35.1,
+      "end_time": 41.6,
+      "event_ids": [
+        "ev-code-to-memory"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-008",
+      "scene_id": "journey",
+      "sequence": 8,
+      "text": "The name score is the same in the code and in the table; only the representation changes.",
+      "start_time": 41.6,
+      "end_time": 48.1,
+      "event_ids": [
+        "ev-code-to-memory"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-009",
+      "scene_id": "journey",
+      "sequence": 9,
+      "text": "Zooming in, the value cell is where ten actually sits.",
+      "start_time": 48.1,
+      "end_time": 52.38,
+      "event_ids": [
+        "ev-zoom-value"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-010",
+      "scene_id": "journey",
+      "sequence": 10,
+      "text": "Zooming back out, the rest of the diagram is still there, and the clock never reset.",
+      "start_time": 52.38,
+      "end_time": 58.88,
+      "event_ids": [
+        "ev-zoom-full"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-011",
+      "scene_id": "journey",
+      "sequence": 11,
+      "text": "So a variable is not the number itself. It is a stable name for a replaceable slot in memory.",
+      "start_time": 58.88,
+      "end_time": 65.38,
+      "event_ids": [
+        "ev-to-recap",
+        "ev-closing"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    }
+  ],
+  "narration": "A variable is a named place that holds a value while a program runs.\nWe start with a simple picture: a box labeled score that currently holds ten.\nThat picture is useful, but it is not how the computer actually sees the assignment.\nIn source code, the same idea is written as score equals ten.\nThe identifier on the left is the name we chose; the number on the right is the value we stored.\nWhen this line runs, the language runtime looks up that name in memory.\nMemory is just a table of slots: an address, a name, and the value that lives there.\nThe name score is the same in the code and in the table; only the representation changes.\nZooming in, the value cell is where ten actually sits.\nZooming back out, the rest of the diagram is still there, and the clock never reset.\nSo a variable is not the number itself. It is a stable name for a replaceable slot in memory.\n",
+  "frame_rate": 30,
+  "reading_wpm": 150,
+  "notes": "Part 3 journey. Subtitle times are estimates. cue-008 spans the code and memory beats on purpose."
+}

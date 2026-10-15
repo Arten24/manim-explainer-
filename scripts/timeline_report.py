@@ -17,6 +17,7 @@ from quonitron_manim.timeline.models import load_timeline  # noqa: E402
 from quonitron_manim.timeline.report import write_timeline_report  # noqa: E402
 from quonitron_manim.timeline.validate import validate_timeline  # noqa: E402
 from quonitron_manim.motion import ALL_MOTION_RECIPES  # noqa: E402
+from quonitron_manim.transitions import ALL_TRANSITIONS  # noqa: E402
 
 
 def main() -> int:
@@ -29,7 +30,9 @@ def main() -> int:
     parser.add_argument("--out", default=str(ROOT / "examples" / "variable_timeline_report.md"))
     args = parser.parse_args()
     timeline = load_timeline(args.timeline)
-    known = [cls.component_id for cls in ALL_MOTION_RECIPES]
+    known = [cls.component_id for cls in ALL_MOTION_RECIPES] + [
+        cls.component_id for cls in ALL_TRANSITIONS
+    ]
     report = validate_timeline(timeline, known_motion_ids=known)
     path = write_timeline_report(timeline, args.out)
     exports = write_timeline_subtitles(timeline, ROOT / "examples")

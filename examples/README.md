@@ -17,6 +17,20 @@ python scripts/timeline_report.py
 manim -ql examples/motion_timeline_demo.py VariableMemoryTimeline
 ```
 
+## Part 3 — transitions + the same clock
+
+Narration: `journey_narration.txt`  
+Clock: `journey_timeline.json`  
+Scene: `journey_demo.py`
+
+```bash
+python scripts/timeline_report.py examples/journey_timeline.json --out examples/journey_timeline_report.md
+manim -ql examples/journey_demo.py CodeToMemoryJourney
+```
+
+Beats in the JSON are chapters. They do not start a second timer. `cue-008`
+is written to continue across the code → memory change.
+
 The report writes SRT/VTT next to the examples. Those timestamps are
 **estimates**. They are not aligned to a voice recording. Override cue
 times in the JSON (`timing_status: manual`) after you record voiceover;

@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "catalog_version": "1.2.0",
-  "library_version": "0.3.0",
+  "catalog_version": "1.3.0",
+  "library_version": "0.4.0",
   "updated": "2026-10-15",
-  "notes": "Part 2 adds the basic motion library and a shared subtitle/animation timeline. Visual motion animate() calls need Manim; parameter tests pass without Cairo. Foundation visual rows remain not_tested until a preview render succeeds.",
+  "notes": "Part 3 adds reusable transitions on the shared Part 2 timeline. Optional beats are conceptual chapters; the clock does not reset. Camera transitions require QuonitronMovingCameraScene. Parameter tests pass without Cairo. Preview renders remain untested here.",
   "components": [
     {
       "id": "design.theme.quonitron_dark",
@@ -340,7 +340,7 @@
     {
       "id": "timeline.shared",
       "name": "Shared Scene Timeline",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "utility",
       "subcategory": "timeline",
       "tags": [
@@ -348,15 +348,17 @@
         "clock",
         "subtitle",
         "event",
-        "sync"
+        "sync",
+        "beat"
       ],
       "aliases": [
         "shared timeline",
         "scene clock"
       ],
-      "description": "One timeline for visual events and subtitle cues, with estimated vs manual timing and cue-to-event links.",
+      "description": "One seconds timeline for visual events and subtitle cues. Optional beats are conceptual chapters on the same clock; a scene change does not start a second timer.",
       "use_cases": [
         "Keep captions and animations on the same clock",
+        "Carry a sentence across a conceptual scene change",
         "Override cue times after recording voiceover without rewriting animation code"
       ],
       "module": "quonitron_manim.timeline.models",
@@ -375,20 +377,21 @@
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
       },
-      "example": "examples/variable_timeline.json",
+      "example": "examples/journey_timeline.json",
       "preview": null,
       "test_status": "passed",
-      "limitations": "Playback adapter sequences play() calls; overlapping play windows must set overlap_ok.",
+      "limitations": "Playback adapter sequences play() calls; overlapping play windows must set overlap_ok. Beats are labels, not a second clock.",
       "related_components": [
         "utility.subtitle_track",
-        "foundation.subtitle_overlay"
+        "foundation.subtitle_overlay",
+        "transition.simple.fade"
       ],
       "license": "MIT"
     },
     {
       "id": "foundation.subtitle_overlay",
       "name": "Subtitle Overlay",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "foundation",
       "subcategory": "subtitles",
       "tags": [
@@ -402,7 +405,7 @@
       ],
       "description": "Bottom-safe caption mobject updated from Timeline.cue_at() on the shared clock.",
       "use_cases": [
-        "Render the same cues that are exported to SRT/VTT"
+        "Render the same cues that are exported to SRT/VTT across beat boundaries"
       ],
       "module": "quonitron_manim.components.foundation.subtitle_overlay",
       "class_name": "SubtitleOverlay",
@@ -421,7 +424,7 @@
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
       },
-      "example": "examples/motion_timeline_demo.py",
+      "example": "examples/journey_demo.py",
       "preview": null,
       "test_status": "not_tested",
       "limitations": "Needs Pango/Cairo to build Text. Updater uses dt from play/wait.",
@@ -434,7 +437,7 @@
     {
       "id": "utility.narration_segmenter",
       "name": "Narration Segmenter",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "category": "utility",
       "subcategory": "subtitles",
       "tags": [
@@ -471,13 +474,59 @@
       "compatibility": {
         "python": ">=3.10"
       },
-      "example": "examples/variable_narration.txt",
+      "example": "examples/journey_narration.txt",
       "preview": null,
       "test_status": "passed",
       "limitations": "Does not call TTS or transcription. Durations are estimates.",
       "related_components": [
         "timeline.shared",
         "utility.subtitle_track"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.moving_camera_scene",
+      "name": "QUONITRON Moving Camera Scene",
+      "version": "0.4.0",
+      "category": "foundation",
+      "subcategory": "scene",
+      "tags": [
+        "camera",
+        "scene",
+        "zoom",
+        "pan"
+      ],
+      "aliases": [
+        "moving camera scene"
+      ],
+      "description": "QuonitronMovingCameraScene subclasses manim.MovingCameraScene so camera.frame can pan and zoom. Plain QuonitronScene cannot.",
+      "use_cases": [
+        "Zoom into a memory cell, then restore the full diagram"
+      ],
+      "module": "quonitron_manim.core.base_scene",
+      "class_name": "QuonitronMovingCameraScene",
+      "parameters": {
+        "theme_name": {
+          "type": "string",
+          "default": "quonitron_dark",
+          "description": "Registered theme id"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/journey_demo.py",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "camera.frame is a MovingCamera API. Unit tests do not render a zoom.",
+      "related_components": [
+        "foundation.base_scene",
+        "transition.camera.zoom_in",
+        "design.theme.quonitron_dark"
       ],
       "license": "MIT"
     },
@@ -3523,6 +3572,2329 @@
       "related_components": [
         "design.theme.quonitron_dark",
         "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.fade",
+      "name": "Fade Transition",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "fade",
+        "crossfade",
+        "simple"
+      ],
+      "aliases": [
+        "fade in and fade out",
+        "cross fade"
+      ],
+      "description": "Cross-fade: outgoing fades out while incoming fades in.",
+      "use_cases": [
+        "Soft change when objects do not correspond"
+      ],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "FadeTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import FadeTransition\nanim = FadeTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.cut",
+      "name": "Clean Cut",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "cut",
+        "hard",
+        "instant"
+      ],
+      "aliases": [
+        "clean cut",
+        "hard cut"
+      ],
+      "description": "Near-instant swap. Use sparingly for a hard editorial cut.",
+      "use_cases": [
+        "Chapter title after a recap, when continuity would feel false"
+      ],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "CutTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import CutTransition\nanim = CutTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.slide",
+      "name": "Slide Transition",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "slide",
+        "directional",
+        "layout"
+      ],
+      "aliases": [
+        "slide transition"
+      ],
+      "description": "Outgoing and incoming slide together so the layout feels continuous.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "SlideTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "default": "LEFT",
+          "description": "Incoming arrives from the opposite edge"
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import SlideTransition\nanim = SlideTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.wipe",
+      "name": "Wipe",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "wipe",
+        "directional",
+        "cover"
+      ],
+      "aliases": [
+        "wipe from left",
+        "wipe from right",
+        "wipe from top",
+        "wipe from bottom"
+      ],
+      "description": "A theme-colored bar wipes across the frame. May hide captions briefly.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "WipeTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "default": "LEFT",
+          "description": "Direction the bar travels"
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import WipeTransition\nanim = WipeTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Uses a full-frame rectangle, not a pixel shader. Overlapping subtitle cues are warned as potentially unreadable.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.cover",
+      "name": "Cover",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "cover",
+        "slide",
+        "overlay"
+      ],
+      "aliases": [
+        "cover"
+      ],
+      "description": "Incoming slides over outgoing (cover).",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "CoverTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "default": "RIGHT",
+          "description": "direction"
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import CoverTransition\nanim = CoverTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.uncover",
+      "name": "Uncover",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "uncover",
+        "reveal"
+      ],
+      "aliases": [
+        "uncover"
+      ],
+      "description": "Outgoing slides away, revealing incoming already in place.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "UncoverTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "default": "LEFT",
+          "description": "direction"
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import UncoverTransition\nanim = UncoverTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.directional_reveal",
+      "name": "Directional Reveal",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "reveal",
+        "directional",
+        "fade"
+      ],
+      "aliases": [
+        "directional reveal"
+      ],
+      "description": "Incoming fades in from a direction; outgoing fades out the other way.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "DirectionalRevealTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "default": "UP",
+          "description": "direction"
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import DirectionalRevealTransition\nanim = DirectionalRevealTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.shape_reveal",
+      "name": "Shape Reveal",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "shape",
+        "grow",
+        "reveal"
+      ],
+      "aliases": [
+        "shape-based reveal"
+      ],
+      "description": "Incoming grows from center while outgoing fades.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "ShapeRevealTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import ShapeRevealTransition\nanim = ShapeRevealTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.sequential_reveal",
+      "name": "Sequential Reveal",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "stagger",
+        "group",
+        "reveal"
+      ],
+      "aliases": [
+        "sequential reveal",
+        "group entrance"
+      ],
+      "description": "Staggered entrance of the incoming group's submobjects.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "SequentialRevealTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "lag_ratio": {
+          "type": "number",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "lag_ratio"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import SequentialRevealTransition\nanim = SequentialRevealTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.simple.group_swap",
+      "name": "Group Swap",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "simple",
+      "tags": [
+        "group",
+        "swap",
+        "layout"
+      ],
+      "aliases": [
+        "controlled transition between visual groups"
+      ],
+      "description": "Controlled swap of two visual groups.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.simple",
+      "class_name": "GroupSwapTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.simple import GroupSwapTransition\nanim = GroupSwapTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.morph",
+      "name": "Morph",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "morph",
+        "transform",
+        "continuity"
+      ],
+      "aliases": [
+        "transform one object into another",
+        "morph supported shapes"
+      ],
+      "description": "Morph source into destination with Manim Transform (shared points).",
+      "use_cases": [
+        "A variable card becoming a source-code token"
+      ],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "MorphTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import MorphTransition\nanim = MorphTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "motion.transform.transform",
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.match_shapes",
+      "name": "Match Shapes",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "match",
+        "correspondence",
+        "layout"
+      ],
+      "aliases": [
+        "match corresponding objects across layouts"
+      ],
+      "description": "Pair corresponding submobjects by shape across two layouts.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "MatchShapesTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import MatchShapesTransition\nanim = MatchShapesTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "motion.transform.matching_shapes",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.replace",
+      "name": "Replace Visual",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "replace",
+        "continuity"
+      ],
+      "aliases": [
+        "replace one visual with another"
+      ],
+      "description": "Replace source with destination in the scene.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "ReplaceTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import ReplaceTransition\nanim = ReplaceTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "motion.transform.replacement",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.role_shift",
+      "name": "Role Shift",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "role",
+        "move",
+        "continuity"
+      ],
+      "aliases": [
+        "move an object into its next conceptual role"
+      ],
+      "description": "Move the source into the destination's place, then replace.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "RoleShiftTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import RoleShiftTransition\nanim = RoleShiftTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.simplify_to_detail",
+      "name": "Simplify To Detail",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "detail",
+        "model",
+        "diagram"
+      ],
+      "aliases": [
+        "transform a simple diagram into a more detailed diagram",
+        "transition from a simplified model to a detailed model"
+      ],
+      "description": "Cross-fade transform from a simplified model to a richer diagram.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "SimplifyToDetailTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import SimplifyToDetailTransition\nanim = SimplifyToDetailTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "motion.transform.fade_transform",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.continuity.carry_anchor",
+      "name": "Carry Anchor",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "continuity",
+      "tags": [
+        "anchor",
+        "label",
+        "preserve"
+      ],
+      "aliases": [
+        "preserve selected labels or visual anchors across changes"
+      ],
+      "description": "Keep a named anchor (label) while the rest of the layout changes.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.continuity",
+      "class_name": "CarryAnchorTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.continuity import CarryAnchorTransition\nanim = CarryAnchorTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Pass (outgoing_group, incoming_group). The recipe does not auto-detect labels; keep the shared label as a separate mobject and omit it from the groups.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.camera.zoom_in",
+      "name": "Zoom In",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "camera",
+      "tags": [
+        "zoom",
+        "camera",
+        "focus"
+      ],
+      "aliases": [
+        "zoom into a selected object"
+      ],
+      "description": "Zoom the moving camera into a selected mobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.camera",
+      "class_name": "ZoomInTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "margin": {
+          "type": "number",
+          "default": 1.6,
+          "description": "Frame width as a multiple of the target width",
+          "minimum": 1.05
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.camera import ZoomInTransition\nanim = ZoomInTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires QuonitronMovingCameraScene. Pass scene= via kwargs. Does not run on a plain Cairo Scene.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.camera.zoom_out",
+      "name": "Zoom Out",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "camera",
+      "tags": [
+        "zoom",
+        "camera",
+        "context"
+      ],
+      "aliases": [
+        "zoom out to reveal context"
+      ],
+      "description": "Zoom out to a wider context (default: full QUONITRON frame width).",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.camera",
+      "class_name": "ZoomOutTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "width": {
+          "type": "number",
+          "description": "Target frame width in scene units",
+          "default": 14.222
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.camera import ZoomOutTransition\nanim = ZoomOutTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.camera.pan",
+      "name": "Pan",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "camera",
+      "tags": [
+        "pan",
+        "camera"
+      ],
+      "aliases": [
+        "pan to another visual region",
+        "move the camera between focal points"
+      ],
+      "description": "Pan the camera so the target sits at frame center.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.camera",
+      "class_name": "PanTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.camera import PanTransition\nanim = PanTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.camera.reframe",
+      "name": "Reframe",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "camera",
+      "tags": [
+        "reframe",
+        "camera",
+        "safe-area"
+      ],
+      "aliases": [
+        "reframe content while preserving safe margins"
+      ],
+      "description": "Move and resize the frame while keeping theme safe margins in mind.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.camera",
+      "class_name": "ReframeTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "margin": {
+          "type": "number",
+          "default": 1.8,
+          "minimum": 1.1,
+          "description": "margin"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.camera import ReframeTransition\nanim = ReframeTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.camera.closeup_to_full",
+      "name": "Close-up To Full",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "camera",
+      "tags": [
+        "zoom",
+        "restore",
+        "camera"
+      ],
+      "aliases": [
+        "transition from a close-up to a full diagram",
+        "focus on one object and then another"
+      ],
+      "description": "Restore a wide shot from a close-up (uses saved camera.frame state when present).",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.camera",
+      "class_name": "CloseUpToFullTransition",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.camera import CloseUpToFullTransition\nanim = CloseUpToFullTransition(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "If camera.frame was save_state()'d, Restore is used. Otherwise zooms to the default frame width.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.title_to_explanation",
+      "name": "Title To Explanation",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "title",
+        "story",
+        "opening"
+      ],
+      "aliases": [
+        "title to explanation"
+      ],
+      "description": "Title card yields to the first explanatory visual.",
+      "use_cases": [
+        "Open an explainer without a hard cut"
+      ],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "TitleToExplanation",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import TitleToExplanation\nanim = TitleToExplanation(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.explanation_to_example",
+      "name": "Explanation To Example",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "example",
+        "story"
+      ],
+      "aliases": [
+        "explanation to worked example"
+      ],
+      "description": "Slide from a definition into a worked example.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "ExplanationToExample",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import ExplanationToExample\nanim = ExplanationToExample(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.example_to_code",
+      "name": "Example To Code",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "code",
+        "story",
+        "continuity"
+      ],
+      "aliases": [
+        "example to code"
+      ],
+      "description": "Morph or replace an example object into a source-code representation.",
+      "use_cases": [
+        "A variable box becoming the assignment statement that created it"
+      ],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "ExampleToCode",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import ExampleToCode\nanim = ExampleToCode(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.code_to_trace",
+      "name": "Code To Trace",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "trace",
+        "code",
+        "story"
+      ],
+      "aliases": [
+        "code to execution trace"
+      ],
+      "description": "Slide from a code snippet into an execution-trace layout.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "CodeToTrace",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import CodeToTrace\nanim = CodeToTrace(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.code_to_memory",
+      "name": "Code To Memory",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "memory",
+        "code",
+        "architecture",
+        "story"
+      ],
+      "aliases": [
+        "code to memory or architecture diagram"
+      ],
+      "description": "Carry the identifier from a code line into a memory-diagram cell.",
+      "use_cases": [
+        "Show that a name in source is a labeled slot in memory"
+      ],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "CodeToMemory",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import CodeToMemory\nanim = CodeToMemory(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.diagram_to_chart",
+      "name": "Diagram To Chart",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "chart",
+        "diagram",
+        "story"
+      ],
+      "aliases": [
+        "diagram to chart"
+      ],
+      "description": "Fade-transform a diagram into a chart-shaped layout (chart library is Part 7).",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "DiagramToChart",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import DiagramToChart\nanim = DiagramToChart(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Does not draw axes. Pass a chart mobject from a later part when it exists.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.explanation_to_recap",
+      "name": "Explanation To Recap",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "recap",
+        "story"
+      ],
+      "aliases": [
+        "detailed explanation to recap"
+      ],
+      "description": "Settle into a recap line after the detailed explanation.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "ExplanationToRecap",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import ExplanationToRecap\nanim = ExplanationToRecap(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.chapter_break",
+      "name": "Chapter Break",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "chapter",
+        "story"
+      ],
+      "aliases": [
+        "one chapter to the next"
+      ],
+      "description": "One chapter to the next: brief fade, not a decorative flourish.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "ChapterBreak",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import ChapterBreak\nanim = ChapterBreak(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "transition.story.closing_preview",
+      "name": "Closing Preview",
+      "version": "0.4.0",
+      "category": "transition",
+      "subcategory": "story",
+      "tags": [
+        "closing",
+        "preview",
+        "story"
+      ],
+      "aliases": [
+        "closing scene and next-topic preview"
+      ],
+      "description": "Closing scene plus a quiet next-topic preview.",
+      "use_cases": [],
+      "module": "quonitron_manim.transitions.story",
+      "class_name": "ClosingPreview",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "direction": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN where relevant",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN"
+          ]
+        },
+        "delay": {
+          "type": "number",
+          "description": "Seconds to wait before the transition plays",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.transitions.story import ClosingPreview\nanim = ClosingPreview(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "motion.appearance.fade_in"
       ],
       "license": "MIT"
     }

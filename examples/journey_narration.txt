@@ -1,0 +1,11 @@
+A variable is a named place that holds a value while a program runs.
+We start with a simple picture: a box labeled score that currently holds ten.
+That picture is useful, but it is not how the computer actually sees the assignment.
+In source code, the same idea is written as score equals ten.
+The identifier on the left is the name we chose; the number on the right is the value we stored.
+When this line runs, the language runtime looks up that name in memory.
+Memory is just a table of slots: an address, a name, and the value that lives there.
+The name score is the same in the code and in the table; only the representation changes.
+Zooming in, the value cell is where ten actually sits.
+Zooming back out, the rest of the diagram is still there, and the clock never reset.
+So a variable is not the number itself. It is a stable name for a replaceable slot in memory.

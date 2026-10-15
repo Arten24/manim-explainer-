@@ -7,8 +7,8 @@ subtitle export, and automated checks.
 The package name is `quonitron_manim`. Agents should **search the catalog
 and reuse tested components** before writing new animation code.
 
-Current milestone: **Part 2 — basic motion library + shared subtitle timeline**.
-Parts 3–20 are not implemented.
+Current milestone: **Part 3 — reusable transitions on the shared timeline**.
+Parts 4–20 are not implemented.
 
 ## Purpose
 
@@ -24,6 +24,7 @@ src/quonitron_manim/
   design/            color, type, layout, motion tokens
   core/              base scene, component contract, catalog loader
   motion/            Part 2 animation recipes
+  transitions/       Part 3 scene-change recipes
   timeline/          shared subtitle + event clock
   components/        reusable building blocks
   subtitles/         cues, segmentation, SRT / WebVTT
@@ -47,8 +48,9 @@ Details: [docs/architecture.md](docs/architecture.md).
 ├── examples/
 │   ├── foundation_demo.py
 │   ├── motion_timeline_demo.py
+│   ├── journey_demo.py
 │   ├── variable_timeline.json
-│   └── variable_narration.txt
+│   └── journey_timeline.json
 ├── tests/
 ├── scripts/
 │   ├── validate_catalog.py
@@ -114,8 +116,8 @@ Inexpensive checks (no renderer):
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/timeline_report.py
-python scripts/search_catalog.py indicate
+python scripts/timeline_report.py examples/journey_timeline.json --out examples/journey_timeline_report.md
+python scripts/search_catalog.py --category transition wipe
 pytest -m "not render"
 ```
 
@@ -125,6 +127,7 @@ Preview-render test (needs Cairo, Pango, FFmpeg, Manim):
 pytest -m render
 python scripts/render_demo.py
 python scripts/render_motion_demo.py
+python scripts/render_transition_demo.py
 ```
 
 GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
@@ -137,6 +140,7 @@ From the repository root:
 ```bash
 manim -ql examples/foundation_demo.py VariableStoresAValue
 manim -ql examples/motion_timeline_demo.py VariableMemoryTimeline
+manim -ql examples/journey_demo.py CodeToMemoryJourney
 ```
 
 `-ql` is 480p15 and is the intended smoke render. Do not use `-qh` for
@@ -146,8 +150,8 @@ Part 2 loads `examples/variable_timeline.json` for **both** animation
 `run_time` values and on-screen captions. Export the same cues with
 `python scripts/timeline_report.py`.
 
-Motion recipes and the timeline: [docs/motion-library.md](docs/motion-library.md),
-[docs/timeline.md](docs/timeline.md).
+Motion, transitions, and the timeline: [docs/motion-library.md](docs/motion-library.md),
+[docs/transitions.md](docs/transitions.md), [docs/timeline.md](docs/timeline.md).
 
 ## Master JSON catalog
 
@@ -196,10 +200,11 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 
 ## Current limitations
 
-- Parts 3–20 are not built. The category list is a registry, not a fake
+- Parts 4–20 are not built. The category list is a registry, not a fake
   component dump.
-- Part 2 motion `animate()` calls need a real Manim renderer. Catalog
+- Part 2–3 `animate()` calls need a real Manim renderer. Catalog
   `passed` on those rows means **parameter tests**, not a preview MP4.
+- Camera zooms need `QuonitronMovingCameraScene`. Plain `QuonitronScene` cannot pan.
 - Visual catalog entries (`foundation.title_card`, `section_heading`,
   `variable_store`, `base_scene`) are `not_tested` until a Manim preview
   render actually passes in the environment that runs the tests.
@@ -232,7 +237,7 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 | 19 | Automated render QA |
 | 20 | Agent integration and catalog expansion |
 
-Do not start Part 2 until Part 1 is reported complete.
+Do not start Part 4 until Part 3 is reported complete.
 
 ## License
 

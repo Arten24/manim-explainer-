@@ -13,9 +13,9 @@ from quonitron_manim.design.layout import safe_area, subtitle_anchor, title_anch
 from quonitron_manim.design.motion import resolve_rate_function
 from quonitron_manim.design.theme import Theme, apply_theme_to_manim, get_theme
 
-if manim_available():
+try:
     from manim import DOWN, FadeIn, FadeOut, Scene, Write
-else:  # pragma: no cover - exercised only without Cairo
+except Exception:  # pragma: no cover
     class Scene:  # type: ignore[no-redef]
         def setup(self) -> None:
             return None
@@ -38,14 +38,22 @@ else:  # pragma: no cover - exercised only without Cairo
     DOWN = None  # type: ignore[assignment]
     FadeIn = FadeOut = Write = object  # type: ignore[misc, assignment]
 
+try:
+    from manim import MovingCameraScene as _MovingCameraScene
+except Exception:  # pragma: no cover
+    _MovingCameraScene = Scene  # type: ignore[misc, assignment]
 
-class QuonitronScene(Scene):
+
+class QuonitronSceneMixin:
     """Shared helpers for titles, headings, captions, and timing."""
 
     theme_name: str = "quonitron_dark"
     render_profile_name: Optional[str] = None
 
     def setup(self) -> None:
+        parent_setup = getattr(super(), "setup", None)
+        if callable(parent_setup):
+            parent_setup()
         self.theme: Theme = get_theme(self.theme_name)
         apply_theme_to_manim(self.theme)
         profile_name = self.render_profile_name or self.theme.render_profile
@@ -135,3 +143,11 @@ class QuonitronScene(Scene):
             caption.width = max_width
         self.place_caption(caption)
         return caption
+
+
+class QuonitronScene(QuonitronSceneMixin, Scene):
+    """Default Cairo scene. Use QuonitronMovingCameraScene for pan/zoom."""
+
+
+class QuonitronMovingCameraScene(QuonitronSceneMixin, _MovingCameraScene):
+    """Scene with manim.MovingCamera (camera.frame). Required for camera transitions."""

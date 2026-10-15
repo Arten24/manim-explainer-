@@ -8,11 +8,14 @@ with `timeline.seconds_to_frames(t)` using the configured frame rate.
 
 See `examples/variable_timeline.json`.
 
-- `scene` — `scene_id`, start, end
+- `scene` — `scene_id`, start, end (the program window)
+- `beats` — optional conceptual chapters on the **same** seconds clock
 - `events` — `id`, `motion_id`, interval, optional `play_duration`,
-  `depends_on`, `overlap_ok`, `pause_after`
+  `kind`, `source_id`, `destination_id`, `depends_on`, `overlap_ok`, `pause_after`
 - `cues` — same fields as Part 1 plus `event_ids` and `timing_status`
 - `narration` — full English source text
+
+A beat is a label. It does not restart time. A caption may span two beats.
 
 `play_duration` is the time passed to `Scene.play`. The event interval may
 be longer: that is the semantic window used to link cues (the box stays on
@@ -25,7 +28,7 @@ cover several visuals. A long visual may cover several sentences.
 
 Validation (`validate_timeline`):
 
-- scene ids match
+- scene ids match the program **or** a declared beat
 - times ≥ 0 and end > start
 - cues and events lie inside the scene window
 - event ids exist

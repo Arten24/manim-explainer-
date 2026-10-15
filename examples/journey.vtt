@@ -1,0 +1,50 @@
+WEBVTT
+
+NOTE Part 3 journey. Subtitle times are estimates. cue-008 spans the code and memory beats on purpose.
+
+cue-001
+00:00:00.000 --> 00:00:05.880
+A variable is a named place that holds a value while a program runs.
+
+cue-002
+00:00:05.880 --> 00:00:11.760
+We start with a simple picture: a box labeled score that currently holds ten.
+
+cue-003
+00:00:11.760 --> 00:00:18.040
+That picture is useful, but it is not how the computer actually sees the assignment.
+
+cue-004
+00:00:18.040 --> 00:00:23.120
+In source code, the same idea is written as score equals ten.
+
+cue-005
+00:00:23.120 --> 00:00:29.620
+The identifier on the left is the name we chose; the number on the right is the
+value we stored.
+
+cue-006
+00:00:29.620 --> 00:00:35.100
+When this line runs, the language runtime looks up that name in memory.
+
+cue-007
+00:00:35.100 --> 00:00:41.600
+Memory is just a table of slots: an address, a name, and the value that lives there.
+
+cue-008
+00:00:41.600 --> 00:00:48.100
+The name score is the same in the code and in the table; only the representation
+changes.
+
+cue-009
+00:00:48.100 --> 00:00:52.380
+Zooming in, the value cell is where ten actually sits.
+
+cue-010
+00:00:52.380 --> 00:00:58.880
+Zooming back out, the rest of the diagram is still there, and the clock never reset.
+
+cue-011
+00:00:58.880 --> 00:01:05.380
+So a variable is not the number itself. It is a stable name for a replaceable slot
+in memory.

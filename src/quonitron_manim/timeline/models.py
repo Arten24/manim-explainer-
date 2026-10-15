@@ -63,6 +63,10 @@ class VisualEvent:
     overlap_ok: bool = False
     pause_after: float = 0.0
     play_duration: Optional[float] = None
+    kind: str = "motion"
+    source_id: Optional[str] = None
+    destination_id: Optional[str] = None
+    cue_ids: List[str] = field(default_factory=list)
     params: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -72,6 +76,10 @@ class VisualEvent:
             raise ValueError(f"{self.id}: scene_id is required")
         if not self.motion_id:
             raise ValueError(f"{self.id}: motion_id is required")
+        if self.kind not in {"motion", "transition"}:
+            raise ValueError(f"{self.id}: kind must be 'motion' or 'transition'")
+        if self.motion_id.startswith("transition."):
+            self.kind = "transition"
         _positive_interval(self.start, self.end, f"event {self.id}")
         if self.pause_after < 0:
             raise ValueError(f"{self.id}: pause_after must be >= 0")
@@ -116,6 +124,10 @@ class VisualEvent:
                 if data.get("play_duration") is not None
                 else None
             ),
+            kind=str(data.get("kind") or "motion"),
+            source_id=data.get("source_id"),
+            destination_id=data.get("destination_id"),
+            cue_ids=list(data.get("cue_ids") or []),
             params=dict(data.get("params") or {}),
         )
 
@@ -209,6 +221,7 @@ class Timeline:
     events: List[VisualEvent] = field(default_factory=list)
     cues: List[LinkedCue] = field(default_factory=list)
     narration: str = ""
+    beats: List[SceneWindow] = field(default_factory=list)
     frame_rate: float = 30.0
     reading_wpm: int = 155
     notes: str = (
@@ -288,9 +301,35 @@ class Timeline:
     def override_cue(self, cue_id: str, start: float, end: float) -> None:
         self.cue_by_id(cue_id).override_timing(start, end)
 
+    def allowed_scene_ids(self) -> List[str]:
+        return [self.scene.scene_id, *[beat.scene_id for beat in self.beats]]
+
+    def beat_at(self, time: float) -> Optional[SceneWindow]:
+        for beat in self.beats:
+            if beat.contains(time, time):
+                return beat
+        return None
+
+    def spanning_cues(self) -> List[LinkedCue]:
+        """Cues whose interval overlaps more than one conceptual beat."""
+        if len(self.beats) < 2:
+            return []
+        hits = []
+        for cue in self.cues:
+            start, end = cue.effective_start(), cue.effective_end()
+            overlap_ids = [
+                beat.scene_id
+                for beat in self.beats
+                if min(end, beat.end) - max(start, beat.start) > 1e-6
+            ]
+            if len(overlap_ids) > 1:
+                hits.append(cue)
+        return hits
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "scene": self.scene.to_dict(),
+            "beats": [beat.to_dict() for beat in self.beats],
             "events": [event.to_dict() for event in self.events],
             "cues": [cue.to_dict() for cue in self.cues],
             "narration": self.narration,
@@ -303,6 +342,7 @@ class Timeline:
     def from_dict(cls, data: Dict[str, Any]) -> "Timeline":
         return cls(
             scene=SceneWindow.from_dict(data["scene"]),
+            beats=[SceneWindow.from_dict(item) for item in data.get("beats") or []],
             events=[VisualEvent.from_dict(item) for item in data.get("events") or []],
             cues=[LinkedCue.from_dict(item) for item in data.get("cues") or []],
             narration=str(data.get("narration") or ""),

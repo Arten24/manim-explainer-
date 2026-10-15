@@ -52,13 +52,30 @@ def validate_timeline(
 
     known_events = set(event_ids)
     known_motions = set(known_motion_ids) if known_motion_ids is not None else None
+    allowed_scenes = set(timeline.allowed_scene_ids())
+    hiding = {
+        "transition.simple.wipe",
+        "transition.simple.cover",
+    }
 
-    for event in timeline.events:
-        if event.scene_id != scene.scene_id:
+    for beat in timeline.beats:
+        if not scene.contains(beat.start, beat.end):
             report.issues.append(
                 TimelineIssue(
                     "error",
-                    f"{event.id}: scene_id {event.scene_id!r} != {scene.scene_id!r}",
+                    f"beat {beat.scene_id}: {beat.start:.3f}-{beat.end:.3f} "
+                    f"is outside the program window",
+                    beat.scene_id,
+                )
+            )
+
+    for event in timeline.events:
+        if event.scene_id not in allowed_scenes:
+            report.issues.append(
+                TimelineIssue(
+                    "error",
+                    f"{event.id}: scene_id {event.scene_id!r} is not the program "
+                    f"or a declared beat. Known: {sorted(allowed_scenes)}",
                     event.id,
                 )
             )
@@ -79,6 +96,21 @@ def validate_timeline(
                     event.id,
                 )
             )
+        if event.kind == "transition":
+            for ref, label in (
+                (event.source_id, "source_id"),
+                (event.destination_id, "destination_id"),
+            ):
+                if not ref:
+                    continue
+                if ref not in known_events and ref not in allowed_scenes:
+                    report.issues.append(
+                        TimelineIssue(
+                            "error",
+                            f"{event.id}: {label} {ref!r} is not an event or beat id",
+                            event.id,
+                        )
+                    )
         for dep in event.depends_on:
             if dep not in known_events:
                 report.issues.append(
@@ -119,11 +151,12 @@ def validate_timeline(
                 report.issues.append(TimelineIssue("error", message + " (accidental)", right.id))
 
     for cue in timeline.cues:
-        if cue.scene_id != scene.scene_id:
+        if cue.scene_id not in allowed_scenes:
             report.issues.append(
                 TimelineIssue(
                     "error",
-                    f"{cue.id}: scene_id {cue.scene_id!r} != {scene.scene_id!r}",
+                    f"{cue.id}: scene_id {cue.scene_id!r} is not the program "
+                    f"or a declared beat",
                     cue.id,
                 )
             )
@@ -178,4 +211,32 @@ def validate_timeline(
                     right.id,
                 )
             )
+
+    for cue in timeline.spanning_cues():
+        report.issues.append(
+            TimelineIssue(
+                "warning",
+                f"{cue.id}: spans more than one conceptual beat "
+                "(allowed — the clock does not reset at a scene change)",
+                cue.id,
+            )
+        )
+
+    for event in timeline.events:
+        if event.motion_id not in hiding:
+            continue
+        play_start, play_end = event.start, event.play_end()
+        for cue in timeline.cues:
+            overlap = min(cue.effective_end(), play_end) - max(
+                cue.effective_start(), play_start
+            )
+            if overlap > 0.15:
+                report.issues.append(
+                    TimelineIssue(
+                        "warning",
+                        f"{cue.id}: overlaps hiding transition {event.id} "
+                        f"({overlap:.2f}s may be unreadable)",
+                        cue.id,
+                    )
+                )
     return report

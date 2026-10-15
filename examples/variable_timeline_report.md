@@ -6,6 +6,7 @@
 - Reading speed: 165 wpm (estimates only)
 - Events: 14
 - Cues: 34
+- Beats: 0 (same clock; not a second timeline)
 - Notes: Estimated timings share this clock with visual events. They are not aligned to a recorded speaker until timing_status is set to manual.
 
 ## Validation
@@ -16,22 +17,22 @@ OK
 
 ## Visual events
 
-| id | motion | start | end | frames | overlap_ok | depends_on |
-| --- | --- | ---: | ---: | ---: | --- | --- |
-| `ev_title_in` | `motion.appearance.smooth_entrance` | 0.000 | 2.400 | 0–36 | False | — |
-| `ev_title_out` | `motion.appearance.smooth_exit` | 2.400 | 2.900 | 36–44 | False | ev_title_in |
-| `ev_heading` | `motion.appearance.write` | 2.950 | 94.200 | 44–1413 | False | ev_title_out |
-| `ev_box` | `motion.appearance.grow_from_center` | 4.250 | 104.400 | 64–1566 | False | ev_heading |
-| `ev_name` | `motion.appearance.write` | 5.550 | 104.400 | 83–1566 | False | ev_box |
-| `ev_value0` | `motion.appearance.fade_in` | 6.700 | 59.150 | 100–887 | False | ev_name |
-| `ev_indicate` | `motion.emphasis.indicate` | 8.000 | 47.200 | 120–708 | False | ev_value0 |
-| `ev_circ_name` | `motion.emphasis.circumscribe` | 27.200 | 33.500 | 408–502 | False | ev_indicate |
-| `ev_arrow` | `motion.util.create_line` | 33.600 | 59.100 | 504–886 | False | ev_circ_name |
-| `ev_replace` | `motion.transform.replacement` | 59.150 | 68.650 | 887–1030 | False | ev_arrow |
-| `ev_pulse` | `motion.emphasis.pulse` | 68.700 | 71.700 | 1030–1076 | False | ev_replace |
-| `ev_focus` | `motion.emphasis.focus_set` | 71.750 | 82.700 | 1076–1240 | False | ev_pulse |
-| `ev_recap` | `motion.appearance.smooth_entrance` | 94.250 | 104.400 | 1414–1566 | False | ev_focus |
-| `ev_end` | `motion.group.parallel` | 104.500 | 107.995 | 1568–1620 | False | ev_recap |
+| id | kind | motion | start | end | play | src | dest |
+| --- | --- | --- | ---: | ---: | ---: | --- | --- |
+| `ev_title_in` | motion | `motion.appearance.smooth_entrance` | 0.000 | 2.400 | 1.200 | — | — |
+| `ev_title_out` | motion | `motion.appearance.smooth_exit` | 2.400 | 2.900 | 0.500 | — | — |
+| `ev_heading` | motion | `motion.appearance.write` | 2.950 | 94.200 | 1.200 | — | — |
+| `ev_box` | motion | `motion.appearance.grow_from_center` | 4.250 | 104.400 | 1.200 | — | — |
+| `ev_name` | motion | `motion.appearance.write` | 5.550 | 104.400 | 1.050 | — | — |
+| `ev_value0` | motion | `motion.appearance.fade_in` | 6.700 | 59.150 | 0.800 | — | — |
+| `ev_indicate` | motion | `motion.emphasis.indicate` | 8.000 | 47.200 | 1.150 | — | — |
+| `ev_circ_name` | motion | `motion.emphasis.circumscribe` | 27.200 | 33.500 | 1.300 | — | — |
+| `ev_arrow` | motion | `motion.util.create_line` | 33.600 | 59.100 | 1.200 | — | — |
+| `ev_replace` | motion | `motion.transform.replacement` | 59.150 | 68.650 | 1.250 | — | — |
+| `ev_pulse` | motion | `motion.emphasis.pulse` | 68.700 | 71.700 | 1.250 | — | — |
+| `ev_focus` | motion | `motion.emphasis.focus_set` | 71.750 | 82.700 | 1.350 | — | — |
+| `ev_recap` | motion | `motion.appearance.smooth_entrance` | 94.250 | 104.400 | 1.150 | — | — |
+| `ev_end` | motion | `motion.group.parallel` | 104.500 | 107.995 | 1.400 | — | — |
 
 ## Subtitle cues
 
