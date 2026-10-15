@@ -119,7 +119,7 @@ def test_demo_endpoint_geometry(file, scene):
     # Resolve Part 2 name without guessing the public scene class.
     if file == "motion_timeline_demo.py":
         scene = "VariableMemoryTimeline"  # public demo scene
-    with tempconfig({"dry_run": True, "disable_caching": True}):
+    with tempconfig({"dry_run": True, "disable_caching": True, "quality": "low_quality"}):
         instance = getattr(module, scene)()
         failures = []
         original = instance.check_layout

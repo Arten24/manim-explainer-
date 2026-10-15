@@ -38,14 +38,19 @@ jobs:
           python -m compileall -q src scripts examples tests
           python scripts/validate_catalog.py
           python scripts/verify_environment.py --json media/cloud-verification/dependencies.json
-      - name: Full suite (render failures and skips are reported)
-        run: python -m pytest -ra --junitxml=media/cloud-verification/tests.xml
       - name: All actual preview renders, decode and frames
         if: ${{ !cancelled() }}
         run: python scripts/verify_renders.py
       - name: Intended-quality smoke
         if: ${{ !cancelled() }}
         run: python scripts/verify_renders.py --only themed --quality production
+      - name: Publish preliminary render evidence
+        if: ${{ !cancelled() }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/publish_ci_evidence.py
+      - name: Full suite (render failures and skips are reported)
+        run: python -m pytest -ra --junitxml=media/cloud-verification/tests.xml
       - name: Actual notebook backend execution
         if: ${{ !cancelled() }}
         run: |
