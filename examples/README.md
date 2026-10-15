@@ -1,31 +1,23 @@
 # Examples
 
-## Foundation demo
-
-Explains how a variable stores a value using the Part 1 design system,
-`TitleCard`, `SectionHeading`, and `VariableStore`.
+## Part 1 — foundation demo
 
 ```bash
-# from the repository root
-pip install -e ".[dev]"
 manim -ql examples/foundation_demo.py VariableStoresAValue
 ```
 
-Windows (PowerShell):
+## Part 2 — motion + shared timeline
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-manim -ql examples/foundation_demo.py VariableStoresAValue
-```
-
-Low-quality (`-ql`) is 480p15 and is the intended smoke render. Do not use
-`-qh` for routine checks.
-
-On-screen captions come from `subtitle_demo.json`. Export the same cues to
-files without rendering:
+Narration source: `variable_narration.txt`  
+Clock: `variable_timeline.json`  
+Scene: `motion_timeline_demo.py`
 
 ```bash
-python -c "from pathlib import Path; from quonitron_manim.subtitles import load_track, write_srt, write_vtt; t=load_track('examples/subtitle_demo.json'); write_srt(t, Path('examples/subtitle_demo.srt')); write_vtt(t, Path('examples/subtitle_demo.vtt'))"
+python scripts/timeline_report.py
+manim -ql examples/motion_timeline_demo.py VariableMemoryTimeline
 ```
 
-Those timestamps are **estimates**. They are not aligned to a voice recording.
+The report writes SRT/VTT next to the examples. Those timestamps are
+**estimates**. They are not aligned to a voice recording. Override cue
+times in the JSON (`timing_status: manual`) after you record voiceover;
+keep the same cue ids.

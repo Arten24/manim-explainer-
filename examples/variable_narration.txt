@@ -1,0 +1,19 @@
+Imagine you are tidying a desk. You do not throw every paper into one anonymous pile. You take a small box, write a name on the lid, and place a single note inside.
+
+A variable works in that same spirit. It is a named place in the computer's memory, reserved so your program can find a piece of information again.
+
+The name on the box is not the information. It is the handle. When we write the word score, we are pointing at a location, not at the number itself.
+
+Inside the box is the value. That is the information the name currently holds. At the beginning, score holds zero, because we have not counted anything yet.
+
+Now, here's the important part. Programs change. If we could not change what a box contains, we would need a new box for every new number, and we would forget where the latest number lives.
+
+So we reassign. We write score equals ten. We are not creating a second box labeled score. We are opening the same box and replacing the note inside.
+
+The name stays. The value can change. After the assignment, whenever the program asks for score, it receives ten, not zero.
+
+The visual is helpful: a lid you can read, and contents you can swap. It also has limits. Real memory is not a wooden crate. The computer stores bits at an address, and the name is a label your programming language keeps for you.
+
+Remember this: a variable binds a stable name to a replaceable value, so the rest of the program can talk about the thing without chasing a moving number.
+
+That is how a variable stores a value.

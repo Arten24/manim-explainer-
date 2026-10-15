@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quonitron-manim-master-library"
-version = "0.2.0"
+version = "0.3.0"
 description = "An extensible, reusable Manim animation component library, JSON catalog, subtitle toolkit, scene templates, and automated quality checks for educational video production."
 readme = "README.md"
 license = { text = "MIT" }

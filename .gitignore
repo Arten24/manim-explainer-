@@ -229,6 +229,7 @@ partial_movie_files/
 *.srt
 *.vtt
 !examples/**/*.srt
+!examples/**/*.vtt
 !docs/**/*.md
 
 # Local secrets and editor noise

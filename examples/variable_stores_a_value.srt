@@ -1,0 +1,135 @@
+1
+00:00:00,000 --> 00:00:02,342
+Imagine you are tidying a desk.
+
+2
+00:00:02,342 --> 00:00:06,138
+You do not throw every paper into one anonymous pile.
+
+3
+00:00:06,138 --> 00:00:11,938
+You take a small box, write a name on the lid, and place a single note inside.
+
+4
+00:00:11,938 --> 00:00:14,644
+A variable works in that same spirit.
+
+5
+00:00:14,644 --> 00:00:17,966
+It is a named place in the computer's memory,
+
+6
+00:00:17,966 --> 00:00:22,126
+reserved so your program can find a piece of information again.
+
+7
+00:00:22,126 --> 00:00:25,559
+The name on the box is not the information.
+
+8
+00:00:25,559 --> 00:00:27,174
+It is the handle.
+
+9
+00:00:27,174 --> 00:00:31,587
+When we write the word score, we are pointing at a location,
+
+10
+00:00:31,587 --> 00:00:33,565
+not at the number itself.
+
+11
+00:00:33,565 --> 00:00:35,907
+Inside the box is the value.
+
+12
+00:00:35,907 --> 00:00:38,976
+That is the information the name currently holds.
+
+13
+00:00:38,976 --> 00:00:43,864
+At the beginning, score holds zero, because we have not counted anything yet.
+
+14
+00:00:43,864 --> 00:00:45,842
+Now, here's the important part.
+
+15
+00:00:45,842 --> 00:00:47,252
+Programs change.
+
+16
+00:00:47,252 --> 00:00:50,575
+If we could not change what a box contains,
+
+17
+00:00:50,575 --> 00:00:54,261
+we would need a new box for every new number,
+
+18
+00:00:54,261 --> 00:00:57,694
+and we would forget where the latest number lives.
+
+19
+00:00:57,694 --> 00:00:59,104
+So we reassign.
+
+20
+00:00:59,104 --> 00:01:01,082
+We write score equals ten.
+
+21
+00:01:01,082 --> 00:01:04,515
+We are not creating a second box labeled score.
+
+22
+00:01:04,515 --> 00:01:08,675
+We are opening the same box and replacing the note inside.
+
+23
+00:01:08,675 --> 00:01:10,085
+The name stays.
+
+24
+00:01:10,085 --> 00:01:11,699
+The value can change.
+
+25
+00:01:11,699 --> 00:01:16,113
+After the assignment, whenever the program asks for score, it receives ten,
+
+26
+00:01:16,113 --> 00:01:17,523
+not zero.
+
+27
+00:01:17,523 --> 00:01:22,774
+The visual is helpful: a lid you can read, and contents you can swap.
+
+28
+00:01:22,774 --> 00:01:24,388
+It also has limits.
+
+29
+00:01:24,388 --> 00:01:27,094
+Real memory is not a wooden crate.
+
+30
+00:01:27,094 --> 00:01:29,689
+The computer stores bits at an address,
+
+31
+00:01:29,689 --> 00:01:34,213
+and the name is a label your programming language keeps for you.
+
+32
+00:01:34,213 --> 00:01:38,626
+Remember this: a variable binds a stable name to a replaceable value,
+
+33
+00:01:38,626 --> 00:01:44,426
+so the rest of the program can talk about the thing without chasing a moving number.
+
+34
+00:01:44,426 --> 00:01:47,495
+That is how a variable stores a value.

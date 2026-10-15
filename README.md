@@ -7,7 +7,8 @@ subtitle export, and automated checks.
 The package name is `quonitron_manim`. Agents should **search the catalog
 and reuse tested components** before writing new animation code.
 
-Current milestone: **Part 1 — foundation**. Parts 2–20 are not implemented.
+Current milestone: **Part 2 — basic motion library + shared subtitle timeline**.
+Parts 3–20 are not implemented.
 
 ## Purpose
 
@@ -20,11 +21,13 @@ English subtitles without audio, and render a preview.
 ```
 catalog/master.json  ── searchable index (JSON Schema 1.0.0)
 src/quonitron_manim/
-  design/            color, type, layout, motion
+  design/            color, type, layout, motion tokens
   core/              base scene, component contract, catalog loader
+  motion/            Part 2 animation recipes
+  timeline/          shared subtitle + event clock
   components/        reusable building blocks
-  subtitles/         cue model, validation, SRT / WebVTT
-examples/            foundation demo + subtitle JSON
+  subtitles/         cues, segmentation, SRT / WebVTT
+examples/            Part 1 + Part 2 demos and timeline JSON
 ```
 
 Details: [docs/architecture.md](docs/architecture.md).
@@ -43,11 +46,15 @@ Details: [docs/architecture.md](docs/architecture.md).
 ├── src/quonitron_manim/
 ├── examples/
 │   ├── foundation_demo.py
-│   └── subtitle_demo.json
+│   ├── motion_timeline_demo.py
+│   ├── variable_timeline.json
+│   └── variable_narration.txt
 ├── tests/
 ├── scripts/
 │   ├── validate_catalog.py
-│   └── render_demo.py
+│   ├── timeline_report.py
+│   ├── render_demo.py
+│   └── render_motion_demo.py
 └── docs/
 ```
 
@@ -107,6 +114,8 @@ Inexpensive checks (no renderer):
 
 ```bash
 python scripts/validate_catalog.py
+python scripts/timeline_report.py
+python scripts/search_catalog.py indicate
 pytest -m "not render"
 ```
 
@@ -115,25 +124,30 @@ Preview-render test (needs Cairo, Pango, FFmpeg, Manim):
 ```bash
 pytest -m render
 python scripts/render_demo.py
+python scripts/render_motion_demo.py
 ```
 
 GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
 `continue-on-error` because system packages may fail on a runner.
 
-## Render the demo
+## Render the demos
 
 From the repository root:
 
 ```bash
 manim -ql examples/foundation_demo.py VariableStoresAValue
+manim -ql examples/motion_timeline_demo.py VariableMemoryTimeline
 ```
 
 `-ql` is 480p15 and is the intended smoke render. Do not use `-qh` for
 routine tests. Output lands under `media/` (gitignored).
 
-The demo uses `QuonitronScene`, `TitleCard`, `SectionHeading`, and
-`VariableStore` with the `quonitron_dark` theme. It does not hard-code
-brand hex colors.
+Part 2 loads `examples/variable_timeline.json` for **both** animation
+`run_time` values and on-screen captions. Export the same cues with
+`python scripts/timeline_report.py`.
+
+Motion recipes and the timeline: [docs/motion-library.md](docs/motion-library.md),
+[docs/timeline.md](docs/timeline.md).
 
 ## Master JSON catalog
 
@@ -182,8 +196,10 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 
 ## Current limitations
 
-- Parts 2–20 are not built. The category list is a registry, not a fake
+- Parts 3–20 are not built. The category list is a registry, not a fake
   component dump.
+- Part 2 motion `animate()` calls need a real Manim renderer. Catalog
+  `passed` on those rows means **parameter tests**, not a preview MP4.
 - Visual catalog entries (`foundation.title_card`, `section_heading`,
   `variable_store`, `base_scene`) are `not_tested` until a Manim preview
   render actually passes in the environment that runs the tests.

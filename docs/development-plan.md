@@ -6,8 +6,8 @@ working code, tests, and an honest limitations note.
 | Part | Focus | Status |
 | --- | --- | --- |
 | 0 | Repository bootstrap | superseded by Part 1 layout |
-| 1 | Foundation and design system | **this milestone** |
-| 2 | Basic motion library | not started |
+| 1 | Foundation and design system | done |
+| 2 | Basic motion library + shared subtitle timeline | **this milestone** |
 | 3 | Transitions and scene changes | not started |
 | 4 | Text and typography | not started |
 | 5 | Subtitle system (full planner + sidecar metadata) | not started |

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __catalog_schema_version__ = "1.0.0"
 
 from quonitron_manim.config import RenderProfile, get_render_profile

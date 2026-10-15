@@ -1,0 +1,776 @@
+{
+  "scene": {
+    "scene_id": "variable_stores_a_value",
+    "start": 0.0,
+    "end": 107.995,
+    "title": "How a variable stores a value"
+  },
+  "events": [
+    {
+      "id": "ev_title_in",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.smooth_entrance",
+      "start": 0.0,
+      "end": 2.4,
+      "label": "Opening title",
+      "depends_on": [],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.2,
+      "params": {}
+    },
+    {
+      "id": "ev_title_out",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.smooth_exit",
+      "start": 2.4,
+      "end": 2.9,
+      "label": "Clear title",
+      "depends_on": [
+        "ev_title_in"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 0.5,
+      "params": {}
+    },
+    {
+      "id": "ev_heading",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.write",
+      "start": 2.95,
+      "end": 94.2,
+      "label": "Section heading",
+      "depends_on": [
+        "ev_title_out"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.2,
+      "params": {}
+    },
+    {
+      "id": "ev_box",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.grow_from_center",
+      "start": 4.25,
+      "end": 104.4,
+      "label": "Variable card",
+      "depends_on": [
+        "ev_heading"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.2,
+      "params": {}
+    },
+    {
+      "id": "ev_name",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.write",
+      "start": 5.55,
+      "end": 104.4,
+      "label": "Write name score",
+      "depends_on": [
+        "ev_box"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.05,
+      "params": {}
+    },
+    {
+      "id": "ev_value0",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.fade_in",
+      "start": 6.7,
+      "end": 59.15,
+      "label": "Value 0",
+      "depends_on": [
+        "ev_name"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 0.8,
+      "params": {}
+    },
+    {
+      "id": "ev_indicate",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.emphasis.indicate",
+      "start": 8.0,
+      "end": 47.2,
+      "label": "Indicate the box",
+      "depends_on": [
+        "ev_value0"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.15,
+      "params": {}
+    },
+    {
+      "id": "ev_circ_name",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.emphasis.circumscribe",
+      "start": 27.2,
+      "end": 33.5,
+      "label": "Circumscribe name",
+      "depends_on": [
+        "ev_indicate"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.3,
+      "params": {}
+    },
+    {
+      "id": "ev_arrow",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.util.create_line",
+      "start": 33.6,
+      "end": 59.1,
+      "label": "Name to value arrow",
+      "depends_on": [
+        "ev_circ_name"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.2,
+      "params": {}
+    },
+    {
+      "id": "ev_replace",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.transform.replacement",
+      "start": 59.15,
+      "end": 68.65,
+      "label": "0 becomes 10",
+      "depends_on": [
+        "ev_arrow"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.25,
+      "params": {}
+    },
+    {
+      "id": "ev_pulse",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.emphasis.pulse",
+      "start": 68.7,
+      "end": 71.7,
+      "label": "Pulse new value",
+      "depends_on": [
+        "ev_replace"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.25,
+      "params": {}
+    },
+    {
+      "id": "ev_focus",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.emphasis.focus_set",
+      "start": 71.75,
+      "end": 82.7,
+      "label": "Focus the card",
+      "depends_on": [
+        "ev_pulse"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.35,
+      "params": {}
+    },
+    {
+      "id": "ev_recap",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.appearance.smooth_entrance",
+      "start": 94.25,
+      "end": 104.4,
+      "label": "Recap line",
+      "depends_on": [
+        "ev_focus"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.15,
+      "params": {}
+    },
+    {
+      "id": "ev_end",
+      "scene_id": "variable_stores_a_value",
+      "motion_id": "motion.group.parallel",
+      "start": 104.5,
+      "end": 107.995,
+      "label": "Fade everything out",
+      "depends_on": [
+        "ev_recap"
+      ],
+      "overlap_ok": false,
+      "pause_after": 0.0,
+      "play_duration": 1.4,
+      "params": {}
+    }
+  ],
+  "cues": [
+    {
+      "id": "cue-001",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 1,
+      "text": "Imagine you are tidying a desk.",
+      "start_time": 0.0,
+      "end_time": 2.342,
+      "event_ids": [
+        "ev_title_in"
+      ],
+      "visual_cue": "title_card",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-002",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 2,
+      "text": "You do not throw every paper into one anonymous pile.",
+      "start_time": 2.342,
+      "end_time": 6.138,
+      "event_ids": [
+        "ev_title_in"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-003",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 3,
+      "text": "You take a small box, write a name on the lid, and place a single note inside.",
+      "start_time": 6.138,
+      "end_time": 11.938,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": "variable_box",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-004",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 4,
+      "text": "A variable works in that same spirit.",
+      "start_time": 11.938,
+      "end_time": 14.644,
+      "event_ids": [
+        "ev_heading",
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-005",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 5,
+      "text": "It is a named place in the computer's memory,",
+      "start_time": 14.644,
+      "end_time": 17.966,
+      "event_ids": [
+        "ev_heading",
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-006",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 6,
+      "text": "reserved so your program can find a piece of information again.",
+      "start_time": 17.966,
+      "end_time": 22.126,
+      "event_ids": [
+        "ev_heading",
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-007",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 7,
+      "text": "The name on the box is not the information.",
+      "start_time": 22.126,
+      "end_time": 25.559,
+      "event_ids": [
+        "ev_name",
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-008",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 8,
+      "text": "It is the handle.",
+      "start_time": 25.559,
+      "end_time": 27.174,
+      "event_ids": [
+        "ev_name",
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-009",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 9,
+      "text": "When we write the word score, we are pointing at a location,",
+      "start_time": 27.174,
+      "end_time": 31.587,
+      "event_ids": [
+        "ev_circ_name",
+        "ev_name"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-010",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 10,
+      "text": "not at the number itself.",
+      "start_time": 31.587,
+      "end_time": 33.565,
+      "event_ids": [
+        "ev_circ_name"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-011",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 11,
+      "text": "Inside the box is the value.",
+      "start_time": 33.565,
+      "end_time": 35.907,
+      "event_ids": [
+        "ev_value0",
+        "ev_arrow"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-012",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 12,
+      "text": "That is the information the name currently holds.",
+      "start_time": 35.907,
+      "end_time": 38.976,
+      "event_ids": [
+        "ev_value0"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-013",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 13,
+      "text": "At the beginning, score holds zero, because we have not counted anything yet.",
+      "start_time": 38.976,
+      "end_time": 43.864,
+      "event_ids": [
+        "ev_value0"
+      ],
+      "visual_cue": "value_zero",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-014",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 14,
+      "text": "Now, here's the important part.",
+      "start_time": 43.864,
+      "end_time": 45.842,
+      "event_ids": [
+        "ev_indicate"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-015",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 15,
+      "text": "Programs change.",
+      "start_time": 45.842,
+      "end_time": 47.252,
+      "event_ids": [
+        "ev_indicate"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-016",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 16,
+      "text": "If we could not change what a box contains,",
+      "start_time": 47.252,
+      "end_time": 50.575,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-017",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 17,
+      "text": "we would need a new box for every new number,",
+      "start_time": 50.575,
+      "end_time": 54.261,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-018",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 18,
+      "text": "and we would forget where the latest number lives.",
+      "start_time": 54.261,
+      "end_time": 57.694,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-019",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 19,
+      "text": "So we reassign.",
+      "start_time": 57.694,
+      "end_time": 59.104,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-020",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 20,
+      "text": "We write score equals ten.",
+      "start_time": 59.104,
+      "end_time": 61.082,
+      "event_ids": [
+        "ev_replace"
+      ],
+      "visual_cue": "assignment",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-021",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 21,
+      "text": "We are not creating a second box labeled score.",
+      "start_time": 61.082,
+      "end_time": 64.515,
+      "event_ids": [
+        "ev_replace"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-022",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 22,
+      "text": "We are opening the same box and replacing the note inside.",
+      "start_time": 64.515,
+      "end_time": 68.675,
+      "event_ids": [
+        "ev_replace"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-023",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 23,
+      "text": "The name stays.",
+      "start_time": 68.675,
+      "end_time": 70.085,
+      "event_ids": [
+        "ev_pulse",
+        "ev_name"
+      ],
+      "visual_cue": "name_stays",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-024",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 24,
+      "text": "The value can change.",
+      "start_time": 70.085,
+      "end_time": 71.699,
+      "event_ids": [
+        "ev_pulse"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-025",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 25,
+      "text": "After the assignment, whenever the program asks for score, it receives ten,",
+      "start_time": 71.699,
+      "end_time": 76.113,
+      "event_ids": [
+        "ev_focus"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-026",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 26,
+      "text": "not zero.",
+      "start_time": 76.113,
+      "end_time": 77.523,
+      "event_ids": [
+        "ev_focus"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-027",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 27,
+      "text": "The visual is helpful: a lid you can read, and contents you can swap.",
+      "start_time": 77.523,
+      "end_time": 82.774,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-028",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 28,
+      "text": "It also has limits.",
+      "start_time": 82.774,
+      "end_time": 84.388,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-029",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 29,
+      "text": "Real memory is not a wooden crate.",
+      "start_time": 84.388,
+      "end_time": 87.094,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-030",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 30,
+      "text": "The computer stores bits at an address,",
+      "start_time": 87.094,
+      "end_time": 89.689,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-031",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 31,
+      "text": "and the name is a label your programming language keeps for you.",
+      "start_time": 89.689,
+      "end_time": 94.213,
+      "event_ids": [
+        "ev_box"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-032",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 32,
+      "text": "Remember this: a variable binds a stable name to a replaceable value,",
+      "start_time": 94.213,
+      "end_time": 98.626,
+      "event_ids": [
+        "ev_recap"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-033",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 33,
+      "text": "so the rest of the program can talk about the thing without chasing a moving number.",
+      "start_time": 98.626,
+      "end_time": 104.426,
+      "event_ids": [
+        "ev_recap"
+      ],
+      "visual_cue": null,
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-034",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 34,
+      "text": "That is how a variable stores a value.",
+      "start_time": 104.426,
+      "end_time": 107.495,
+      "event_ids": [
+        "ev_end"
+      ],
+      "visual_cue": "ending",
+      "speaker": "narrator",
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    }
+  ],
+  "narration": "Imagine you are tidying a desk. You do not throw every paper into one anonymous pile. You take a small box, write a name on the lid, and place a single note inside.\n\nA variable works in that same spirit. It is a named place in the computer's memory, reserved so your program can find a piece of information again.\n\nThe name on the box is not the information. It is the handle. When we write the word score, we are pointing at a location, not at the number itself.\n\nInside the box is the value. That is the information the name currently holds. At the beginning, score holds zero, because we have not counted anything yet.\n\nNow, here's the important part. Programs change. If we could not change what a box contains, we would need a new box for every new number, and we would forget where the latest number lives.\n\nSo we reassign. We write score equals ten. We are not creating a second box labeled score. We are opening the same box and replacing the note inside.\n\nThe name stays. The value can change. After the assignment, whenever the program asks for score, it receives ten, not zero.\n\nThe visual is helpful: a lid you can read, and contents you can swap. It also has limits. Real memory is not a wooden crate. The computer stores bits at an address, and the name is a label your programming language keeps for you.\n\nRemember this: a variable binds a stable name to a replaceable value, so the rest of the program can talk about the thing without chasing a moving number.\n\nThat is how a variable stores a value.",
+  "frame_rate": 15.0,
+  "reading_wpm": 165,
+  "notes": "Estimated timings share this clock with visual events. They are not aligned to a recorded speaker until timing_status is set to manual."
+}

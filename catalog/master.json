@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "catalog_version": "1.1.0",
-  "library_version": "0.2.0",
+  "catalog_version": "1.2.0",
+  "library_version": "0.3.0",
   "updated": "2026-10-15",
-  "notes": "Part 1 foundation catalog. Only real, implemented entries are listed. Visual components stay not_tested until a Manim preview render succeeds.",
+  "notes": "Part 2 adds the basic motion library and a shared subtitle/animation timeline. Visual motion animate() calls need Manim; parameter tests pass without Cairo. Foundation visual rows remain not_tested until a preview render succeeds.",
   "components": [
     {
       "id": "design.theme.quonitron_dark",
@@ -11,8 +11,19 @@
       "version": "0.2.0",
       "category": "design",
       "subcategory": "theme",
-      "tags": ["theme", "palette", "typography", "dark", "editorial", "design-system"],
-      "aliases": ["default theme", "quonitron dark", "brand colors"],
+      "tags": [
+        "theme",
+        "palette",
+        "typography",
+        "dark",
+        "editorial",
+        "design-system"
+      ],
+      "aliases": [
+        "default theme",
+        "quonitron dark",
+        "brand colors"
+      ],
       "description": "Default premium dark editorial theme: semantic colors, type hierarchy, spacing, stroke, and motion tokens.",
       "use_cases": [
         "Apply a consistent look to every educational scene",
@@ -27,7 +38,9 @@
           "default": "quonitron_dark"
         }
       },
-      "dependencies": ["python>=3.10"],
+      "dependencies": [
+        "python>=3.10"
+      ],
       "compatibility": {
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
@@ -49,8 +62,17 @@
       "version": "0.2.0",
       "category": "foundation",
       "subcategory": "scene",
-      "tags": ["scene", "theme", "title", "safe-area", "base"],
-      "aliases": ["QuonitronScene", "base scene"],
+      "tags": [
+        "scene",
+        "theme",
+        "title",
+        "safe-area",
+        "base"
+      ],
+      "aliases": [
+        "QuonitronScene",
+        "base scene"
+      ],
       "description": "Manim Scene subclass that applies the theme, safe areas, and title/caption helpers.",
       "use_cases": [
         "Start every explainer scene from a consistent shell",
@@ -65,7 +87,9 @@
           "default": "quonitron_dark"
         }
       },
-      "dependencies": ["manim>=0.18.1"],
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
       "compatibility": {
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
@@ -87,8 +111,16 @@
       "version": "0.2.0",
       "category": "foundation",
       "subcategory": "title",
-      "tags": ["title", "opening", "branding", "typography"],
-      "aliases": ["opening title", "branded title"],
+      "tags": [
+        "title",
+        "opening",
+        "branding",
+        "typography"
+      ],
+      "aliases": [
+        "opening title",
+        "branded title"
+      ],
       "description": "Centered branded title with a kicker label and a thin accent rule.",
       "use_cases": [
         "Opening title of an educational video",
@@ -113,7 +145,10 @@
           "default": true
         }
       },
-      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "dependencies": [
+        "manim>=0.18.1",
+        "manimpango>=0.7"
+      ],
       "compatibility": {
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
@@ -134,8 +169,15 @@
       "version": "0.2.0",
       "category": "foundation",
       "subcategory": "heading",
-      "tags": ["heading", "section", "typography"],
-      "aliases": ["section title", "h2"],
+      "tags": [
+        "heading",
+        "section",
+        "typography"
+      ],
+      "aliases": [
+        "section title",
+        "h2"
+      ],
       "description": "In-scene heading with a vertical accent marker.",
       "use_cases": [
         "Introduce a new beat inside a scene",
@@ -150,7 +192,10 @@
           "required": true
         }
       },
-      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "dependencies": [
+        "manim>=0.18.1",
+        "manimpango>=0.7"
+      ],
       "compatibility": {
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
@@ -171,8 +216,17 @@
       "version": "0.2.0",
       "category": "foundation",
       "subcategory": "programming",
-      "tags": ["variable", "box", "programming", "memory", "value"],
-      "aliases": ["variable box", "named value"],
+      "tags": [
+        "variable",
+        "box",
+        "programming",
+        "memory",
+        "value"
+      ],
+      "aliases": [
+        "variable box",
+        "named value"
+      ],
       "description": "Rounded card showing a variable name and a replaceable stored value.",
       "use_cases": [
         "Explain how a variable stores a value",
@@ -206,7 +260,10 @@
           "maximum": 6.0
         }
       },
-      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "dependencies": [
+        "manim>=0.18.1",
+        "manimpango>=0.7"
+      ],
       "compatibility": {
         "python": ">=3.10",
         "manim": ">=0.18.1,<1.0"
@@ -227,8 +284,18 @@
       "version": "0.2.0",
       "category": "utility",
       "subcategory": "subtitles",
-      "tags": ["subtitles", "srt", "vtt", "caption", "voiceover-prep"],
-      "aliases": ["srt export", "webvtt", "caption track"],
+      "tags": [
+        "subtitles",
+        "srt",
+        "vtt",
+        "caption",
+        "voiceover-prep"
+      ],
+      "aliases": [
+        "srt export",
+        "webvtt",
+        "caption track"
+      ],
       "description": "Subtitle-first cue model with validation and SRT/WebVTT export. Timings are estimates until aligned to real voiceover.",
       "use_cases": [
         "Author English explainer captions without audio",
@@ -248,10 +315,16 @@
           "type": "string",
           "description": "How overlapping cues are treated",
           "default": "error",
-          "enum": ["error", "warn", "allow"]
+          "enum": [
+            "error",
+            "warn",
+            "allow"
+          ]
         }
       },
-      "dependencies": ["python>=3.10"],
+      "dependencies": [
+        "python>=3.10"
+      ],
       "compatibility": {
         "python": ">=3.10"
       },
@@ -259,7 +332,3198 @@
       "preview": null,
       "test_status": "passed",
       "limitations": "Does not transcribe audio or generate voice. Estimated times are not a real speaker.",
-      "related_components": ["foundation.base_scene"],
+      "related_components": [
+        "foundation.base_scene"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "timeline.shared",
+      "name": "Shared Scene Timeline",
+      "version": "0.3.0",
+      "category": "utility",
+      "subcategory": "timeline",
+      "tags": [
+        "timeline",
+        "clock",
+        "subtitle",
+        "event",
+        "sync"
+      ],
+      "aliases": [
+        "shared timeline",
+        "scene clock"
+      ],
+      "description": "One timeline for visual events and subtitle cues, with estimated vs manual timing and cue-to-event links.",
+      "use_cases": [
+        "Keep captions and animations on the same clock",
+        "Override cue times after recording voiceover without rewriting animation code"
+      ],
+      "module": "quonitron_manim.timeline.models",
+      "class_name": "Timeline",
+      "parameters": {
+        "frame_rate": {
+          "type": "number",
+          "description": "Used only to convert seconds to frames",
+          "default": 30
+        }
+      },
+      "dependencies": [
+        "python>=3.10"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/variable_timeline.json",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Playback adapter sequences play() calls; overlapping play windows must set overlap_ok.",
+      "related_components": [
+        "utility.subtitle_track",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.subtitle_overlay",
+      "name": "Subtitle Overlay",
+      "version": "0.3.0",
+      "category": "foundation",
+      "subcategory": "subtitles",
+      "tags": [
+        "subtitle",
+        "caption",
+        "overlay",
+        "safe-area"
+      ],
+      "aliases": [
+        "on-screen captions"
+      ],
+      "description": "Bottom-safe caption mobject updated from Timeline.cue_at() on the shared clock.",
+      "use_cases": [
+        "Render the same cues that are exported to SRT/VTT"
+      ],
+      "module": "quonitron_manim.components.foundation.subtitle_overlay",
+      "class_name": "SubtitleOverlay",
+      "parameters": {
+        "text": {
+          "type": "string",
+          "description": "Initial caption",
+          "default": " "
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1",
+        "manimpango>=0.7"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/motion_timeline_demo.py",
+      "preview": null,
+      "test_status": "not_tested",
+      "limitations": "Needs Pango/Cairo to build Text. Updater uses dt from play/wait.",
+      "related_components": [
+        "timeline.shared",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "utility.narration_segmenter",
+      "name": "Narration Segmenter",
+      "version": "0.3.0",
+      "category": "utility",
+      "subcategory": "subtitles",
+      "tags": [
+        "subtitle",
+        "segment",
+        "narration",
+        "wpm"
+      ],
+      "aliases": [
+        "split narration",
+        "cue splitter"
+      ],
+      "description": "Split a full English narration into readable cues with configurable limits and estimated durations.",
+      "use_cases": [
+        "Author many subtitle cues from one paragraph of explanation"
+      ],
+      "module": "quonitron_manim.subtitles.segment",
+      "function_name": "split_narration",
+      "parameters": {
+        "max_chars": {
+          "type": "integer",
+          "default": 84,
+          "description": "Soft character limit per cue"
+        },
+        "reading_wpm": {
+          "type": "integer",
+          "default": 150,
+          "description": "Estimated reading speed"
+        }
+      },
+      "dependencies": [
+        "python>=3.10"
+      ],
+      "compatibility": {
+        "python": ">=3.10"
+      },
+      "example": "examples/variable_narration.txt",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Does not call TTS or transcription. Durations are estimates.",
+      "related_components": [
+        "timeline.shared",
+        "utility.subtitle_track"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.fade_in",
+      "name": "Fade In",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "fade",
+        "appear",
+        "entrance"
+      ],
+      "aliases": [
+        "fadein",
+        "appear fade"
+      ],
+      "description": "Fade a mobject in, optionally shifting from a direction.",
+      "use_cases": [
+        "Bring a diagram into the scene without drawing its path"
+      ],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "FadeInMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "shift": {
+          "type": "string",
+          "description": "Optional direction name: UP, DOWN, LEFT, RIGHT"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import FadeInMotion\nanim = FadeInMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.fade_out",
+      "name": "Fade Out",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "fade",
+        "exit",
+        "disappear"
+      ],
+      "aliases": [
+        "fadeout"
+      ],
+      "description": "Fade a mobject out, optionally shifting off-frame.",
+      "use_cases": [
+        "Remove a title before the educational content"
+      ],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "FadeOutMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import FadeOutMotion\nanim = FadeOutMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.create",
+      "name": "Create",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "create",
+        "draw",
+        "stroke"
+      ],
+      "aliases": [
+        "show creation",
+        "draw path"
+      ],
+      "description": "Draw a VMobject along its path (Manim Create, not the deprecated ShowCreation).",
+      "use_cases": [
+        "Draw a box, arrow, or path into existence"
+      ],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "CreateMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import CreateMotion\nanim = CreateMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Uses manim.Create (ShowCreation was removed). Works best on VMobjects.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.uncreate",
+      "name": "Uncreate",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "uncreate",
+        "erase"
+      ],
+      "aliases": [
+        "erase path"
+      ],
+      "description": "Reverse of Create.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "UncreateMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import UncreateMotion\nanim = UncreateMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.write",
+      "name": "Write",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "write",
+        "text",
+        "inscription"
+      ],
+      "aliases": [
+        "handwrite"
+      ],
+      "description": "Write text or a VMobject as if it were being inscribed.",
+      "use_cases": [
+        "Introduce a variable name or heading"
+      ],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "WriteMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import WriteMotion\nanim = WriteMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.draw_border_then_fill",
+      "name": "Draw Border Then Fill",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "border",
+        "fill",
+        "draw"
+      ],
+      "aliases": [
+        "draw border around"
+      ],
+      "description": "Stroke the outline, then fill.",
+      "use_cases": [
+        "Reveal a variable card by outlining it first"
+      ],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "DrawBorderThenFillMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import DrawBorderThenFillMotion\nanim = DrawBorderThenFillMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.grow_from_center",
+      "name": "Grow From Center",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "grow",
+        "scale",
+        "entrance"
+      ],
+      "aliases": [
+        "pop in"
+      ],
+      "description": "Grow a mobject from its center.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "GrowFromCenterMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import GrowFromCenterMotion\nanim = GrowFromCenterMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.grow_from_point",
+      "name": "Grow From Point",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "grow",
+        "point",
+        "origin"
+      ],
+      "aliases": [
+        "grow from a point"
+      ],
+      "description": "Grow a mobject from a world-space point.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "GrowFromPointMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "point": {
+          "type": "array",
+          "description": "World coordinates [x, y, z]",
+          "default": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import GrowFromPointMotion\nanim = GrowFromPointMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.smooth_entrance",
+      "name": "Smooth Entrance",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "entrance",
+        "smooth",
+        "fade"
+      ],
+      "aliases": [
+        "soft enter"
+      ],
+      "description": "Fade in with a small upward settle. Default Part 2 entrance.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "SmoothEntranceMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import SmoothEntranceMotion\nanim = SmoothEntranceMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.smooth_exit",
+      "name": "Smooth Exit",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "exit",
+        "smooth",
+        "fade"
+      ],
+      "aliases": [
+        "soft leave"
+      ],
+      "description": "Fade out with a small downward drift.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "SmoothExitMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import SmoothExitMotion\nanim = SmoothExitMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.appearance.staggered_reveal",
+      "name": "Staggered Reveal",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "appearance",
+      "tags": [
+        "stagger",
+        "group",
+        "reveal",
+        "lag"
+      ],
+      "aliases": [
+        "reveal group",
+        "ordered reveal"
+      ],
+      "description": "Lagged fade-in of several mobjects, preserving order.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.appearance",
+      "class_name": "StaggeredRevealMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "lag_ratio": {
+          "type": "number",
+          "description": "0 = together, 1 = fully sequential",
+          "default": 0.2,
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.appearance import StaggeredRevealMotion\nanim = StaggeredRevealMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.move_to",
+      "name": "Move To",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "move",
+        "position",
+        "translate"
+      ],
+      "aliases": [
+        "move to a position"
+      ],
+      "description": "Move a mobject so its center sits at a target point.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "MoveToMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "target": {
+          "type": "array",
+          "description": "World point [x, y, z]",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import MoveToMotion\nanim = MoveToMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.shift",
+      "name": "Shift",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "shift",
+        "nudge",
+        "translate"
+      ],
+      "aliases": [
+        "shift horizontally",
+        "shift vertically"
+      ],
+      "description": "Shift horizontally or vertically by a vector.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "ShiftMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "vector": {
+          "type": "array",
+          "description": "Displacement [dx, dy, dz] in scene units",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import ShiftMotion\nanim = ShiftMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.move_along_path",
+      "name": "Move Along Path",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "path",
+        "follow",
+        "track"
+      ],
+      "aliases": [
+        "follow a path",
+        "move along a path"
+      ],
+      "description": "Move a mobject along a VMobject path.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "MoveAlongPathMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import MoveAlongPathMotion\nanim = MoveAlongPathMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Second argument must be a VMobject path. Requires Manim MoveAlongPath.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.follow_path",
+      "name": "Follow Path",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "path",
+        "follow",
+        "track"
+      ],
+      "aliases": [
+        "follow path"
+      ],
+      "description": "Alias recipe for MoveAlongPath with a follower-oriented name.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "FollowPathMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import FollowPathMotion\nanim = FollowPathMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Second argument must be a VMobject path. Requires Manim MoveAlongPath.",
+      "related_components": [
+        "motion.position.move_along_path",
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.move_between_anchors",
+      "name": "Move Between Anchors",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "anchors",
+        "waypoints",
+        "path"
+      ],
+      "aliases": [
+        "move between anchor points"
+      ],
+      "description": "Walk a mobject through a list of anchor points in order.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "MoveBetweenAnchorsMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "anchors": {
+          "type": "array",
+          "description": "List of world points",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import MoveBetweenAnchorsMotion\nanim = MoveBetweenAnchorsMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.move_group",
+      "name": "Move Group",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "group",
+        "layout",
+        "shift"
+      ],
+      "aliases": [
+        "move a group"
+      ],
+      "description": "Shift a group so relative layout is preserved.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "MoveGroupMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "vector": {
+          "type": "array",
+          "description": "Group displacement",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import MoveGroupMotion\nanim = MoveGroupMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.enter_frame",
+      "name": "Enter Frame",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "enter",
+        "frame",
+        "slide"
+      ],
+      "aliases": [
+        "smoothly enter the frame"
+      ],
+      "description": "Slide a mobject in from a frame edge.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "EnterFrameMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "edge": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN",
+          "default": "LEFT"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import EnterFrameMotion\nanim = EnterFrameMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.exit_frame",
+      "name": "Exit Frame",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "exit",
+        "frame",
+        "slide"
+      ],
+      "aliases": [
+        "smoothly exit the frame"
+      ],
+      "description": "Slide a mobject out through a frame edge.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "ExitFrameMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "edge": {
+          "type": "string",
+          "description": "LEFT, RIGHT, UP, or DOWN",
+          "default": "DOWN"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import ExitFrameMotion\nanim = ExitFrameMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.position.track_label",
+      "name": "Track Label",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "position",
+      "tags": [
+        "label",
+        "tracker",
+        "updater"
+      ],
+      "aliases": [
+        "move an object while updating a related label",
+        "label tracking"
+      ],
+      "description": "Keep a label next to a moving host via an updater (not a timed Animation).",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.position",
+      "class_name": "TrackLabelMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "buff": {
+          "type": "number",
+          "description": "Gap in scene units",
+          "default": 0.2
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.position import TrackLabelMotion\nanim = TrackLabelMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Attaches an updater; it is not a finite Animation. Call attach() rather than expecting Scene.play to consume a run_time. Remove the updater when the host leaves the scene.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.transform",
+      "name": "Transform",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "transform",
+        "morph"
+      ],
+      "aliases": [
+        "transform one object into another"
+      ],
+      "description": "Morph source into the shape of target; source remains the on-scene mobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "TransformMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import TransformMotion\nanim = TransformMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.replacement",
+      "name": "Replacement Transform",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "replace",
+        "transform",
+        "value"
+      ],
+      "aliases": [
+        "replacement transform"
+      ],
+      "description": "Replace source with target in the scene.",
+      "use_cases": [
+        "Swap a stored value for a new one inside a variable card"
+      ],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "ReplacementTransformMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import ReplacementTransformMotion\nanim = ReplacementTransformMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.matching_shapes",
+      "name": "Transform Matching Shapes",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "matching",
+        "transform",
+        "text"
+      ],
+      "aliases": [
+        "transform matching objects",
+        "transform text"
+      ],
+      "description": "Match submobjects by shape and transform them pairwise.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "TransformMatchingShapesMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import TransformMatchingShapesMotion\nanim = TransformMatchingShapesMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.matching_tex",
+      "name": "Transform Matching Tex",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "tex",
+        "formula",
+        "transform"
+      ],
+      "aliases": [
+        "transform mathematical expressions"
+      ],
+      "description": "Match TeX parts by tex string. Requires a LaTeX installation.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "TransformMatchingTexMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import TransformMatchingTexMotion\nanim = TransformMatchingTexMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires LaTeX. Not used in the Part 2 demo. Fails if tex_template cannot compile.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.fade_transform",
+      "name": "Fade Transform",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "fade",
+        "morph"
+      ],
+      "aliases": [
+        "object-to-object transition"
+      ],
+      "description": "Cross-fade transform, useful when topology differs.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "FadeTransformMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import FadeTransformMotion\nanim = FadeTransformMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.transform.morph_property",
+      "name": "Morph Property",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "transform",
+      "tags": [
+        "color",
+        "opacity",
+        "scale",
+        "interpolate"
+      ],
+      "aliases": [
+        "animate changes in object properties",
+        "interpolate position, scale, color, and opacity"
+      ],
+      "description": "Interpolate color, opacity, and/or scale on one mobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.transform",
+      "class_name": "MorphPropertyMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "color": {
+          "type": "string",
+          "description": "Theme color role or hex"
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "opacity"
+        },
+        "scale": {
+          "type": "number",
+          "description": "Scale factor relative to current size"
+        },
+        "target": {
+          "type": "array",
+          "description": "Optional destination point"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.transform import MorphPropertyMotion\nanim = MorphPropertyMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.indicate",
+      "name": "Indicate",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "indicate",
+        "pulse",
+        "attention"
+      ],
+      "aliases": [
+        "emphasize a label or formula"
+      ],
+      "description": "Scale-pulse a mobject to draw attention.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "IndicateMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "scale_factor": {
+          "type": "number",
+          "default": 1.15,
+          "minimum": 1.0,
+          "description": "scale_factor"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import IndicateMotion\nanim = IndicateMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.circumscribe",
+      "name": "Circumscribe",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "circumscribe",
+        "outline",
+        "attention"
+      ],
+      "aliases": [
+        "draw border around an object"
+      ],
+      "description": "Draw a temporary rectangle or circle around a mobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "CircumscribeMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import CircumscribeMotion\nanim = CircumscribeMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.flash",
+      "name": "Flash",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "flash",
+        "spark",
+        "attention"
+      ],
+      "aliases": [
+        "flash"
+      ],
+      "description": "Radial flash at a point, defaulting to the mobject center.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "FlashMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import FlashMotion\nanim = FlashMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.wiggle",
+      "name": "Wiggle",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "wiggle",
+        "shake"
+      ],
+      "aliases": [
+        "wiggle"
+      ],
+      "description": "Wiggle in place.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "WiggleMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import WiggleMotion\nanim = WiggleMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.pulse",
+      "name": "Pulse",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "pulse",
+        "scale",
+        "emphasis"
+      ],
+      "aliases": [
+        "pulse or scale emphasis"
+      ],
+      "description": "There-and-back scale emphasis.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "PulseMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "scale_factor": {
+          "type": "number",
+          "default": 1.2,
+          "minimum": 1.0,
+          "description": "scale_factor"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import PulseMotion\nanim = PulseMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.focus_on",
+      "name": "Focus On",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "focus",
+        "attention"
+      ],
+      "aliases": [
+        "focus attention"
+      ],
+      "description": "Camera-like focus pulse toward a mobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "FocusOnMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import FocusOnMotion\nanim = FocusOnMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.highlight_line",
+      "name": "Highlight Line",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "code",
+        "highlight",
+        "line"
+      ],
+      "aliases": [
+        "highlight a line of code"
+      ],
+      "description": "Emphasize one mobject (a code line, formula, or label) with Indicate.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "HighlightLineMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import HighlightLineMotion\nanim = HighlightLineMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Operates on a mobject you pass in. It does not parse source files. For a code block, pass the submobject that represents the line.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.emphasis.focus_set",
+      "name": "Focus Set",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "emphasis",
+      "tags": [
+        "focus",
+        "deemphasize",
+        "opacity"
+      ],
+      "aliases": [
+        "focus attention on one object while de-emphasizing others"
+      ],
+      "description": "Keep the first mobject full opacity; fade the rest to a muted opacity.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.emphasis",
+      "class_name": "FocusSetMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "muted_opacity": {
+          "type": "number",
+          "default": 0.22,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "muted_opacity"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.emphasis import FocusSetMotion\nanim = FocusSetMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.rotation.rotate",
+      "name": "Rotate",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "rotation",
+      "tags": [
+        "rotate",
+        "spin"
+      ],
+      "aliases": [
+        "rotate"
+      ],
+      "description": "Rotate around the mobject center by an angle in radians.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.rotation",
+      "class_name": "RotateMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "angle": {
+          "type": "number",
+          "description": "Radians",
+          "default": 0.785398
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.rotation import RotateMotion\nanim = RotateMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.rotation.rotate_around",
+      "name": "Rotate Around",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "rotation",
+      "tags": [
+        "rotate",
+        "pivot",
+        "about"
+      ],
+      "aliases": [
+        "rotate around a configurable point"
+      ],
+      "description": "Rotate around a configurable world point.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.rotation",
+      "class_name": "RotateAroundMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "angle": {
+          "type": "number",
+          "default": 0.785398,
+          "description": "angle"
+        },
+        "about_point": {
+          "type": "array",
+          "description": "Pivot [x, y, z]",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.rotation import RotateAroundMotion\nanim = RotateAroundMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.scale.scale",
+      "name": "Scale",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "scale",
+      "tags": [
+        "scale",
+        "size"
+      ],
+      "aliases": [
+        "scale up or down"
+      ],
+      "description": "Scale up or down about the mobject center.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.rotation",
+      "class_name": "ScaleMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "factor": {
+          "type": "number",
+          "description": "Scale factor",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.rotation import ScaleMotion\nanim = ScaleMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.scale.grow_shrink",
+      "name": "Grow and Shrink",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "scale",
+      "tags": [
+        "grow",
+        "shrink",
+        "pulse"
+      ],
+      "aliases": [
+        "grow and shrink"
+      ],
+      "description": "Scale up and return (there-and-back).",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.rotation",
+      "class_name": "GrowShrinkMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "scale_factor": {
+          "type": "number",
+          "default": 1.18,
+          "minimum": 1.0,
+          "description": "scale_factor"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.rotation import GrowShrinkMotion\nanim = GrowShrinkMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.rotation.rotate_and_move",
+      "name": "Rotate and Move",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "rotation",
+      "tags": [
+        "rotate",
+        "move",
+        "compose"
+      ],
+      "aliases": [
+        "rotate and move together"
+      ],
+      "description": "Rotate while shifting \u2014 composed as an AnimationGroup.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.rotation",
+      "class_name": "RotateAndMoveMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "angle": {
+          "type": "number",
+          "default": 0.5,
+          "description": "angle"
+        },
+        "vector": {
+          "type": "array",
+          "description": "Shift [dx, dy, dz]",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.rotation import RotateAndMoveMotion\nanim = RotateAndMoveMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.group.sequential",
+      "name": "Sequential",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "group",
+      "tags": [
+        "sequence",
+        "succession",
+        "timeline"
+      ],
+      "aliases": [
+        "sequential animation"
+      ],
+      "description": "Play animations one after another (Manim Succession).",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.sequence",
+      "class_name": "SequentialMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.sequence import SequentialMotion\nanim = SequentialMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Pass already-built Animation objects to animate(), not mobjects.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.group.parallel",
+      "name": "Parallel",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "group",
+      "tags": [
+        "parallel",
+        "together",
+        "group"
+      ],
+      "aliases": [
+        "parallel animation",
+        "coordinated object movement"
+      ],
+      "description": "Play animations together (Manim AnimationGroup).",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.sequence",
+      "class_name": "ParallelMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.sequence import ParallelMotion\nanim = ParallelMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.group.staggered",
+      "name": "Staggered Group",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "group",
+      "tags": [
+        "stagger",
+        "lag",
+        "group"
+      ],
+      "aliases": [
+        "staggered groups"
+      ],
+      "description": "LaggedStart over supplied animations.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.sequence",
+      "class_name": "StaggeredGroupMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "lag_ratio": {
+          "type": "number",
+          "default": 0.25,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "lag_ratio"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.sequence import StaggeredGroupMotion\nanim = StaggeredGroupMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.timing.wait",
+      "name": "Wait",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "timing",
+      "tags": [
+        "wait",
+        "pause",
+        "gap",
+        "hold"
+      ],
+      "aliases": [
+        "pause",
+        "gap"
+      ],
+      "description": "Hold the frame. Encodes an explicit pause on the shared timeline.",
+      "use_cases": [
+        "Leave a breath between an explanation and the next visual"
+      ],
+      "module": "quonitron_manim.motion.sequence",
+      "class_name": "WaitMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.sequence import WaitMotion\nanim = WaitMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.util.create_line",
+      "name": "Create Line",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "utility",
+      "tags": [
+        "line",
+        "arrow",
+        "draw"
+      ],
+      "aliases": [
+        "animated line creation"
+      ],
+      "description": "Create (draw) a line or arrow VMobject.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.math_utils",
+      "class_name": "CreateLineMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.math_utils import CreateLineMotion\nanim = CreateLineMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.util.move_arrow",
+      "name": "Move Arrow",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "utility",
+      "tags": [
+        "arrow",
+        "move"
+      ],
+      "aliases": [
+        "arrow movement"
+      ],
+      "description": "Shift an arrow, typically from a name toward a value.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.math_utils",
+      "class_name": "MoveArrowMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "vector": {
+          "type": "array",
+          "description": "Displacement",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.math_utils import MoveArrowMotion\nanim = MoveArrowMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.util.dot_along_line",
+      "name": "Dot Along Line",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "utility",
+      "tags": [
+        "dot",
+        "line",
+        "trace"
+      ],
+      "aliases": [
+        "dot movement along a line",
+        "endpoint tracking"
+      ],
+      "description": "Move a dot along a line or path.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.math_utils",
+      "class_name": "DotAlongLineMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.math_utils import DotAlongLineMotion\nanim = DotAlongLineMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.util.traced_path",
+      "name": "Traced Path",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "utility",
+      "tags": [
+        "trace",
+        "path"
+      ],
+      "aliases": [
+        "simple path tracing"
+      ],
+      "description": "Return a TracedPath mobject that follows another mobject.\n\n    This is a mobject constructor, not a finite Animation. Call build_tracer().",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.math_utils",
+      "class_name": "TracedPathMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.math_utils import TracedPathMotion\nanim = TracedPathMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Returns a TracedPath mobject. Add it to the scene, then animate the host. It is not passed to Scene.play as an Animation.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "motion.util.changing_decimal",
+      "name": "Changing Decimal",
+      "version": "0.3.0",
+      "category": "motion",
+      "subcategory": "utility",
+      "tags": [
+        "number",
+        "counter",
+        "decimal"
+      ],
+      "aliases": [
+        "smooth counter updates"
+      ],
+      "description": "Animate a DecimalNumber to a new value.",
+      "use_cases": [],
+      "module": "quonitron_manim.motion.math_utils",
+      "class_name": "ChangingDecimalMotion",
+      "parameters": {
+        "run_time": {
+          "type": "number",
+          "description": "Duration in seconds. Overrides speed when set.",
+          "minimum": 0.01
+        },
+        "speed": {
+          "type": "string",
+          "description": "Theme motion token used when run_time is omitted",
+          "default": "normal",
+          "enum": [
+            "instant",
+            "fast",
+            "normal",
+            "slow",
+            "emphasis",
+            "hold"
+          ]
+        },
+        "easing": {
+          "type": "string",
+          "description": "Rate-function alias from the design system",
+          "default": "smooth"
+        },
+        "value": {
+          "type": "number",
+          "description": "Target value",
+          "required": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.motion.math_utils import ChangingDecimalMotion\nanim = ChangingDecimalMotion(run_time=0.6).animate(mob)",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Requires Manim Community Edition to build the Animation. Unit tests cover parameter validation only.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared"
+      ],
       "license": "MIT"
     }
   ]

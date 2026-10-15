@@ -20,6 +20,8 @@ class SubtitleCue:
     end_time: float
     visual_cue: Optional[str] = None
     speaker: Optional[str] = None
+    event_ids: Optional[list] = None
+    timing_status: str = "estimated"
 
     def __post_init__(self) -> None:
         if not self.id:
@@ -57,6 +59,8 @@ class SubtitleCue:
             end_time=float(data["end_time"]),
             visual_cue=data.get("visual_cue"),
             speaker=data.get("speaker"),
+            event_ids=list(data.get("event_ids") or []) or None,
+            timing_status=str(data.get("timing_status") or "estimated"),
         )
 
 

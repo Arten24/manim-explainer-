@@ -15,6 +15,8 @@ audio file in Part 1.
 | `end_time` | yes | Seconds, strictly after `start_time` |
 | `visual_cue` | no | What should be on screen |
 | `speaker` | no | Speaker label |
+| `event_ids` | Part 2 | VisualEvent ids on the shared timeline |
+| `timing_status` | Part 2 | `estimated` or `manual` |
 
 ## Track fields
 

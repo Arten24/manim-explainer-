@@ -4,17 +4,16 @@ Part 1 establishes the spine later animation parts plug into. Visual
 libraries (motion, math, ML, …) are not implemented here.
 
 ```
-educational script
+educational script / narration
         │
         ▼
-subtitle JSON  ──►  validation  ──►  SRT / WebVTT
-        │
-        ▼
-QuonitronScene (theme, safe area, helpers)
-        │
-        ├── TitleCard / SectionHeading / VariableStore
-        │
-        └── catalog/master.json  ──►  search / resolve / QA
+segmenter ──► LinkedCue[] ──► Timeline (seconds)
+        │                         │
+        │                         ├── VisualEvent[] (motion_id + play_duration)
+        │                         └── cue.event_ids
+        ▼                         ▼
+   SRT / VTT              QuonitronScene + play_on_scene
+                          SubtitleOverlay.cue_at(t)
 ```
 
 ## Boundaries

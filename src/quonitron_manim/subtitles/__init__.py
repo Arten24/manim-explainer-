@@ -8,6 +8,7 @@ from quonitron_manim.subtitles.export import (
     write_vtt,
 )
 from quonitron_manim.subtitles.models import SubtitleCue, SubtitleTrack
+from quonitron_manim.subtitles.segment import pack_cues, split_narration
 from quonitron_manim.subtitles.validation import validate_track
 
 __all__ = [
@@ -18,6 +19,8 @@ __all__ = [
     "load_track",
     "to_srt",
     "to_vtt",
+    "pack_cues",
+    "split_narration",
     "validate_track",
     "write_srt",
     "write_vtt",
