@@ -53,7 +53,7 @@ except ImportError:
 
 class SubtitleSyncDemo(QuonitronMovingCameraScene):
     def construct(self):
-        from manim import FadeIn, Indicate, VGroup
+        from manim import DOWN, FadeIn, Indicate, VGroup
         from quonitron_manim.core.text import measured_text
         from quonitron_manim.components.foundation.subtitle_overlay import SubtitleOverlay
         from quonitron_manim.design.layout import place_in
@@ -62,7 +62,7 @@ class SubtitleSyncDemo(QuonitronMovingCameraScene):
                               max_width=10, max_height=1.5)
         code = measured_text("score = 10", "body", self.theme, max_width=8, max_height=1)
         place_in(title, self.layout_validator.regions["content"])
-        code.next_to(title, [0, -1, 0], buff=0.5)
+        code.next_to(title, DOWN, buff=0.5)
         group = VGroup(title, code)
         self.register_layout("explanation", group)
         overlay = SubtitleOverlay(theme=self.theme)
