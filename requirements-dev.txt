@@ -1,2 +1,3 @@
--r requirements.txt
-pytest>=8.0,<9
+# Pip-compatible full development install (native renderer libraries are OS-specific).
+# Use uv sync --locked --extra dev --extra render --extra notebook for the resolved stack.
+-e .[dev,render,notebook]

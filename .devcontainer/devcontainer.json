@@ -1,13 +1,16 @@
 {
   "name": "QUONITRON Manim",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev fonts-dejavu-core && python -m pip install --upgrade pip && pip install -e '.[dev,render]'",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev fonts-dejavu-core && python -m pip install --upgrade pip && python -m pip install --disable-pip-version-check uv==0.13.1 && uv sync --locked --extra dev --extra render --extra notebook",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-toolsai.jupyter"
-      ]
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+      }
     }
   },
   "remoteEnv": {

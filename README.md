@@ -81,18 +81,29 @@ Linux / macOS:
 ```bash
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install -e ".[dev]"
+pip install -e ".[dev,notebook]"
 ```
 
-For video rendering you also need Manim’s system libraries (Cairo, Pango,
-FFmpeg) and:
+For Cairo rendering, install the native libraries with your OS package manager.
+On Debian/Ubuntu:
 
 ```bash
-pip install -e ".[dev,render]"
+sudo apt-get update
+sudo apt-get install -y libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev fonts-dejavu-core
+pip install -e ".[dev,render,notebook]"
 ```
 
-Follow the official installer for your OS:
-[Manim Community installation](https://docs.manim.community/en/stable/installation.html).
+For an exact, cross-platform Python dependency resolution, install the pinned
+`uv` tool and sync the checked-in `uv.lock`:
+
+```bash
+python -m pip install uv==0.13.1
+uv sync --locked --extra dev --extra render --extra notebook
+```
+
+The lock file pins Python package versions and artifact hashes; Cairo, Pango,
+FFmpeg, and fonts remain operating-system dependencies. Follow the official
+installer for your OS: [Manim Community installation](https://docs.manim.community/en/stable/installation.html).
 
 ### Windows (PowerShell)
 
@@ -136,8 +147,13 @@ python scripts/render_transition_demo.py
 python scripts/render_text_demo.py
 ```
 
-GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
-`continue-on-error` because system packages may fail on a runner.
+GitHub Actions uses the checked-in `uv.lock` for Python 3.10–3.12 unit,
+JSON/catalog, timeline, subtitle-export, and notebook checks. A separate
+Ubuntu 24.04 render workflow installs Cairo, Pango, FFmpeg, and fonts, then
+runs the existing Parts 1–4 Manim render tests and fails on render errors. It
+probes the MP4 files, extracts midpoint frames, and uploads videos and frames as the
+`quonitron-part-1-4-render-previews` artifact; it is not configured to hide
+render failures with `continue-on-error`.
 
 ## Render the demos
 
@@ -216,8 +232,11 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 - Visual catalog entries (`foundation.title_card`, `section_heading`,
   `variable_store`, `base_scene`) are `not_tested` until a Manim preview
   render actually passes in the environment that runs the tests.
-- This cloud workspace cannot install Cairo/Pango/FFmpeg (apt mirrors are
-  unreachable). Unit tests still run. A demo **video render is not claimed**.
+- A coding-agent sandbox may not grant `sudo` or include Cairo/Pango/FFmpeg.
+  In that case, Python-only tests are still useful but are **not** proof of a
+  rendered animation. Use the Ubuntu GitHub Actions render workflow for actual
+  MP4 generation and frame artifacts; report local renders as skipped when the
+  native dependencies are unavailable.
 - Font faces are fallbacks. Inter is optional.
 - Subtitle times are not a real speaker.
 

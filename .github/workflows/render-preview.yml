@@ -1,44 +1,77 @@
-name: Render preview
+name: Manim render previews
 
 on:
   workflow_dispatch:
   push:
     branches: [main, "arena/**"]
     paths:
-      - "examples/text_typography_demo.py"
-      - "examples/text_timeline.json"
+      - "examples/**"
       - "src/quonitron_manim/**"
+      - "tests/**"
+      - "scripts/verify_render_artifacts.py"
+      - "catalog/**"
+      - "manim.cfg"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".devcontainer/**"
       - ".github/workflows/render-preview.yml"
 
+permissions:
+  contents: read
+
 jobs:
-  render-part4:
-    runs-on: ubuntu-latest
+  render-parts-1-4:
+    name: Render and verify Parts 1–4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install Cairo, Pango, FFmpeg, fonts
+      - name: Install Linux rendering libraries
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev \
             fonts-dejavu-core
-      - name: Install Python packages
+      - name: Report native renderer versions
         run: |
-          python -m pip install --upgrade pip
-          pip install jsonschema "manim>=0.18.1,<1.0"
-          pip install -e .
-      - name: Render Part 4 demo (-ql)
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
+          ffmpeg -version | sed -n '1p'
+          pkg-config --modversion cairo pango pangocairo
+          fc-list | sed -n '1,3p'
+      - name: Install pinned uv and sync locked render dependencies
         run: |
-          python -m manim -ql --disable_caching \
-            examples/text_typography_demo.py AssignmentInType
-      - name: Upload MP4
+          python -m pip install --disable-pip-version-check "uv==0.13.1"
+          uv sync --locked --python 3.11 --extra dev --extra render --extra notebook
+      - name: Verify real Manim, Cairo, Pango, and FFmpeg
+        run: |
+          command -v ffmpeg
+          command -v ffprobe
+          uv run --locked python - <<'PY'
+          import manim
+          from quonitron_manim.core.manim_compat import cairo_usable, manimpango_usable
+
+          assert cairo_usable()[0], cairo_usable()[1]
+          assert manimpango_usable()[0], manimpango_usable()[1]
+          print("Manim", manim.__version__)
+          print("Cairo", cairo_usable()[1])
+          print("Pango", manimpango_usable()[1])
+          PY
+      - name: Render existing Part 1–4 demos with Cairo
+        run: uv run --locked python -m pytest --basetemp=.renders/tests -m render -vv
+      - name: Probe MP4s and extract midpoint frames
+        run: >-
+          uv run --locked python scripts/verify_render_artifacts.py
+          .renders/tests --frames-dir .renders/frames --min-videos 4
+      - name: Upload rendered videos and inspection frames
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: assignment-in-type-ql
-          path: media/**/*.mp4
+          name: quonitron-part-1-4-render-previews
+          path: |
+            .renders/tests/**/*.mp4
+            .renders/frames/*.jpg
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14

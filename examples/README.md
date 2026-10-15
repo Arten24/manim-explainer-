@@ -56,9 +56,10 @@ This cloud agent **cannot create a Codespace** for `Arten24/manim-explainer-`
 manim -ql examples/text_typography_demo.py AssignmentInType
 ```
 
-A GitHub Actions workflow (**.github/workflows/render-preview.yml**) also
-renders that scene on `ubuntu-latest` and uploads the MP4 as an artifact
-named `assignment-in-type-ql`.
+The GitHub Actions workflow (**.github/workflows/render-preview.yml**) uses
+Ubuntu 24.04 to render the existing Parts 1–4 demos with Cairo. It checks the
+MP4 metadata, extracts midpoint frames for inspection, and uploads both videos
+and frames as the `quonitron-part-1-4-render-previews` artifact.
 
 The report writes SRT/VTT next to the examples. Those timestamps are
 **estimates**. They are not aligned to a voice recording. Override cue

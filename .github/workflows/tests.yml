@@ -4,10 +4,16 @@ on:
   push:
     branches: [main, "arena/**"]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   unit:
-    runs-on: ubuntu-latest
+    name: Unit and notebook checks (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -17,34 +23,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install unit-test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install jsonschema pytest
-          pip install -e .
-      - name: Validate catalog and run unit tests
-        run: |
-          python scripts/validate_catalog.py
-          pytest -m "not render"
-
-  render:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install Manim system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev
-      - name: Install Python packages
-        run: |
-          python -m pip install --upgrade pip
-          pip install jsonschema pytest
-          pip install "manim>=0.18.1,<1.0"
-          pip install -e .
-      - name: Low-quality demo render test
-        run: pytest -m render
+      - name: Install pinned uv
+        run: python -m pip install --disable-pip-version-check "uv==0.13.1"
+      - name: Sync locked unit and notebook dependencies
+        run: uv sync --locked --python "${{ matrix.python-version }}" --extra dev --extra notebook
+      - name: Check Python syntax
+        run: uv run --locked python -m compileall -q src scripts examples tests
+      - name: Validate component catalog
+        run: uv run --locked python scripts/validate_catalog.py
+      - name: Run unit and data-validation tests
+        run: uv run --locked python -m pytest -m "not render" -vv
