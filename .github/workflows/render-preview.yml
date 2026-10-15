@@ -92,9 +92,24 @@ jobs:
           fi
           exit "$render_status"
       - name: Probe MP4s and extract midpoint frames
-        run: >-
-          uv run --locked python scripts/verify_render_artifacts.py
-          .renders/tests --frames-dir .renders/frames --min-videos 4
+        run: |
+          set +e
+          uv run --locked python scripts/verify_render_artifacts.py \
+            .renders/tests --frames-dir .renders/frames --min-videos 4 \
+            2>&1 | tee .renders/probe.log
+          probe_status=${PIPESTATUS[0]}
+          if [ "$probe_status" -ne 0 ]; then
+            failure_summary="$(tail -n 40 .renders/probe.log | tr '\n' ' ' | cut -c 1-4000)"
+            {
+              echo "## MP4 verification failure (exit $probe_status)"
+              echo
+              echo '```text'
+              cat .renders/probe.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error title=MP4 verification failed::$failure_summary"
+          fi
+          exit "$probe_status"
       - name: Upload rendered videos and inspection frames
         if: always()
         uses: actions/upload-artifact@v4
@@ -104,6 +119,7 @@ jobs:
             .renders/tests/**/*.mp4
             .renders/frames/*.jpg
             .renders/render-tests.log
+            .renders/probe.log
           if-no-files-found: warn
           include-hidden-files: true
           retention-days: 14
