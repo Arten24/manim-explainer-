@@ -1,7 +1,7 @@
 """Play a compiled timeline on a QuonitronScene.
 
 Subtitles follow the same clock as visual events. The overlay updater uses
-elapsed dt from Manim plays/waits, starting at 0 when playback begins.
+scene elapsed time relative to playback start and the canonical program origin.
 
 Overlapping events (overlap_ok) are batched into AnimationGroup. Accidental
 overlaps should already have failed validation.
@@ -82,6 +82,12 @@ def play_on_scene(
         for event in group:
             delay = event.start - start
             anim = binders[event.id](event)
+            if len(group) > 1:
+                # Normalize each binder result BEFORE grouping; otherwise the group's
+                # global run_time rescales default 1s animations and shifts cue links.
+                from manim.animation.animation import prepare_animation
+                anim = prepare_animation(anim)
+                anim.set_run_time(event.animation_duration())
             if delay > 1e-6:
                 from manim import Succession, Wait
 

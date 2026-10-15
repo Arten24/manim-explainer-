@@ -7,6 +7,7 @@ recorded voiceover. This module never generates audio.
 from __future__ import annotations
 
 import math
+import re
 
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
@@ -23,7 +24,7 @@ def valid_interval(start, end, label="cue"):
 def valid_text(text):
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Cue text must be non-empty")
-    if any(ord(c) < 32 and c not in "\n\t" for c in text) or "\n\n" in text:
+    if any(ord(c) < 32 and c not in "\n\t" for c in text) or re.search(r"\n[ \t]*\n", text):
         raise ValueError("Cue text cannot contain control characters or blank lines")
 
 

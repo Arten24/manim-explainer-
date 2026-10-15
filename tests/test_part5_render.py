@@ -65,3 +65,25 @@ def test_part5_actual_low_quality_render(tmp_path):
         assert Path(scene.renderer.file_writer.movie_file_path).stat().st_size > 0
         assert scene.sync_overlay._shown_id == ()
         assert not [i for i in scene.check_layout() if i.severity == "ERROR"]
+
+
+def test_overlapping_event_animation_durations_are_not_globally_compressed():
+    manim = native()
+    from quonitron_manim.timeline import SceneWindow, Timeline, VisualEvent, play_on_scene
+    class Scene:
+        time = 0.
+        group = None
+        def play(self, animation, run_time):
+            self.group = animation
+            self.time += run_time
+        def wait(self, seconds):
+            self.time += seconds
+    events = [VisualEvent("a", "s", "motion", 0, 1, overlap_ok=True),
+              VisualEvent("b", "s", "motion", .5, 1, overlap_ok=True)]
+    scene = Scene()
+    play_on_scene(scene, Timeline(SceneWindow("s", 0, 1), events=events),
+                  {e.id: lambda e: manim.Wait() for e in events})
+    assert scene.group.animations[0].run_time == 1
+    assert scene.group.animations[1].run_time == 1  # .5 delay + .5 playback
+    assert scene.group.animations[1].animations[-1].run_time == .5
+    assert scene.group.max_end_time == 1

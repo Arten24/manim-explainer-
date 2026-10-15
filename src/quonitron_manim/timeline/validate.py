@@ -132,6 +132,8 @@ def validate_timeline(
                             event.id,
                         )
                     )
+        if event.play_end() + event.pause_after > scene.end + 1e-6:
+            report.issues.append(TimelineIssue("error", f"{event.id}: play/pause exceeds scene end", event.id))
         for dep in event.depends_on:
             if dep not in known_events:
                 report.issues.append(
@@ -171,7 +173,7 @@ def validate_timeline(
                     report.issues.append(TimelineIssue("warning", message + " (intentional)", right.id))
                 else:
                     report.issues.append(TimelineIssue("error", message + " (accidental)", right.id))
-    
+
 
     for cue in timeline.cues:
         if cue.scene_id not in allowed_scenes:

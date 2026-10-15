@@ -51,6 +51,20 @@ def main():
                       errors=errors, video_html_outputs=videos,
                       inline_browser_playback='NOT_VERIFIED', sha=sha)
         ok = bool(cells) and report['executed_cells'] == len(cells) and not errors and videos == 7
+        part5_path = root / 'media/part5/part05_subtitle_sync.executed.ipynb'
+        part5 = json.loads(part5_path.read_text()) if part5_path.exists() else {'cells': []}
+        part5_cells = [c for c in part5['cells'] if c['cell_type'] == 'code']
+        part5_outputs = [o for c in part5_cells for o in c.get('outputs', [])]
+        part5_errors = [{'name': o.get('ename'), 'message': o.get('evalue')}
+                        for o in part5_outputs if o['output_type'] == 'error']
+        part5_videos = sum('<video' in ''.join(o.get('data', {}).get('text/html', []))
+                          for o in part5_outputs)
+        part5_skips = sum('RENDER SKIPPED:' in ''.join(o.get('text', [])) for o in part5_outputs)
+        report['part5'] = dict(code_cells=len(part5_cells),
+            executed_cells=sum(c.get('execution_count') is not None for c in part5_cells),
+            errors=part5_errors, video_html_outputs=part5_videos, render_skips=part5_skips)
+        ok = (ok and bool(part5_cells) and report['part5']['executed_cells'] == len(part5_cells)
+              and not part5_errors and not part5_skips and part5_videos == 1)
         publish('QUONITRON notebook evidence', 'Actual notebook backend; browser playback is not certified.',
                 json.dumps(report, indent=2), 'success' if ok else 'failure')
         return

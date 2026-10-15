@@ -174,3 +174,46 @@ def test_demo_validation_and_exports(tmp_path):
     assert any("crosses" in i.message or "spans" in i.message for i in validate_timeline(t).warnings)
     result = export_demo(tmp_path)
     assert result["srt"].read_text(encoding="utf-8") == result["srt_text"]
+
+
+def test_nonzero_program_origin_and_optional_audio_share_elapsed_seconds():
+    from quonitron_manim.timeline import NarrationAudio
+    from quonitron_manim.timeline.player import play_on_scene
+    class Scene:
+        time = 100.
+        calls = []
+        def add_sound(self, path, time_offset):
+            self.calls.append((path, time_offset, self.time))
+        def wait(self, seconds):
+            self.time += seconds
+    t = Timeline(SceneWindow("offset", 5, 9), narration_audio=NarrationAudio("voice.wav", 6, 2))
+    scene = Scene()
+    clock = play_on_scene(scene, t, {})
+    assert scene.time == 104 and clock.time == 9
+    assert scene.calls == [("voice.wav", 1, 100)]
+    assert Timeline.from_dict(t.to_dict()).narration_audio == t.narration_audio
+    t.narration_audio.duration = 10
+    assert validate_timeline(t).errors
+
+
+def test_nested_visual_overlap_and_pause_overrun_are_rejected():
+    events = [VisualEvent("long", "s", "motion", 0, 8),
+              VisualEvent("inner1", "s", "motion", 1, 2),
+              VisualEvent("inner2", "s", "motion", 4, 5)]
+    report = validate_timeline(timeline([], events=events))
+    assert len([i for i in report.errors if "overlapping play" in i.message]) == 2
+    events = [VisualEvent("last", "s", "motion", 10, 12, pause_after=1)]
+    assert any("exceeds scene end" in i.message for i in validate_timeline(timeline([], events=events)).errors)
+
+
+def test_lead_times_and_invalid_status_are_not_silently_clamped():
+    with pytest.raises(ValueError):
+        cue(lead_in=2)
+    with pytest.raises(ValueError):
+        cue(lead_out=float("inf"))
+    with pytest.raises(ValueError):
+        cue(timing_status="aligned")
+    t = timeline([cue(end_time=11.9, lead_out=.2)])
+    assert validate_timeline(t).errors
+    with pytest.raises(ValueError):
+        timeline_to_track(t)
