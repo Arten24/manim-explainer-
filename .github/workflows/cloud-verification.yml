@@ -82,7 +82,9 @@ jobs:
           python -m pip install -r requirements-render.txt
           python -m pip install --no-deps -e .
       - name: Execute real-render notebook backend
-        run: python scripts/execute_environment_notebook.py
+        run: |
+          python scripts/execute_environment_notebook.py
+          python scripts/execute_part5_notebook.py --strict
       - name: Publish notebook execution evidence
         if: always()
         env:

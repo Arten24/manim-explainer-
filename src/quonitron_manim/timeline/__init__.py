@@ -1,5 +1,6 @@
 from quonitron_manim.timeline.models import (
     LinkedCue,
+    NarrationAudio,
     SceneWindow,
     Timeline,
     VisualEvent,
@@ -12,6 +13,7 @@ from quonitron_manim.timeline.validate import validate_timeline
 
 __all__ = [
     "LinkedCue",
+    "NarrationAudio",
     "SceneWindow",
     "Timeline",
     "VisualEvent",

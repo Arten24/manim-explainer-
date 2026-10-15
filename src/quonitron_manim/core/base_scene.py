@@ -167,15 +167,9 @@ class QuonitronSceneMixin:
             family = {id(m) for root in getattr(self, "mobjects", []) for m in root.get_family()}
             items = [i for i in items if id(i.mobject) in family]
         frame = getattr(getattr(self, "camera", None), "frame", None)
-        if frame is not None:
-            projected = []
-            for item in items:
-                mob = item.mobject.copy()
-                mob.shift(-frame.get_center())
-                mob.scale(self.theme.frame_width / frame.width, about_point=[0, 0, 0])
-                projected.append(LayoutItem(item.id, mob, item.region))
-            items = projected
-        issues = self.layout_validator.validate(items)
+        viewport = ((frame.get_center(), self.theme.frame_width / frame.width)
+                    if frame is not None else None)
+        issues = self.layout_validator.validate(items, viewport=viewport)
         for issue in issues:
             key = (issue.severity, issue.ids, issue.message)
             if issue.severity != "INFO" and key not in self._layout_reported:

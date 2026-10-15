@@ -42,6 +42,14 @@ def validate_timeline(
     known_motion_ids: Optional[Sequence[str]] = None,
 ) -> TimelineReport:
     report = TimelineReport()
+    # Dataclasses remain editable for compatibility; validate mutations too.
+    for obj in [timeline, timeline.scene, *timeline.beats, *timeline.events, *timeline.cues]:
+        try:
+            obj.__post_init__()
+        except (ValueError, TypeError) as exc:
+            report.issues.append(TimelineIssue("error", str(exc), getattr(obj, "id", None)))
+    if report.errors:
+        return report
     scene = timeline.scene
     event_ids = [event.id for event in timeline.events]
     if len(event_ids) != len(set(event_ids)):
@@ -50,6 +58,19 @@ def validate_timeline(
     if len(cue_ids) != len(set(cue_ids)):
         report.issues.append(TimelineIssue("error", "Duplicate cue ids"))
 
+    beat_ids = [b.scene_id for b in timeline.beats]
+    if len(set(beat_ids)) != len(beat_ids) or timeline.scene.scene_id in beat_ids:
+        report.issues.append(TimelineIssue("error", "Beat IDs must be unique and distinct from program ID"))
+    if timeline.narration_audio:
+        try:
+            timeline.narration_audio.__post_init__()
+            audio = timeline.narration_audio
+            if audio.start_time < timeline.scene.start or audio.start_time >= timeline.scene.end:
+                raise ValueError("Narration audio starts outside scene")
+            if audio.duration is not None and audio.start_time + audio.duration > timeline.scene.end + 1e-6:
+                raise ValueError("Narration audio duration exceeds scene")
+        except (ValueError, TypeError) as exc:
+            report.issues.append(TimelineIssue("error", str(exc)))
     known_events = set(event_ids)
     known_motions = set(known_motion_ids) if known_motion_ids is not None else None
     allowed_scenes = set(timeline.allowed_scene_ids())
@@ -137,18 +158,20 @@ def validate_timeline(
                     )
 
     ordered = sorted(timeline.events, key=lambda item: (item.start, item.id))
-    for left, right in zip(ordered, ordered[1:]):
-        # Accidental overlap is about *playback* windows, not semantic presence.
-        if right.start < left.play_end() - 1e-6:
-            allowed = left.overlap_ok or right.overlap_ok
-            message = (
-                f"Events {left.id} and {right.id} have overlapping play windows "
-                f"({left.play_end():.3f} > {right.start:.3f})"
-            )
-            if allowed:
-                report.issues.append(TimelineIssue("warning", message + " (intentional)", right.id))
-            else:
-                report.issues.append(TimelineIssue("error", message + " (accidental)", right.id))
+    for index, left in enumerate(ordered):
+        for right in ordered[index + 1:]:
+            # Accidental overlap is about *playback* windows, not semantic presence.
+            if right.start < left.play_end() - 1e-6:
+                allowed = left.overlap_ok or right.overlap_ok
+                message = (
+                    f"Events {left.id} and {right.id} have overlapping play windows "
+                    f"({left.play_end():.3f} > {right.start:.3f})"
+                )
+                if allowed:
+                    report.issues.append(TimelineIssue("warning", message + " (intentional)", right.id))
+                else:
+                    report.issues.append(TimelineIssue("error", message + " (accidental)", right.id))
+    
 
     for cue in timeline.cues:
         if cue.scene_id not in allowed_scenes:
@@ -201,16 +224,30 @@ def validate_timeline(
                         )
                     )
 
+    sequences = [cue.sequence for cue in timeline.cues]
+    if len(set(sequences)) != len(sequences):
+        report.issues.append(TimelineIssue("error", "Cue sequence numbers must be unique"))
     cue_ordered = sorted(timeline.cues, key=lambda item: (item.effective_start(), item.sequence))
-    for left, right in zip(cue_ordered, cue_ordered[1:]):
-        if right.effective_start() + 1e-6 < left.effective_end():
-            report.issues.append(
-                TimelineIssue(
-                    "error",
-                    f"Cues {left.id} and {right.id} overlap on the shared clock",
-                    right.id,
-                )
-            )
+    if list(timeline.cues) != cue_ordered:
+        report.issues.append(TimelineIssue("warning", "Cues are not in chronological order; playback/export sort canonically"))
+    for index, left in enumerate(cue_ordered):
+        for right in cue_ordered[index + 1:]:
+            if right.effective_start() >= left.effective_end() - 1e-9:
+                break
+            allowed = (timeline.cue_overlap_policy == "allow" and left.overlap_ok and right.overlap_ok
+                       and left.speaker and right.speaker and left.speaker != right.speaker)
+            report.issues.append(TimelineIssue("warning" if allowed else "error",
+                f"Cues {left.id} and {right.id} overlap on the shared clock"
+                + (" (explicit distinct-speaker overlap)" if allowed else " (not explicitly permitted)"), right.id))
+    for event in timeline.events:
+        for cue_id in event.cue_ids:
+            if cue_id not in set(cue_ids):
+                report.issues.append(TimelineIssue("error", f"{event.id}: unknown cue_ids reference {cue_id}", event.id))
+    # A pause occupies real playback time, and must not silently push later events.
+    for group_index, left in enumerate(ordered):
+        for right in ordered[group_index + 1:]:
+            if left.play_end() <= right.start < left.play_end() + left.pause_after - 1e-6:
+                report.issues.append(TimelineIssue("error", f"{left.id}: pause_after overlaps event {right.id}", left.id))
 
     for cue in timeline.spanning_cues():
         report.issues.append(

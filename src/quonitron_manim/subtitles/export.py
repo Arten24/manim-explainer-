@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import math
+import html
 from pathlib import Path
 from typing import Union
 
@@ -13,8 +15,8 @@ PathLike = Union[str, Path]
 
 
 def format_timestamp(seconds: float, *, vtt: bool = False) -> str:
-    if seconds < 0:
-        raise ValueError("Timestamp cannot be negative")
+    if not math.isfinite(seconds) or seconds < 0:
+        raise ValueError("Timestamp must be finite and nonnegative")
     millis = int(round(seconds * 1000.0))
     hours, remainder = divmod(millis, 3_600_000)
     minutes, remainder = divmod(remainder, 60_000)
@@ -48,8 +50,10 @@ def to_srt(track: SubtitleTrack, *, validate: bool = True) -> str:
     if validate:
         validate_track(track).raise_if_invalid()
     blocks = []
-    for index, cue in enumerate(track.cues, start=1):
-        body = _wrap(cue.text, track.max_chars)
+    for index, cue in enumerate(sorted(track.cues, key=lambda c: (c.start_time, c.sequence, c.id)), start=1):
+        if int(round(cue.end_time * 1000)) <= int(round(cue.start_time * 1000)):
+            raise ValueError(f"{cue.id}: cue collapses at millisecond export precision")
+        body = html.escape(cue.text if track.preserve_lines else _wrap(cue.text, track.max_chars), quote=False)
         blocks.append(
             f"{index}\n"
             f"{format_timestamp(cue.start_time)} --> "
@@ -62,10 +66,13 @@ def to_srt(track: SubtitleTrack, *, validate: bool = True) -> str:
 def to_vtt(track: SubtitleTrack, *, validate: bool = True) -> str:
     if validate:
         validate_track(track).raise_if_invalid()
-    blocks = ["WEBVTT", f"NOTE {track.notes}"]
-    for cue in track.cues:
+    note = " ".join(track.notes.split()).replace("-->", "→")
+    blocks = ["WEBVTT"] + ([f"NOTE {note}"] if note else [])
+    for cue in sorted(track.cues, key=lambda c: (c.start_time, c.sequence, c.id)):
+        if int(round(cue.end_time * 1000)) <= int(round(cue.start_time * 1000)):
+            raise ValueError(f"{cue.id}: cue collapses at millisecond export precision")
         ident = cue.id
-        body = _wrap(cue.text, track.max_chars)
+        body = html.escape(cue.text if track.preserve_lines else _wrap(cue.text, track.max_chars), quote=False)
         blocks.append(
             f"{ident}\n"
             f"{format_timestamp(cue.start_time, vtt=True)} --> "

@@ -6,8 +6,30 @@ recorded voiceover. This module never generates audio.
 
 from __future__ import annotations
 
+import math
+
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
+
+
+TIMING_STATUSES = frozenset({"estimated", "manual", "manually_aligned", "verified"})
+
+
+def valid_interval(start, end, label="cue"):
+    if not math.isfinite(start) or not math.isfinite(end) or start < 0 or end <= start:
+        raise ValueError(f"{label}: end_time must be finite and after nonnegative start_time")
+
+
+def valid_text(text):
+    if not isinstance(text, str) or not text.strip():
+        raise ValueError("Cue text must be non-empty")
+    if any(ord(c) < 32 and c not in "\n\t" for c in text) or "\n\n" in text:
+        raise ValueError("Cue text cannot contain control characters or blank lines")
+
+
+def valid_id(value):
+    if not isinstance(value, str) or not value.strip() or any(c.isspace() for c in value) or "-->" in value:
+        raise ValueError("Cue ID must be nonempty, whitespace-free and not contain -->")
 
 
 @dataclass
@@ -22,6 +44,9 @@ class SubtitleCue:
     speaker: Optional[str] = None
     event_ids: Optional[list] = None
     timing_status: str = "estimated"
+    timing_source: str = "reading_speed"
+    alignment_notes: str = ""
+    narration_metadata: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.id:
@@ -32,13 +57,14 @@ class SubtitleCue:
             raise ValueError("sequence must be >= 1")
         if not str(self.text).strip():
             raise ValueError(f"Cue {self.id}: text must be non-empty")
-        if self.start_time < 0 or self.end_time < 0:
-            raise ValueError(f"Cue {self.id}: times must be >= 0")
-        if self.end_time <= self.start_time:
-            raise ValueError(
-                f"Cue {self.id}: end_time ({self.end_time}) must be after "
-                f"start_time ({self.start_time})"
-            )
+        valid_id(self.id)
+        valid_text(self.text)
+        valid_interval(self.start_time, self.end_time, f"Cue {self.id}")
+        if self.timing_status not in TIMING_STATUSES:
+            raise ValueError(f"{self.id}: invalid timing_status")
+        if self.timing_status == "verified" and not (
+                self.alignment_notes.strip() and self.narration_metadata.get("audio_reference")):
+            raise ValueError(f"{self.id}: verified timing requires review notes and audio_reference")
 
     @property
     def duration(self) -> float:
@@ -61,6 +87,9 @@ class SubtitleCue:
             speaker=data.get("speaker"),
             event_ids=list(data.get("event_ids") or []) or None,
             timing_status=str(data.get("timing_status") or "estimated"),
+            timing_source=str(data.get("timing_source") or "reading_speed"),
+            alignment_notes=str(data.get("alignment_notes") or ""),
+            narration_metadata=dict(data.get("narration_metadata") or {}),
         )
 
 
@@ -77,6 +106,7 @@ class SubtitleTrack:
         "Edit these cues when aligning a real voiceover."
     )
     cues: List[SubtitleCue] = field(default_factory=list)
+    preserve_lines: bool = False
 
     def add(self, cue: SubtitleCue) -> None:
         self.cues.append(cue)
@@ -91,6 +121,7 @@ class SubtitleTrack:
             "overlap_policy": self.overlap_policy,
             "notes": self.notes,
             "cues": [cue.to_dict() for cue in self.cues],
+            "preserve_lines": self.preserve_lines,
         }
 
     @classmethod
@@ -103,7 +134,41 @@ class SubtitleTrack:
             max_chars=int(data.get("max_chars", 84)),
             overlap_policy=str(data.get("overlap_policy", "error")),
             notes=str(data.get("notes", cls.notes)),
+            preserve_lines=bool(data.get("preserve_lines", False)),
         )
         for raw in data.get("cues") or []:
             track.add(SubtitleCue.from_dict(raw))
         return track
+
+
+@dataclass(frozen=True)
+class SubtitleStyle:
+    """Insets within the shared subtitle reservation; never expands into content."""
+    max_lines: int = 2
+    max_width: Optional[float] = None
+    padding: float = 0.04
+    safe_margin: Optional[float] = None
+    line_gap: float = 0.08
+    speaker_labels: bool = False
+
+    def __post_init__(self):
+        if not isinstance(self.max_lines, int) or self.max_lines < 1:
+            raise ValueError("max_lines must be a positive integer")
+        for value in (self.padding, self.line_gap, self.safe_margin):
+            if value is not None and (not math.isfinite(value) or value < 0):
+                raise ValueError("Subtitle insets must be finite and nonnegative")
+        if self.max_width is not None and (not math.isfinite(self.max_width) or self.max_width <= 0):
+            raise ValueError("max_width must be finite and positive")
+
+    def region(self, theme):
+        from quonitron_manim.design.layout import SafeArea, LayoutError, layout_regions
+        band = layout_regions(theme.frame_width, theme.frame_height, theme.spacing.safe_margin)["subtitle"]
+        extra = max(0, (self.safe_margin or 0) - theme.spacing.safe_margin)
+        left, right = band.left + self.padding + extra, band.right - self.padding - extra
+        if self.max_width is not None and self.max_width < right - left:
+            middle = (left + right) / 2
+            left, right = middle - self.max_width / 2, middle + self.max_width / 2
+        area = SafeArea(left, right, band.bottom + self.padding + extra, band.top - self.padding)
+        if area.width <= 0 or area.height <= 0:
+            raise LayoutError("Subtitle padding/margins leave no usable space")
+        return area

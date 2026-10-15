@@ -11,12 +11,15 @@ from quonitron_manim.timeline.models import Timeline
 
 
 def timeline_to_track(timeline: Timeline) -> SubtitleTrack:
+    from quonitron_manim.timeline.validate import validate_timeline
+    validate_timeline(timeline).raise_if_invalid()
     track = SubtitleTrack(
         reading_wpm=timeline.reading_wpm,
         notes=timeline.notes,
-        overlap_policy="error",
+        overlap_policy=timeline.cue_overlap_policy,
+        preserve_lines=True,
     )
-    for cue in timeline.cues:
+    for cue in sorted(timeline.cues, key=lambda c: (c.effective_start(), c.sequence, c.id)):
         track.add(
             SubtitleCue(
                 id=cue.id,
@@ -27,6 +30,9 @@ def timeline_to_track(timeline: Timeline) -> SubtitleTrack:
                 end_time=cue.effective_end(),
                 visual_cue=cue.visual_cue,
                 speaker=cue.speaker,
+                event_ids=list(cue.event_ids), timing_status=cue.timing_status,
+                timing_source=cue.timing_source, alignment_notes=cue.alignment_notes,
+                narration_metadata=dict(cue.narration_metadata),
             )
         )
     return track

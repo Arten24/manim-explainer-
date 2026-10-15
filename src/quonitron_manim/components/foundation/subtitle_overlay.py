@@ -1,6 +1,6 @@
 """On-screen subtitle overlay driven by the shared timeline.
 
-Styling comes from the theme. Timing comes only from Timeline.cue_at().
+Styling comes from the theme. Timing comes only from Timeline.cues_at().
 """
 
 from __future__ import annotations
@@ -27,20 +27,25 @@ class SubtitleOverlay(Component):
         self._shown_id: Optional[str] = None
         self.timeline: Optional[Timeline] = None
         self.clock: Optional[TimelineClock] = None
+        from quonitron_manim.subtitles.models import SubtitleStyle
+        self.style = self.param("style", None) or SubtitleStyle()
+        self._preflight_cache = {}
         self._projection_scale = 1.0
         self._projection_center = (0.0, 0.0, 0.0)
 
     def build(self) -> Any:
         from quonitron_manim.core.text import subtitle_text
 
-        self._canonical = subtitle_text(self.param("text", " "), self.theme)
+        self._canonical = subtitle_text(self.param("text", " "), self.theme, style=self.style)
         self._mob = self._canonical.copy()
         return self._mob
 
     def _restyle(self, text: str) -> None:
         from quonitron_manim.core.text import subtitle_text
 
-        self._canonical = subtitle_text(text, self.theme)
+        self._canonical = self._preflight_cache.get(text)
+        if self._canonical is None:
+            self._canonical = subtitle_text(text, self.theme, style=self.style)
         self._mob.become(self._canonical)
         # Cue replacement is canonical again, not in the previous camera pose.
         self._projection_scale = 1.0
@@ -71,27 +76,52 @@ class SubtitleOverlay(Component):
             self.get()
         self._restyle(text)
 
+    def _active_text(self, cues):
+        return "\n".join((f"{c.speaker}: " if self.style.speaker_labels and c.speaker else "") + c.text
+                         for c in cues) or " "
+
+    def preflight(self, timeline):
+        """Measure every active combination (including simultaneous speakers) once."""
+        from quonitron_manim.timeline.validate import validate_timeline
+        from quonitron_manim.core.text import subtitle_text
+        validate_timeline(timeline).raise_if_invalid()
+        times = {timeline.scene.start, *(c.effective_start() for c in timeline.cues),
+                 *(c.effective_end() for c in timeline.cues)}
+        self._preflight_cache = {}
+        for time in sorted(times):
+            text = self._active_text(timeline.cues_at(time))
+            if text not in self._preflight_cache:
+                self._preflight_cache[text] = subtitle_text(text, self.theme, style=self.style)
+        return {text: mob.measured_line_count for text, mob in self._preflight_cache.items()}
+
+    def update_at(self, time, *, scene=None):
+        cues = self.timeline.cues_at(time)
+        ids = tuple(c.id for c in cues)
+        changed = ids != self._shown_id
+        if changed:
+            self._shown_id = ids
+            self.show_text(self._active_text(cues))
+        previous = (self._projection_scale, self._projection_center)
+        if scene is not None:
+            self._follow_viewport(scene)
+            moving = previous != (self._projection_scale, self._projection_center)
+            # Shared collision diagnostics, without glyph deepcopy on moving frames.
+            if (changed or moving) and hasattr(scene, "check_layout"):
+                scene.check_layout()
+        return ids
+
     def attach(self, scene: Any, timeline: Timeline, clock: TimelineClock) -> Any:
+        self.preflight(timeline)
         self.timeline = timeline
         self.clock = clock
         mob = self.get()
         scene.add(mob)
         if hasattr(scene, "register_layout"):
             scene.register_layout("subtitle", mob, region="subtitle")
-        overlay = self
 
         def _tick(_mobject: Any, dt: float) -> None:
-            clock.advance(dt)
-            cue = timeline.cue_at(clock.time)
-            cue_id = cue.id if cue else None
-            if cue_id != overlay._shown_id:
-                overlay._shown_id = cue_id
-                overlay.show_text(cue.text if cue else " ")
-            overlay._follow_viewport(scene)
+            self.update_at(clock.sync(dt), scene=scene)
 
         mob.add_updater(_tick)
-        first = timeline.cue_at(0.0)
-        if first:
-            self._shown_id = first.id
-            self.show_text(first.text)
+        self.update_at(clock.time, scene=scene)
         return mob

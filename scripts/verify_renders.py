@@ -18,6 +18,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES = {
+    'subtitles': ('subtitle_sync_demo.py', 'SubtitleSyncDemo', [1, 3.7, 4.5, 7.5, 10.7]),
     'minimal': ('environment_smoke.py', 'MinimalRenderCheck', [0.4, 1.2]),
     'themed': ('environment_smoke.py', 'ThemeSubtitleRenderCheck', [0.4, 1.5]),
     'foundation': ('foundation_demo.py', 'VariableStoresAValue', [1, 5, 12, 20]),

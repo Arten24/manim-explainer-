@@ -256,3 +256,12 @@ Do not start Part 5 until Part 4 is reported complete.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Part 5: subtitle / narration synchronization
+
+See [authoring and alignment guide](docs/PART5_SUBTITLE_SYNC.md),
+[integration audit](docs/PART5_AUDIT.md), and
+[verification evidence](docs/PART5_VERIFICATION.md). Run
+`notebooks/part05_subtitle_sync.ipynb` with the project kernel;
+`examples/subtitle_sync_demo.py` uses the existing canonical timeline and overlay.
+No supplied narration audio means its timings remain estimated.

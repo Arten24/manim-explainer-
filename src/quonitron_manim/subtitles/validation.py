@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 from dataclasses import dataclass, field
 from typing import List
 
@@ -81,6 +83,10 @@ def validate_track(track: SubtitleTrack) -> ValidationReport:
         )
         return report
 
+    if (not math.isfinite(track.min_duration) or not math.isfinite(track.max_duration)
+            or track.min_duration <= 0 or track.max_duration < track.min_duration
+            or track.reading_wpm <= 0 or track.max_chars < 1):
+        report.issues.append(SubtitleIssue("error", "Invalid track duration/reading/width settings"))
     seen_ids = set()
     ordered = sorted(track.cues, key=lambda c: (c.start_time, c.sequence))
     for cue in ordered:
@@ -89,18 +95,19 @@ def validate_track(track: SubtitleTrack) -> ValidationReport:
                 SubtitleIssue("error", f"Duplicate cue id {cue.id!r}", cue.id)
             )
         seen_ids.add(cue.id)
+        try:
+            cue.__post_init__()
+        except (ValueError, TypeError) as exc:
+            report.issues.append(SubtitleIssue("error", str(exc), cue.id))
         _check_cue(cue, track, report)
 
-    for left, right in zip(ordered, ordered[1:]):
-        if right.start_time < left.end_time - 1e-6:
-            message = (
-                f"Cues {left.id} and {right.id} overlap "
-                f"({left.end_time:.3f} > {right.start_time:.3f})"
-            )
-            if track.overlap_policy == "error":
-                report.issues.append(SubtitleIssue("error", message, right.id))
-            elif track.overlap_policy == "warn":
-                report.issues.append(SubtitleIssue("warning", message, right.id))
+    for index, left in enumerate(ordered):
+        for right in ordered[index + 1:]:
+            if right.start_time >= left.end_time - 1e-9:
+                break
+            message = f"Cues {left.id} and {right.id} overlap ({left.end_time:.3f} > {right.start_time:.3f})"
+            if track.overlap_policy != "allow":
+                report.issues.append(SubtitleIssue("error" if track.overlap_policy == "error" else "warning", message, right.id))
 
     sequences = [cue.sequence for cue in track.cues]
     if sequences != sorted(sequences):

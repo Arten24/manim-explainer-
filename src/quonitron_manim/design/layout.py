@@ -222,12 +222,17 @@ class LayoutValidator:
             raise ValueError("Intentional overlaps need distinct IDs and a reason")
         self.allowed[frozenset((first, second))] = reason
 
-    def validate(self, items):
+    def validate(self, items, *, viewport=None):
         items = list(items)
         if len({i.id for i in items}) != len(items):
             raise ValueError("Layout IDs must be unique")
         issues = []
         boxes = {i.id: bounds(i.mobject) for i in items}
+        if viewport is not None:
+            center, scale = viewport
+            boxes = {key: SafeArea((b.left-center[0])*scale, (b.right-center[0])*scale,
+                                  (b.bottom-center[1])*scale, (b.top-center[1])*scale)
+                     for key, b in boxes.items()}
         for item in items:
             box = boxes[item.id]
             area = self.regions[item.region]

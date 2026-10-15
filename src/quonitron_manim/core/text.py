@@ -55,7 +55,7 @@ def fit_to_width(mobject: Any, max_width: float) -> Any:
 
 
 def measured_text(content: str, role="body", theme=None, *, max_width: float,
-                  max_height=None, buff=0.12, **kwargs):
+                  max_height=None, max_lines=None, buff=0.12, **kwargs):
     """Greedy Pango-measured wrapping at the requested font size, never scaling.
 
     Explicit newlines are preserved. Oversized tokens split by character. Text too
@@ -92,21 +92,26 @@ def measured_text(content: str, role="body", theme=None, *, max_width: float,
                 current += char
         if current:
             lines.append(make(current))
+    if max_lines is not None and len(lines) > max_lines:
+        raise LayoutError(f"{role} needs {len(lines)} lines; limit {max_lines}. Split the cue; font size was preserved.")
     group = VGroup(*lines).arrange(DOWN, buff=buff, aligned_edge=LEFT)
     if max_height is not None and group.height > max_height + 1e-6:
         raise LayoutError(f"{role} text needs {group.height:.3f} units; available "
                           f"{max_height:.3f}. Split the explanation/cue; font size was preserved.")
+    group.measured_line_count = len(lines)
     return group
 
 
-def subtitle_text(content, theme=None, **kwargs):
-    """One canonical fixed-size, bottom-aligned subtitle path for every scene."""
-    from quonitron_manim.design.layout import layout_regions, place_in
+def subtitle_text(content, theme=None, *, style=None, **kwargs):
+    """Fixed-size, measured, bottom-aligned subtitle; never shrink to fit."""
+    from quonitron_manim.design.layout import place_in
+    from quonitron_manim.subtitles.models import SubtitleStyle
     theme = theme or get_theme()
-    band = layout_regions(theme.frame_width, theme.frame_height,
-                          theme.spacing.safe_margin)["subtitle"]
-    mob = measured_text(content or " ", "caption", theme, max_width=band.width,
-                        max_height=band.height, buff=theme.spacing.xxs, **kwargs)
-    place_in(mob, band, align="bottom")
+    style = style or SubtitleStyle()
+    area = style.region(theme)
+    mob = measured_text(content or " ", "caption", theme, max_width=area.width,
+                        max_height=area.height, max_lines=style.max_lines,
+                        buff=style.line_gap, **kwargs)
+    place_in(mob, area, align="bottom")
     mob.set_z_index(100)
     return mob

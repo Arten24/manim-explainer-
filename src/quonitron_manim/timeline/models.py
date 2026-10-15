@@ -6,13 +6,17 @@ frame rate and are never stored as a second clock.
 
 from __future__ import annotations
 
+import math
+
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
-TIMING_STATUSES = frozenset({"estimated", "manual"})
+from quonitron_manim.subtitles.models import TIMING_STATUSES, valid_text, valid_id
 
 
 def _positive_interval(start: float, end: float, label: str) -> None:
+    if not math.isfinite(start) or not math.isfinite(end):
+        raise ValueError(f"{label}: times must be finite")
     if start < 0 or end < 0:
         raise ValueError(f"{label}: times must be >= 0")
     if end <= start:
@@ -81,9 +85,9 @@ class VisualEvent:
         if self.motion_id.startswith("transition."):
             self.kind = "transition"
         _positive_interval(self.start, self.end, f"event {self.id}")
-        if self.pause_after < 0:
+        if not math.isfinite(self.pause_after) or self.pause_after < 0:
             raise ValueError(f"{self.id}: pause_after must be >= 0")
-        if self.play_duration is not None and self.play_duration <= 0:
+        if self.play_duration is not None and (not math.isfinite(self.play_duration) or self.play_duration <= 0):
             raise ValueError(f"{self.id}: play_duration must be positive")
         if self.play_duration is not None and self.play_duration - 1e-6 > self.duration:
             raise ValueError(
@@ -148,16 +152,24 @@ class LinkedCue:
     timing_status: str = "estimated"
     manual_start: Optional[float] = None
     manual_end: Optional[float] = None
+    timing_source: str = "reading_speed"
+    alignment_notes: str = ""
+    narration_metadata: Dict[str, Any] = field(default_factory=dict)
+    lead_in: float = 0.0
+    lead_out: float = 0.0
+    overlap_ok: bool = False
 
     def __post_init__(self) -> None:
         if not self.id:
             raise ValueError("cue id is required")
         if not self.scene_id:
             raise ValueError(f"{self.id}: scene_id is required")
-        if int(self.sequence) < 1:
+        if isinstance(self.sequence, bool) or not isinstance(self.sequence, int) or self.sequence < 1:
             raise ValueError(f"{self.id}: sequence must be >= 1")
         if not str(self.text).strip():
             raise ValueError(f"{self.id}: text must be non-empty")
+        valid_id(self.id)
+        valid_text(self.text)
         if self.timing_status not in TIMING_STATUSES:
             raise ValueError(
                 f"{self.id}: timing_status must be one of {sorted(TIMING_STATUSES)}"
@@ -168,15 +180,33 @@ class LinkedCue:
                 raise ValueError(f"{self.id}: manual start and end must both be set")
             _positive_interval(self.manual_start, self.manual_end, f"cue {self.id} manual")
 
+        for value in (self.lead_in, self.lead_out):
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"{self.id}: lead times must be finite and nonnegative")
+        _positive_interval(self.effective_start(), self.effective_end(), f"cue {self.id} effective")
+        if self.timing_status == "verified" and not (
+                self.alignment_notes.strip() and self.narration_metadata.get("audio_reference")):
+            raise ValueError(f"{self.id}: verified timing requires review notes and audio_reference")
+
     def effective_start(self) -> float:
-        if self.timing_status == "manual" and self.manual_start is not None:
-            return float(self.manual_start)
-        return self.start_time
+        value = self.manual_start if self.timing_status != "estimated" and self.manual_start is not None else self.start_time
+        return float(value) - self.lead_in
 
     def effective_end(self) -> float:
-        if self.timing_status == "manual" and self.manual_end is not None:
-            return float(self.manual_end)
-        return self.end_time
+        value = self.manual_end if self.timing_status != "estimated" and self.manual_end is not None else self.end_time
+        return float(value) + self.lead_out
+
+    def align(self, start: float, end: float, *, notes: str, verified=False, audio_reference=None) -> None:
+        """Declare reviewed canonical timing. Verified is a human attestation, not ASR."""
+        candidate = self.to_dict()
+        candidate.update(start_time=start, end_time=end, manual_start=None, manual_end=None,
+                         alignment_notes=notes, timing_status="verified" if verified else "manually_aligned",
+                         timing_source="audio_review" if verified else "human")
+        candidate["narration_metadata"] = dict(self.narration_metadata)
+        if audio_reference:
+            candidate["narration_metadata"]["audio_reference"] = audio_reference
+        replacement = LinkedCue.from_dict(candidate)
+        self.__dict__.update(replacement.__dict__)
 
     @property
     def duration(self) -> float:
@@ -187,6 +217,7 @@ class LinkedCue:
         self.manual_start = start
         self.manual_end = end
         self.timing_status = "manual"
+        self.timing_source = "human"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -212,7 +243,27 @@ class LinkedCue:
             manual_end=(
                 float(data["manual_end"]) if data.get("manual_end") is not None else None
             ),
+            timing_source=str(data.get("timing_source") or "reading_speed"),
+            alignment_notes=str(data.get("alignment_notes") or ""),
+            narration_metadata=dict(data.get("narration_metadata") or {}),
+            lead_in=float(data.get("lead_in", 0)), lead_out=float(data.get("lead_out", 0)),
+            overlap_ok=bool(data.get("overlap_ok", False)),
         )
+
+
+@dataclass
+class NarrationAudio:
+    """Optional recording asset on the SAME seconds clock. No generated speech."""
+    path: str
+    start_time: float = 0.0
+    duration: Optional[float] = None
+
+    def __post_init__(self):
+        if not self.path or not math.isfinite(self.start_time) or self.start_time < 0:
+            raise ValueError("Audio needs a path and finite nonnegative start_time")
+        if self.duration is not None:
+            _positive_interval(self.start_time, self.start_time + self.duration, "audio")
+
 
 
 @dataclass
@@ -229,8 +280,13 @@ class Timeline:
         "aligned to a recorded speaker until timing_status is set to manual."
     )
 
+    cue_overlap_policy: str = "error"
+    narration_audio: Optional[NarrationAudio] = None
+
     def __post_init__(self) -> None:
-        if self.frame_rate <= 0:
+        if self.cue_overlap_policy not in {"error", "allow"}:
+            raise ValueError("cue_overlap_policy must be error or allow")
+        if not math.isfinite(self.frame_rate) or self.frame_rate <= 0:
             raise ValueError("frame_rate must be positive")
 
     def seconds_to_frames(self, seconds: float) -> int:
@@ -253,11 +309,16 @@ class Timeline:
         known = ", ".join(c.id for c in self.cues) or "(none)"
         raise KeyError(f"Unknown cue id {cue_id!r}. Known: {known}")
 
+    def cues_at(self, time: float) -> List[LinkedCue]:
+        if not math.isfinite(time):
+            raise ValueError("Lookup time must be finite")
+        return sorted((c for c in self.cues if c.effective_start() <= time < c.effective_end()),
+                      key=lambda c: (c.effective_start(), c.sequence, c.id))
+
     def cue_at(self, time: float) -> Optional[LinkedCue]:
-        for cue in self.cues:
-            if cue.effective_start() - 1e-9 <= time < cue.effective_end() - 1e-12:
-                return cue
-        return None
+        """Legacy single-cue lookup; use cues_at for intentionally overlapping voices."""
+        active = self.cues_at(time)
+        return active[0] if active else None
 
     def events_at(self, time: float) -> List[VisualEvent]:
         return [
@@ -287,7 +348,7 @@ class Timeline:
                     other.start += delta
                     other.end += delta
             for cue in self.cues:
-                if cue.timing_status == "manual":
+                if cue.timing_status != "estimated":
                     continue
                 if cue.start_time >= old_end - 1e-9:
                     cue.start_time += delta
@@ -306,7 +367,7 @@ class Timeline:
 
     def beat_at(self, time: float) -> Optional[SceneWindow]:
         for beat in self.beats:
-            if beat.contains(time, time):
+            if beat.start <= time < beat.end:
                 return beat
         return None
 
@@ -336,6 +397,8 @@ class Timeline:
             "frame_rate": self.frame_rate,
             "reading_wpm": self.reading_wpm,
             "notes": self.notes,
+            "cue_overlap_policy": self.cue_overlap_policy,
+            "narration_audio": asdict(self.narration_audio) if self.narration_audio else None,
         }
 
     @classmethod
@@ -346,9 +409,11 @@ class Timeline:
             events=[VisualEvent.from_dict(item) for item in data.get("events") or []],
             cues=[LinkedCue.from_dict(item) for item in data.get("cues") or []],
             narration=str(data.get("narration") or ""),
-            frame_rate=float(data.get("frame_rate") or 30.0),
+            frame_rate=float(data.get("frame_rate", 30.0)),
             reading_wpm=int(data.get("reading_wpm") or 155),
             notes=str(data.get("notes") or cls.notes),
+            cue_overlap_policy=str(data.get("cue_overlap_policy", "error")),
+            narration_audio=NarrationAudio(**data["narration_audio"]) if data.get("narration_audio") else None,
         )
 
 
