@@ -192,6 +192,15 @@ def test_camera_caption_projection_without_per_frame_deepcopy(monkeypatch):
     frame.move_to([1, 2, 0])
     overlay._follow_viewport(scene)
     overlay.show_text("A different cue while the camera is close.")
-    replacement_points = overlay._canonical.get_all_points().copy()
+    # Manim.become aligns SVG subpaths: equal rendered glyphs can have different
+    # control-point counts. Verify canonical bounds, then preserve every actual
+    # post-restyle point through the camera mapping (do not assume topology).
+    canonical_box, replaced_box = bounds(overlay._canonical), bounds(mob)
+    assert np.allclose(
+        [replaced_box.left, replaced_box.right, replaced_box.bottom, replaced_box.top],
+        [canonical_box.left, canonical_box.right, canonical_box.bottom, canonical_box.top],
+        atol=1e-8,
+    )
+    replacement_points = mob.get_all_points().copy()
     overlay._follow_viewport(scene)
     assert np.allclose(mob.get_all_points(), replacement_points * .5 + [1, 2, 0], atol=1e-8)
