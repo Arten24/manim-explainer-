@@ -151,9 +151,9 @@ GitHub Actions uses the checked-in `uv.lock` for Python 3.10–3.12 unit,
 JSON/catalog, timeline, subtitle-export, and notebook checks. A separate
 Ubuntu 24.04 render workflow installs Cairo, Pango, FFmpeg, and fonts, then
 runs the existing Parts 1–4 Manim render tests and fails on render errors. It
-probes the MP4 files, extracts midpoint frames, and uploads videos and frames as the
-`quonitron-part-1-4-render-previews` artifact; it is not configured to hide
-render failures with `continue-on-error`.
+probes the MP4 files, extracts midpoint frames, and uploads videos, frames,
+and a test log as the `quonitron-part-1-4-render-previews` artifact. Render
+failures are not masked with `continue-on-error`.
 
 ## Render the demos
 

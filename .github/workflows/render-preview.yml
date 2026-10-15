@@ -37,9 +37,19 @@ jobs:
             fonts-dejavu-core
       - name: Report native renderer versions
         run: |
-          ffmpeg -version | sed -n '1p'
-          pkg-config --modversion cairo pango pangocairo
-          fc-list | sed -n '1,3p'
+          ffmpeg_version="$(ffmpeg -version | sed -n '1p')"
+          cairo_version="$(pkg-config --modversion cairo)"
+          pango_version="$(pkg-config --modversion pango)"
+          pangocairo_version="$(pkg-config --modversion pangocairo)"
+          {
+            echo "## Native rendering dependencies"
+            echo "- $ffmpeg_version"
+            echo "- Cairo $cairo_version"
+            echo "- Pango $pango_version"
+            echo "- PangoCairo $pangocairo_version"
+            echo "- Font samples:"
+            fc-list | sed -n '1,3p' | sed 's/^/  - /'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Install pinned uv and sync locked render dependencies
         run: |
           python -m pip install --disable-pip-version-check "uv==0.13.1"
@@ -49,17 +59,38 @@ jobs:
           command -v ffmpeg
           command -v ffprobe
           uv run --locked python - <<'PY'
+          import os
           import manim
           from quonitron_manim.core.manim_compat import cairo_usable, manimpango_usable
 
           assert cairo_usable()[0], cairo_usable()[1]
           assert manimpango_usable()[0], manimpango_usable()[1]
-          print("Manim", manim.__version__)
-          print("Cairo", cairo_usable()[1])
-          print("Pango", manimpango_usable()[1])
+          versions = [
+              f"Manim {manim.__version__}",
+              f"{cairo_usable()[1]}",
+              f"Pango {manimpango_usable()[1]}",
+          ]
+          print("\n".join(versions))
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write("\n## Python rendering stack\n")
+              summary.write("\n".join(f"- {version}" for version in versions))
+              summary.write("\n")
           PY
       - name: Render existing Part 1–4 demos with Cairo
-        run: uv run --locked python -m pytest --basetemp=.renders/tests -m render -vv
+        run: |
+          mkdir -p .renders
+          set +e
+          uv run --locked python -m pytest --basetemp=.renders/tests -m render -vv --tb=short 2>&1 | tee .renders/render-tests.log
+          render_status=${PIPESTATUS[0]}
+          if [ "$render_status" -ne 0 ]; then
+            {
+              echo "## Render test diagnostics (exit $render_status)"
+              echo '```text'
+              tail -n 200 .renders/render-tests.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$render_status"
       - name: Probe MP4s and extract midpoint frames
         run: >-
           uv run --locked python scripts/verify_render_artifacts.py
@@ -72,6 +103,7 @@ jobs:
           path: |
             .renders/tests/**/*.mp4
             .renders/frames/*.jpg
-          if-no-files-found: error
+            .renders/render-tests.log
+          if-no-files-found: warn
           include-hidden-files: true
           retention-days: 14
