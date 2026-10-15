@@ -265,3 +265,11 @@ See [authoring and alignment guide](docs/PART5_SUBTITLE_SYNC.md),
 `notebooks/part05_subtitle_sync.ipynb` with the project kernel;
 `examples/subtitle_sync_demo.py` uses the existing canonical timeline and overlay.
 No supplied narration audio means its timings remain estimated.
+
+## Canonical branch consolidation
+
+`arena/9c18e37e-manim-explainer` is the approved development branch. The selective
+[consolidation review](docs/BRANCH_CONSOLIDATION.md) records useful tests/probing
+adopted from the other arena branch and why its lock/workflow replacements were not
+imported. Notebook authoring tests can be installed with `pip install -e '.[dev,notebook]'`;
+real rendering still uses the existing pinned render setup.

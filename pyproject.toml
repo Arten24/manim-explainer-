@@ -34,6 +34,12 @@ dev = [
   "jsonschema>=4.20",
 ]
 
+notebook = [
+  "ipykernel>=6.29,<8",
+  "nbclient>=0.10,<0.12",
+  "nbformat>=5.9,<6",
+]
+
 [tool.setuptools.package-dir]
 "" = "src"
 

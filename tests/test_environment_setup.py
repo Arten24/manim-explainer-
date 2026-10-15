@@ -91,3 +91,69 @@ def test_execute_creates_frame_directory_before_running(tmp_path):
                            str(target)], log)
     assert code == 0
     assert target.read_text() == 'ok'
+
+
+def test_probe_records_useful_metadata(tmp_path, monkeypatch):
+    module = load_script('verify_renders')
+    movie = tmp_path / 'sample.mp4'
+    movie.write_bytes(b'metadata-unit-test-not-a-real-render')
+    payload = {'streams': [{'codec_name': 'h264', 'width': 1920, 'height': 1080,
+                            'avg_frame_rate': '30000/1001'}],
+               'format': {'duration': '1.5', 'size': str(movie.stat().st_size)}}
+    def fake_probe(args, log, **kwargs):
+        assert args[0] == '/test/ffprobe' and kwargs['timeout'] == 30
+        log.write_text(json.dumps(payload))
+        return 0
+    monkeypatch.setattr(module.shutil, 'which', lambda _: '/test/ffprobe')
+    monkeypatch.setattr(module, 'execute', fake_probe)
+    metadata = module.probe_movie(movie, tmp_path / 'probe.json')
+    assert metadata == dict(codec='h264', width=1920, height=1080,
+                            frame_rate='30000/1001', duration_seconds=1.5,
+                            file_bytes=movie.stat().st_size)
+
+
+@pytest.mark.parametrize('payload', [
+    {}, {'streams': []},
+    {'streams': [{'width': 0, 'height': 480, 'avg_frame_rate': '15', 'codec_name': 'h264'}],
+     'format': {'duration': '1'}},
+    {'streams': [{'width': 854, 'height': 480, 'avg_frame_rate': '0/0', 'codec_name': 'h264'}],
+     'format': {'duration': '1'}},
+    {'streams': [{'width': 854, 'height': 480, 'avg_frame_rate': '15', 'codec_name': 'h264'}],
+     'format': {'duration': 'nan'}},
+])
+def test_invalid_probe_metadata_is_rejected(tmp_path, monkeypatch, payload):
+    module = load_script('verify_renders')
+    monkeypatch.setattr(module.shutil, 'which', lambda _: '/test/ffprobe')
+    def fake_probe(args, log, **kwargs):
+        log.write_text(json.dumps(payload))
+        return 0
+    monkeypatch.setattr(module, 'execute', fake_probe)
+    with pytest.raises(ValueError, match='Invalid ffprobe metadata'):
+        module.probe_movie(tmp_path / 'unused.mp4', tmp_path / 'probe.json')
+
+
+def test_probe_command_failure_and_missing_executable(tmp_path, monkeypatch):
+    module = load_script('verify_renders')
+    monkeypatch.setattr(module.shutil, 'which', lambda _: None)
+    with pytest.raises(ValueError, match='unavailable'):
+        module.probe_movie(tmp_path / 'unused.mp4', tmp_path / 'probe.json')
+    monkeypatch.setattr(module.shutil, 'which', lambda _: '/test/ffprobe')
+    monkeypatch.setattr(module, 'execute', lambda *a, **kw: 9)
+    with pytest.raises(ValueError, match='exit 9'):
+        module.probe_movie(tmp_path / 'unused.mp4', tmp_path / 'probe.json')
+
+
+def test_probe_failure_cannot_be_counted_as_decoded(tmp_path, monkeypatch):
+    module = load_script('verify_renders')
+    def fake_render(args, *a, **kw):
+        destination = Path(args[args.index('--media_dir') + 1])
+        (destination / 'MinimalRenderCheck.mp4').write_bytes(b'not-a-real-render')
+        return 0
+    def reject_probe(*a, **kw):
+        raise ValueError('invalid stream')
+    monkeypatch.setattr(module, 'execute', fake_render)
+    monkeypatch.setattr(module.shutil, 'which', lambda _: '/test/ffmpeg')
+    monkeypatch.setattr(module, 'probe_movie', reject_probe)
+    result = module.render_case('minimal', tmp_path)
+    assert result['rendered'] and not result['decoded']
+    assert result['status'] == 'RENDERED_BUT_PROBE_FAILED'

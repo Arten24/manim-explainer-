@@ -10,6 +10,8 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
+import math
+from fractions import Fraction
 import os
 from pathlib import Path
 import shutil
@@ -44,6 +46,35 @@ def execute(args, log, *, timeout=900, cwd=ROOT):
     return code
 
 
+def probe_movie(movie, log):
+    """Validate stream metadata in the existing verifier, not a second pipeline.
+
+    Inspired by adb921d's inspect_video; retain timeout/error logs and full decode.
+    A successful probe is metadata evidence only, never a successful render itself.
+    """
+    ffprobe = shutil.which('ffprobe')
+    if not ffprobe:
+        raise ValueError('ffprobe is unavailable')
+    code = execute([ffprobe, '-v', 'error', '-select_streams', 'v:0',
+                    '-show_entries', 'stream=codec_name,width,height,avg_frame_rate:format=duration,size',
+                    '-of', 'json', str(movie)], log, timeout=30)
+    if code != 0:
+        raise ValueError(f'ffprobe failed with exit {code}; see {log}')
+    try:
+        data = json.loads(log.read_text(encoding='utf-8'))
+        stream = data['streams'][0]
+        duration = float(data['format']['duration'])
+        width, height = int(stream['width']), int(stream['height'])
+        rate = Fraction(stream['avg_frame_rate'])
+        codec = stream['codec_name']
+        if not math.isfinite(duration) or duration <= 0 or min(width, height) <= 0 or rate <= 0 or not codec:
+            raise ValueError('Nonpositive/nonfinite stream metadata')
+    except (ValueError, KeyError, IndexError, TypeError, ZeroDivisionError) as exc:
+        raise ValueError(f'Invalid ffprobe metadata: {exc}') from exc
+    return dict(codec=codec, width=width, height=height, frame_rate=str(rate),
+                duration_seconds=duration, file_bytes=movie.stat().st_size)
+
+
 def render_case(key, output, *, quality='low'):
     filename, scene, timestamps = CASES[key]
     destination = output / key
@@ -67,6 +98,11 @@ def render_case(key, output, *, quality='low'):
     ffmpeg = shutil.which('ffmpeg')
     if not ffmpeg:
         result['status'] = 'RENDERED_BUT_FFMPEG_INSPECTION_BLOCKED'
+        return result
+    try:
+        result['metadata'] = probe_movie(movie, destination / 'probe.json')
+    except ValueError as exc:
+        result.update(status='RENDERED_BUT_PROBE_FAILED', probe_error=str(exc))
         return result
     code = execute([ffmpeg, '-v', 'error', '-xerror', '-i', str(movie), '-f', 'null', '-'],
                    destination / 'decode.log')
