@@ -1,5 +1,9 @@
 # Parts 1–4 overlap audit and repair
 
+> Historical audit boundary: subsequent GitHub cloud rendering and actual frame
+> inspection are documented in [CLOUD_CAPABILITIES.md](CLOUD_CAPABILITIES.md).
+> They found remaining application rendering defects; this audit is not a visual sign-off.
+
 ## Status / evidence boundary
 
 Repair code and non-rendering tests completed; **visual acceptance remains blocked**.

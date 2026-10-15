@@ -70,6 +70,15 @@ The package permits Python **3.10+** and `manim>=0.18.1,<1.0`; that broad range
 is not a claim of render verification for every release. The dedicated rendering
 reference stack is **Python 3.11, Manim CE 0.19.0, NumPy 2.2.6**.
 
+### Cloud development and actual verification
+
+See [verified cloud capabilities and remaining visual defects](docs/CLOUD_CAPABILITIES.md).
+The interactive workspace can edit/test/push but cannot fetch Debian native libraries;
+actual Manim rendering was performed on GitHub's Linux runner, not assumed from tests.
+`Cloud render verification` runs native probes, tests, all existing demos, notebook
+execution and publishes API-readable frame/report evidence in addition to artifacts.
+No setup on the user's Windows PC is required for this cloud workflow.
+
 ### Windows + VS Code Jupyter (recommended)
 
 Use the dedicated Conda-forge environment, not a mixture of Conda DLLs and pip
