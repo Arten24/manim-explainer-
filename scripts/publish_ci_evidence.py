@@ -6,6 +6,7 @@ Checks carry actual frame images as base64 JSON, NOT a visual approval.
 """
 from __future__ import annotations
 import base64
+import argparse
 import io
 import json
 import os
@@ -15,6 +16,9 @@ import xml.etree.ElementTree as ET
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--preliminary', action='store_true')
+    args = parser.parse_args()
     root = Path.cwd()
     repo = os.environ['GITHUB_REPOSITORY']
     sha = os.environ['GITHUB_SHA']
@@ -58,25 +62,32 @@ def main():
     failed = (not report.get('dependencies', {}).get('ready') or not report.get('tests')
               or any(report.get('tests', {}).get(k, 0) for k in ('failures', 'errors', 'skipped'))
               or len(renders) < 7 or any(r['status'] != 'RENDERED_AND_DECODED_NOT_VISUALLY_REVIEWED' for r in renders))
-    publish('QUONITRON cloud evidence', 'Actual dependency probes, tests and renders; no visual approval.',
-            json.dumps(report, indent=2)[-64000:], 'failure' if failed else 'success')
+    text = json.dumps(report, indent=2)
+    if len(text) > 64000:
+        raise RuntimeError('Evidence report exceeds Checks API limit; inspect artifact instead')
+    publish('QUONITRON preliminary render evidence' if args.preliminary else 'QUONITRON cloud evidence',
+            'Actual probes/renders; preliminary reports do NOT certify tests or notebook execution.',
+            text, 'neutral' if args.preliminary else 'failure' if failed else 'success')
     from PIL import Image
     for index, result in enumerate(renders):
         valid = [f for f in result.get('frames', []) if f['ok']]
         if not valid: continue
         # One settled sample per scene plus mid-transition/context samples.
-        chosen = [valid[-1]]
+        chosen = [valid[0], valid[-1]] if len(valid) > 1 else valid
         if result['scene'] in ('CodeToMemoryJourney', 'AssignmentInType', 'LayoutRepairExercise'):
             chosen += valid[1:3]
+        if result['scene'] == 'CodeToMemoryJourney':
+            chosen += [f for f in valid if f['time'] in (49, 54)]
         for frame in chosen:
             image = Image.open(frame['path']).convert('RGB')
+            source_width, source_height = image.size
             buffer = io.BytesIO()
             image.save(buffer, format='JPEG', quality=85)
             if len(buffer.getvalue()) > 44000:
                 image.thumbnail((854, 480))
                 buffer = io.BytesIO(); image.save(buffer, format='JPEG', quality=65)
             payload = dict(scene=result['scene'], timestamp=frame['time'], width=image.width,
-                           height=image.height, mime='image/jpeg',
+                           height=image.height, source_width=source_width, source_height=source_height, mime='image/jpeg',
                            data=base64.b64encode(buffer.getvalue()).decode())
             text = json.dumps(payload)
             if len(text) >= 64000:

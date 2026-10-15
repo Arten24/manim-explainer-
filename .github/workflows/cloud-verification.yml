@@ -12,6 +12,9 @@ on:
       - 'pyproject.toml'
       - '.github/workflows/cloud-verification.yml'
   workflow_dispatch:
+concurrency:
+  group: cloud-verification-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   checks: write
@@ -48,9 +51,9 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python scripts/publish_ci_evidence.py
+        run: python scripts/publish_ci_evidence.py --preliminary
       - name: Full suite (render failures and skips are reported)
-        run: python -m pytest -ra --junitxml=media/cloud-verification/tests.xml
+        run: python -m pytest -ra --timeout=180 --durations=15 --junitxml=media/cloud-verification/tests.xml
       - name: Actual notebook backend execution
         if: ${{ !cancelled() }}
         run: |
