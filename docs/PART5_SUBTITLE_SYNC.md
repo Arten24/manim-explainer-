@@ -57,7 +57,7 @@ Updater-only test doubles retain dt fallback; final playback clears the overlay.
 
 `SubtitleOverlay` is the existing registered component. `preflight(timeline)`
 measures every active cue combination using Part 4 Pango `measured_text` and dark
-caption tokens. `SubtitleStyle(max_lines=2, max_width=None, padding=.04,
+caption tokens. `SubtitleStyle(max_lines=2, max_width=None, padding=0.0,
 safe_margin=None, line_gap=.08, speaker_labels=False)` configures layout **inside**
 the existing reserved subtitle band. Extra safe margins only inset it. Long tokens
 wrap by glyph, explicit line breaks survive, font size never shrinks. Overflow

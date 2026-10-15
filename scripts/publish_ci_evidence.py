@@ -125,6 +125,8 @@ def main():
             chosen += valid[1:3]
         if result['scene'] == 'CodeToMemoryJourney':
             chosen += [f for f in valid if f['time'] in (49, 54)]
+        if result['scene'] == 'SubtitleSyncDemo':
+            chosen = valid  # first cue, gap, moving camera, multiline recap, tail
         for frame in chosen:
             image = Image.open(frame['path']).convert('RGB')
             source_width, source_height = image.size

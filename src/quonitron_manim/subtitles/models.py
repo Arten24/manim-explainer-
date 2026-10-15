@@ -147,7 +147,7 @@ class SubtitleStyle:
     """Insets within the shared subtitle reservation; never expands into content."""
     max_lines: int = 2
     max_width: Optional[float] = None
-    padding: float = 0.04
+    padding: float = 0.0
     safe_margin: Optional[float] = None
     line_gap: float = 0.08
     speaker_labels: bool = False
