@@ -218,3 +218,26 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Manim output and local media
+media/
+media_dir/
+partial_movie_files/
+*.mp4
+*.mov
+*.wav
+*.srt
+*.vtt
+!examples/**/*.srt
+!docs/**/*.md
+
+# Local secrets and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Generated previews
+previews/
+.renders/

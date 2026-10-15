@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quonitron.dev/schemas/catalog-v1.json",
+  "title": "QUONITRON Master Animation Catalog",
+  "description": "Searchable catalog of reusable Manim components, templates, and utilities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalog_version", "library_version", "components"],
+  "properties": {
+    "catalog_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "library_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "updated": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "category",
+        "module",
+        "class_name",
+        "description",
+        "test_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$",
+          "description": "Stable dotted component ID, e.g. math.equation.transform"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "category": {
+          "type": "string",
+          "enum": [
+            "design",
+            "motion",
+            "transition",
+            "text",
+            "shape",
+            "chart",
+            "math",
+            "physics",
+            "code",
+            "data_structure",
+            "ml",
+            "diagram",
+            "camera",
+            "effect",
+            "spatial",
+            "timing",
+            "template",
+            "utility",
+            "base"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "description": { "type": "string", "minLength": 1 },
+        "module": {
+          "type": "string",
+          "description": "Python import path of the implementing module"
+        },
+        "class_name": { "type": "string", "minLength": 1 },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["type", "description"],
+            "properties": {
+              "type": { "type": "string" },
+              "description": { "type": "string" },
+              "default": true,
+              "required": { "type": "boolean" },
+              "enum": { "type": "array" }
+            }
+          }
+        },
+        "defaults": { "type": "object" },
+        "dependencies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "compatibility": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "test_status": {
+          "type": "string",
+          "enum": ["untested", "syntax_ok", "unit_ok", "render_ok", "tested"]
+        },
+        "example": { "type": "string" },
+        "limitations": { "type": "string" },
+        "related_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "part": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Development-plan part that introduced this component"
+        }
+      }
+    }
+  }
+}
