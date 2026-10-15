@@ -12,6 +12,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from quonitron_manim.components.text import ALL_TEXT_COMPONENTS  # noqa: E402
 from quonitron_manim.motion import ALL_MOTION_RECIPES  # noqa: E402
 from quonitron_manim.transitions import ALL_TRANSITIONS  # noqa: E402
 
@@ -154,6 +155,36 @@ def extra_entries() -> list[dict]:
             ],
             "license": "MIT",
         },
+        {
+            "id": "utility.text_wrap",
+            "name": "Plain Text Wrap",
+            "version": "0.5.0",
+            "category": "utility",
+            "subcategory": "text",
+            "tags": ["wrap", "paragraph", "layout"],
+            "aliases": ["word wrap", "line wrapping"],
+            "description": "Word-wrap a string to a character budget without importing Manim.",
+            "use_cases": ["Plan paragraph breaks before constructing Text mobjects"],
+            "module": "quonitron_manim.components.text.wrap",
+            "function_name": "wrap_plain_text",
+            "parameters": {
+                "text": {"type": "string", "description": "Source copy"},
+                "max_chars": {
+                    "type": "integer",
+                    "description": "Soft character limit per line",
+                    "minimum": 8,
+                    "default": 42,
+                },
+            },
+            "dependencies": ["python>=3.10"],
+            "compatibility": {"python": ">=3.10"},
+            "example": "from quonitron_manim.components.text.wrap import wrap_plain_text",
+            "preview": None,
+            "test_status": "passed",
+            "limitations": "Character budget is a heuristic, not a glyph-width measure.",
+            "related_components": ["text.paragraph", "design.theme.quonitron_dark"],
+            "license": "MIT",
+        },
     ]
 
 
@@ -170,23 +201,23 @@ def main() -> int:
     preserved = [item for item in master["components"] if keep(item)]
     motion = [cls.catalog_dict() for cls in ALL_MOTION_RECIPES]
     transitions = [cls.catalog_dict() for cls in ALL_TRANSITIONS]
+    text = [cls.catalog_dict() for cls in ALL_TEXT_COMPONENTS]
     extras = extra_entries()
     seen = {}
     merged = []
-    for item in preserved + extras + motion + transitions:
+    for item in preserved + extras + motion + transitions + text:
         if item["id"] in seen:
             raise SystemExit(f"duplicate {item['id']}")
         seen[item["id"]] = True
         merged.append(item)
     master["components"] = merged
-    master["catalog_version"] = "1.3.0"
-    master["library_version"] = "0.4.0"
+    master["catalog_version"] = "1.4.0"
+    master["library_version"] = "0.5.0"
     master["updated"] = "2026-10-15"
     master["notes"] = (
-        "Part 3 adds reusable transitions on the shared Part 2 timeline. "
-        "Optional beats are conceptual chapters; the clock does not reset. "
-        "Camera transitions require QuonitronMovingCameraScene. "
-        "Parameter tests pass without Cairo. Preview renders remain untested here."
+        "Part 4 adds reusable typography components on the shared timeline. "
+        "Paragraph wrapping and parameter checks pass without Cairo. "
+        "build() still needs Manim Text. Preview renders remain untested here."
     )
     path.write_text(json.dumps(master, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {len(merged)} components to {path}")

@@ -1,0 +1,47 @@
+WEBVTT
+
+NOTE Part 4 typography demo. Estimated timings. Content area stays above captions.
+
+cue-001
+00:00:00.000 --> 00:00:04.334
+A variable is a name that points at a value.
+
+cue-002
+00:00:04.334 --> 00:00:08.668
+We write that idea in code as score equals ten.
+
+cue-003
+00:00:08.668 --> 00:00:14.218
+Look at the left-hand side: the word score is the name we chose.
+
+cue-004
+00:00:14.218 --> 00:00:20.718
+That name is not the number itself; it is how we will find the number later.
+
+cue-005
+00:00:20.718 --> 00:00:27.079
+Now look at the right-hand side: ten is the value sitting in that named slot.
+
+cue-006
+00:00:27.079 --> 00:00:32.224
+An annotation helps: the name stays put even when the number changes.
+
+cue-007
+00:00:32.224 --> 00:00:37.775
+We can write the same fact as a compact equation, score equals ten.
+
+cue-008
+00:00:37.775 --> 00:00:42.919
+If the program later assigns eleven, only the stored value is replaced.
+
+cue-009
+00:00:42.919 --> 00:00:47.254
+The identifier score still labels the same slot in memory.
+
+cue-010
+00:00:47.254 --> 00:00:52.398
+So remember three pieces: a name, a slot, and a replaceable value.
+
+cue-011
+00:00:52.398 --> 00:00:58.354
+Keep the spoken captions low on the frame, and the lesson text above them.

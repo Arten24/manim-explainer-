@@ -7,8 +7,8 @@ subtitle export, and automated checks.
 The package name is `quonitron_manim`. Agents should **search the catalog
 and reuse tested components** before writing new animation code.
 
-Current milestone: **Part 3 — reusable transitions on the shared timeline**.
-Parts 4–20 are not implemented.
+Current milestone: **Part 4 — text and typography**.
+Parts 5–20 are not implemented.
 
 ## Purpose
 
@@ -26,7 +26,7 @@ src/quonitron_manim/
   motion/            Part 2 animation recipes
   transitions/       Part 3 scene-change recipes
   timeline/          shared subtitle + event clock
-  components/        reusable building blocks
+  components/        foundation + Part 4 text blocks
   subtitles/         cues, segmentation, SRT / WebVTT
 examples/            Part 1 + Part 2 demos and timeline JSON
 ```
@@ -49,8 +49,12 @@ Details: [docs/architecture.md](docs/architecture.md).
 │   ├── foundation_demo.py
 │   ├── motion_timeline_demo.py
 │   ├── journey_demo.py
+│   ├── text_typography_demo.py
 │   ├── variable_timeline.json
-│   └── journey_timeline.json
+│   ├── journey_timeline.json
+│   └── text_timeline.json
+├── notebooks/
+│   └── part04_text_typography_demo.ipynb
 ├── tests/
 ├── scripts/
 │   ├── validate_catalog.py
@@ -118,6 +122,7 @@ Inexpensive checks (no renderer):
 python scripts/validate_catalog.py
 python scripts/timeline_report.py examples/journey_timeline.json --out examples/journey_timeline_report.md
 python scripts/search_catalog.py --category transition wipe
+python scripts/search_catalog.py --category text paragraph
 pytest -m "not render"
 ```
 
@@ -128,6 +133,7 @@ pytest -m render
 python scripts/render_demo.py
 python scripts/render_motion_demo.py
 python scripts/render_transition_demo.py
+python scripts/render_text_demo.py
 ```
 
 GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
@@ -141,6 +147,7 @@ From the repository root:
 manim -ql examples/foundation_demo.py VariableStoresAValue
 manim -ql examples/motion_timeline_demo.py VariableMemoryTimeline
 manim -ql examples/journey_demo.py CodeToMemoryJourney
+manim -ql examples/text_typography_demo.py AssignmentInType
 ```
 
 `-ql` is 480p15 and is the intended smoke render. Do not use `-qh` for
@@ -151,7 +158,8 @@ Part 2 loads `examples/variable_timeline.json` for **both** animation
 `python scripts/timeline_report.py`.
 
 Motion, transitions, and the timeline: [docs/motion-library.md](docs/motion-library.md),
-[docs/transitions.md](docs/transitions.md), [docs/timeline.md](docs/timeline.md).
+[docs/transitions.md](docs/transitions.md), [docs/timeline.md](docs/timeline.md),
+[docs/text-typography.md](docs/text-typography.md).
 
 ## Master JSON catalog
 
@@ -200,7 +208,7 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 
 ## Current limitations
 
-- Parts 4–20 are not built. The category list is a registry, not a fake
+- Parts 5–20 are not built. The category list is a registry, not a fake
   component dump.
 - Part 2–3 `animate()` calls need a real Manim renderer. Catalog
   `passed` on those rows means **parameter tests**, not a preview MP4.
@@ -237,7 +245,7 @@ Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
 | 19 | Automated render QA |
 | 20 | Agent integration and catalog expansion |
 
-Do not start Part 4 until Part 3 is reported complete.
+Do not start Part 5 until Part 4 is reported complete.
 
 ## License
 

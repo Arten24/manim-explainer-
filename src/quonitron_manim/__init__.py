@@ -1,8 +1,8 @@
-"""QUONITRON Manim Master Library — Parts 1–3."""
+"""QUONITRON Manim Master Library — Parts 1–4."""
 
 from __future__ import annotations
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 __catalog_schema_version__ = "1.0.0"
 
 from quonitron_manim.config import RenderProfile, get_render_profile

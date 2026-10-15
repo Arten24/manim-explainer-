@@ -1,0 +1,43 @@
+1
+00:00:00,000 --> 00:00:04,334
+A variable is a name that points at a value.
+
+2
+00:00:04,334 --> 00:00:08,668
+We write that idea in code as score equals ten.
+
+3
+00:00:08,668 --> 00:00:14,218
+Look at the left-hand side: the word score is the name we chose.
+
+4
+00:00:14,218 --> 00:00:20,718
+That name is not the number itself; it is how we will find the number later.
+
+5
+00:00:20,718 --> 00:00:27,079
+Now look at the right-hand side: ten is the value sitting in that named slot.
+
+6
+00:00:27,079 --> 00:00:32,224
+An annotation helps: the name stays put even when the number changes.
+
+7
+00:00:32,224 --> 00:00:37,775
+We can write the same fact as a compact equation, score equals ten.
+
+8
+00:00:37,775 --> 00:00:42,919
+If the program later assigns eleven, only the stored value is replaced.
+
+9
+00:00:42,919 --> 00:00:47,254
+The identifier score still labels the same slot in memory.
+
+10
+00:00:47,254 --> 00:00:52,398
+So remember three pieces: a name, a slot, and a replaceable value.
+
+11
+00:00:52,398 --> 00:00:58,354
+Keep the spoken captions low on the frame, and the lesson text above them.

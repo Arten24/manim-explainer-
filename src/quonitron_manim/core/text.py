@@ -42,3 +42,13 @@ def themed_text(
         warn_missing_font=False,
         **kwargs,
     )
+
+
+def fit_to_width(mobject: Any, max_width: float) -> Any:
+    """Scale a mobject down if it is wider than ``max_width``. Never scales up."""
+    if max_width <= 0:
+        raise ValueError("max_width must be positive")
+    width = float(getattr(mobject, "width", 0) or 0)
+    if width > max_width:
+        mobject.scale(max_width / width)
+    return mobject

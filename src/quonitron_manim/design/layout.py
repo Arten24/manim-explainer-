@@ -75,3 +75,42 @@ def title_anchor(area: SafeArea, lift: float = 0.15) -> Tuple[float, float, floa
 def subtitle_anchor(area: SafeArea, drop: float = 0.10) -> Tuple[float, float, float]:
     """World coordinates for a bottom caption / subtitle cue."""
     return (0.0, area.bottom + drop, 0.0)
+
+
+def content_area(
+    frame_width: float = 14.222222,
+    frame_height: float = 8.0,
+    margin: float = 0.80,
+    caption_band: float = 1.05,
+) -> SafeArea:
+    """Safe area with the bottom caption band reserved for SubtitleOverlay."""
+    area = safe_area(frame_width, frame_height, margin)
+    band = max(0.0, float(caption_band))
+    return SafeArea(
+        left=area.left,
+        right=area.right,
+        bottom=area.bottom + band,
+        top=area.top,
+    )
+
+
+def box_overflow(
+    left: float,
+    right: float,
+    bottom: float,
+    top: float,
+    area: SafeArea,
+    *,
+    tol: float = 1e-6,
+) -> list:
+    """Return side names where a bounding box leaves ``area``."""
+    hits = []
+    if left < area.left - tol:
+        hits.append("left")
+    if right > area.right + tol:
+        hits.append("right")
+    if bottom < area.bottom - tol:
+        hits.append("bottom")
+    if top > area.top + tol:
+        hits.append("top")
+    return hits

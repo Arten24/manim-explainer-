@@ -1,0 +1,469 @@
+{
+  "scene": {
+    "scene_id": "assignment_type",
+    "title": "A name for a value",
+    "start": 0.0,
+    "end": 59.754
+  },
+  "beats": [
+    {
+      "scene_id": "beat-open",
+      "title": "Title",
+      "start": 0.0,
+      "end": 4.334
+    },
+    {
+      "scene_id": "beat-code",
+      "title": "Code line",
+      "start": 4.334,
+      "end": 8.668
+    },
+    {
+      "scene_id": "beat-name",
+      "title": "The name",
+      "start": 8.668,
+      "end": 20.718
+    },
+    {
+      "scene_id": "beat-value",
+      "title": "The value",
+      "start": 20.718,
+      "end": 32.224
+    },
+    {
+      "scene_id": "beat-math",
+      "title": "Replace the value",
+      "start": 32.224,
+      "end": 42.919
+    },
+    {
+      "scene_id": "beat-recap",
+      "title": "Recap",
+      "start": 42.919,
+      "end": 59.754
+    }
+  ],
+  "events": [
+    {
+      "id": "ev-title",
+      "scene_id": "beat-open",
+      "motion_id": "motion.appearance.fade_in",
+      "start": 0.25,
+      "end": 4.334,
+      "play_duration": 1.1,
+      "overlap_ok": false,
+      "depends_on": [],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-heading",
+      "scene_id": "beat-open",
+      "motion_id": "motion.appearance.write",
+      "start": 1.45,
+      "end": 5.1339999999999995,
+      "play_duration": 1.15,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-title"
+      ],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-sub",
+      "scene_id": "beat-open",
+      "motion_id": "motion.appearance.fade_in",
+      "start": 2.7,
+      "end": 5.834,
+      "play_duration": 0.8,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-heading"
+      ],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-code",
+      "scene_id": "beat-code",
+      "motion_id": "motion.appearance.write",
+      "start": 4.534,
+      "end": 14.218,
+      "play_duration": 1.2,
+      "depends_on": [
+        "ev-sub"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-name",
+      "scene_id": "beat-name",
+      "motion_id": "text.highlighted_phrase",
+      "start": 8.818,
+      "end": 20.718,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-code"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-indicate-name",
+      "scene_id": "beat-name",
+      "motion_id": "motion.emphasis.indicate",
+      "start": 14.368,
+      "end": 20.718,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-name"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-value",
+      "scene_id": "beat-value",
+      "motion_id": "text.highlighted_phrase",
+      "start": 20.868,
+      "end": 32.224,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-indicate-name"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-indicate-value",
+      "scene_id": "beat-value",
+      "motion_id": "motion.emphasis.indicate",
+      "start": 22.018,
+      "end": 27.079,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-value"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-note",
+      "scene_id": "beat-value",
+      "motion_id": "text.annotation",
+      "start": 27.229,
+      "end": 32.224,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-indicate-value"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-clear-explain",
+      "scene_id": "beat-value",
+      "motion_id": "motion.appearance.fade_out",
+      "start": 31.523999999999997,
+      "end": 32.224,
+      "play_duration": 0.55,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-note"
+      ],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-equation",
+      "scene_id": "beat-math",
+      "motion_id": "text.equation",
+      "start": 32.273999999999994,
+      "end": 42.919,
+      "play_duration": 1.0,
+      "depends_on": [
+        "ev-clear-explain"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-counter",
+      "scene_id": "beat-math",
+      "motion_id": "text.counter",
+      "start": 33.373999999999995,
+      "end": 42.919,
+      "play_duration": 0.85,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-equation"
+      ],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-replace",
+      "scene_id": "beat-math",
+      "motion_id": "motion.transform.replacement",
+      "start": 37.925,
+      "end": 42.919,
+      "play_duration": 1.1,
+      "depends_on": [
+        "ev-counter"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-clear-code",
+      "scene_id": "beat-math",
+      "motion_id": "motion.appearance.fade_out",
+      "start": 42.218999999999994,
+      "end": 42.919,
+      "play_duration": 0.55,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-replace"
+      ],
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-steps",
+      "scene_id": "beat-recap",
+      "motion_id": "text.step_list",
+      "start": 43.068999999999996,
+      "end": 58.354,
+      "play_duration": 1.05,
+      "depends_on": [
+        "ev-clear-code"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-recap",
+      "scene_id": "beat-recap",
+      "motion_id": "text.bullet_list",
+      "start": 47.403999999999996,
+      "end": 58.354,
+      "play_duration": 1.05,
+      "depends_on": [
+        "ev-steps"
+      ],
+      "overlap_ok": false,
+      "params": {},
+      "kind": "motion"
+    },
+    {
+      "id": "ev-body",
+      "scene_id": "beat-recap",
+      "motion_id": "text.paragraph",
+      "start": 52.548,
+      "end": 58.354,
+      "play_duration": 1.0,
+      "overlap_ok": true,
+      "depends_on": [
+        "ev-recap"
+      ],
+      "params": {},
+      "kind": "motion"
+    }
+  ],
+  "cues": [
+    {
+      "id": "cue-001",
+      "scene_id": "assignment_type",
+      "sequence": 1,
+      "text": "A variable is a name that points at a value.",
+      "start_time": 0.0,
+      "end_time": 4.334,
+      "event_ids": [
+        "ev-title",
+        "ev-heading"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-002",
+      "scene_id": "assignment_type",
+      "sequence": 2,
+      "text": "We write that idea in code as score equals ten.",
+      "start_time": 4.334,
+      "end_time": 8.668,
+      "event_ids": [
+        "ev-code"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-003",
+      "scene_id": "assignment_type",
+      "sequence": 3,
+      "text": "Look at the left-hand side: the word score is the name we chose.",
+      "start_time": 8.668,
+      "end_time": 14.218,
+      "event_ids": [
+        "ev-name"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-004",
+      "scene_id": "assignment_type",
+      "sequence": 4,
+      "text": "That name is not the number itself; it is how we will find the number later.",
+      "start_time": 14.218,
+      "end_time": 20.718,
+      "event_ids": [
+        "ev-indicate-name"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-005",
+      "scene_id": "assignment_type",
+      "sequence": 5,
+      "text": "Now look at the right-hand side: ten is the value sitting in that named slot.",
+      "start_time": 20.718,
+      "end_time": 27.079,
+      "event_ids": [
+        "ev-value",
+        "ev-indicate-value"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-006",
+      "scene_id": "assignment_type",
+      "sequence": 6,
+      "text": "An annotation helps: the name stays put even when the number changes.",
+      "start_time": 27.079,
+      "end_time": 32.224,
+      "event_ids": [
+        "ev-note"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-007",
+      "scene_id": "assignment_type",
+      "sequence": 7,
+      "text": "We can write the same fact as a compact equation, score equals ten.",
+      "start_time": 32.224,
+      "end_time": 37.775,
+      "event_ids": [
+        "ev-equation",
+        "ev-counter"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-008",
+      "scene_id": "assignment_type",
+      "sequence": 8,
+      "text": "If the program later assigns eleven, only the stored value is replaced.",
+      "start_time": 37.775,
+      "end_time": 42.919,
+      "event_ids": [
+        "ev-replace"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-009",
+      "scene_id": "assignment_type",
+      "sequence": 9,
+      "text": "The identifier score still labels the same slot in memory.",
+      "start_time": 42.919,
+      "end_time": 47.254,
+      "event_ids": [
+        "ev-steps"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-010",
+      "scene_id": "assignment_type",
+      "sequence": 10,
+      "text": "So remember three pieces: a name, a slot, and a replaceable value.",
+      "start_time": 47.254,
+      "end_time": 52.398,
+      "event_ids": [
+        "ev-recap"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    },
+    {
+      "id": "cue-011",
+      "scene_id": "assignment_type",
+      "sequence": 11,
+      "text": "Keep the spoken captions low on the frame, and the lesson text above them.",
+      "start_time": 52.398,
+      "end_time": 58.354,
+      "event_ids": [
+        "ev-body"
+      ],
+      "visual_cue": null,
+      "speaker": null,
+      "timing_status": "estimated",
+      "manual_start": null,
+      "manual_end": null
+    }
+  ],
+  "narration": "A variable is a name that points at a value.\nWe write that idea in code as score equals ten.\nLook at the left-hand side: the word score is the name we chose.\nThat name is not the number itself; it is how we will find the number later.\nNow look at the right-hand side: ten is the value sitting in that named slot.\nAn annotation helps: the name stays put even when the number changes.\nWe can write the same fact as a compact equation, score equals ten.\nIf the program later assigns eleven, only the stored value is replaced.\nThe identifier score still labels the same slot in memory.\nSo remember three pieces: a name, a slot, and a replaceable value.\nKeep the spoken captions low on the frame, and the lesson text above them.\n",
+  "frame_rate": 30,
+  "reading_wpm": 148,
+  "notes": "Part 4 typography demo. Estimated timings. Content area stays above captions."
+}

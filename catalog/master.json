@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "catalog_version": "1.3.0",
-  "library_version": "0.4.0",
+  "catalog_version": "1.4.0",
+  "library_version": "0.5.0",
   "updated": "2026-10-15",
-  "notes": "Part 3 adds reusable transitions on the shared Part 2 timeline. Optional beats are conceptual chapters; the clock does not reset. Camera transitions require QuonitronMovingCameraScene. Parameter tests pass without Cairo. Preview renders remain untested here.",
+  "notes": "Part 4 adds reusable typography components on the shared timeline. Paragraph wrapping and parameter checks pass without Cairo. build() still needs Manim Text. Preview renders remain untested here.",
   "components": [
     {
       "id": "design.theme.quonitron_dark",
@@ -526,6 +526,55 @@
       "related_components": [
         "foundation.base_scene",
         "transition.camera.zoom_in",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "utility.text_wrap",
+      "name": "Plain Text Wrap",
+      "version": "0.5.0",
+      "category": "utility",
+      "subcategory": "text",
+      "tags": [
+        "wrap",
+        "paragraph",
+        "layout"
+      ],
+      "aliases": [
+        "word wrap",
+        "line wrapping"
+      ],
+      "description": "Word-wrap a string to a character budget without importing Manim.",
+      "use_cases": [
+        "Plan paragraph breaks before constructing Text mobjects"
+      ],
+      "module": "quonitron_manim.components.text.wrap",
+      "function_name": "wrap_plain_text",
+      "parameters": {
+        "text": {
+          "type": "string",
+          "description": "Source copy"
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "Soft character limit per line",
+          "minimum": 8,
+          "default": 42
+        }
+      },
+      "dependencies": [
+        "python>=3.10"
+      ],
+      "compatibility": {
+        "python": ">=3.10"
+      },
+      "example": "from quonitron_manim.components.text.wrap import wrap_plain_text",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Character budget is a heuristic, not a glyph-width measure.",
+      "related_components": [
+        "text.paragraph",
         "design.theme.quonitron_dark"
       ],
       "license": "MIT"
@@ -5895,6 +5944,717 @@
         "design.theme.quonitron_dark",
         "timeline.shared",
         "motion.appearance.fade_in"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.display_title",
+      "name": "Display Title",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "block",
+      "tags": [
+        "title",
+        "typography"
+      ],
+      "aliases": [
+        "main title",
+        "display title"
+      ],
+      "description": "In-scene title using the type hierarchy. Prefer TitleCard for branded openings.",
+      "use_cases": [
+        "Name the current explanation without the full title card"
+      ],
+      "module": "quonitron_manim.components.text.blocks",
+      "class_name": "DisplayTitle",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Title copy",
+          "default": "Title"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.blocks import DisplayTitle\nmob = DisplayTitle(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "foundation.title_card",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.heading",
+      "name": "Scene Heading",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "block",
+      "tags": [
+        "heading",
+        "typography"
+      ],
+      "aliases": [
+        "section heading",
+        "heading"
+      ],
+      "description": "Section heading with an optional accent marker.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.blocks",
+      "class_name": "SceneHeading",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Heading copy",
+          "default": "Heading"
+        },
+        "marker": {
+          "type": "boolean",
+          "description": "Draw the accent bar used by foundation.section_heading",
+          "default": true
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.blocks import SceneHeading\nmob = SceneHeading(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "foundation.section_heading",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.subheading",
+      "name": "Subheading",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "block",
+      "tags": [
+        "subheading",
+        "typography"
+      ],
+      "aliases": [
+        "subheading",
+        "explanatory heading"
+      ],
+      "description": "Secondary heading under a section title.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.blocks",
+      "class_name": "Subheading",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Subheading copy",
+          "default": "Subheading"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.blocks import Subheading\nmob = Subheading(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.paragraph",
+      "name": "Body Paragraph",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "block",
+      "tags": [
+        "paragraph",
+        "wrap",
+        "body"
+      ],
+      "aliases": [
+        "paragraph",
+        "explanatory text",
+        "wrapped body"
+      ],
+      "description": "Wrapped explanatory paragraph that stays inside the content area.",
+      "use_cases": [
+        "A teacher sentence that must not run off the frame"
+      ],
+      "module": "quonitron_manim.components.text.blocks",
+      "class_name": "BodyParagraph",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Paragraph copy"
+        },
+        "role": {
+          "type": "string",
+          "description": "Type role",
+          "default": "body",
+          "enum": [
+            "body",
+            "label",
+            "caption"
+          ]
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.blocks import BodyParagraph\nmob = BodyParagraph(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.caption",
+      "name": "Educational Caption",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "block",
+      "tags": [
+        "caption",
+        "label"
+      ],
+      "aliases": [
+        "diagram caption"
+      ],
+      "description": "In-scene caption for a diagram. Not the SubtitleOverlay clock.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.blocks",
+      "class_name": "EducationalCaption",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Caption copy"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.blocks import EducationalCaption\nmob = EducationalCaption(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "This is educational copy next to a figure. Timed narration uses foundation.subtitle_overlay on the shared timeline.",
+      "related_components": [
+        "foundation.subtitle_overlay",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.inline_code",
+      "name": "Inline Code",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "code",
+      "tags": [
+        "code",
+        "mono",
+        "token"
+      ],
+      "aliases": [
+        "inline code",
+        "code label"
+      ],
+      "description": "A short identifier or token in the mono stack.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.code",
+      "class_name": "InlineCode",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Token or short snippet",
+          "default": "score"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.code import InlineCode\nmob = InlineCode(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.code_line",
+      "name": "Code Line",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "code",
+      "tags": [
+        "code",
+        "statement",
+        "mono"
+      ],
+      "aliases": [
+        "code statement",
+        "source line"
+      ],
+      "description": "One source line on a surface chip. Not a full syntax highlighter (Part 10).",
+      "use_cases": [
+        "Show score = 10 as the assignment being explained"
+      ],
+      "module": "quonitron_manim.components.text.code",
+      "class_name": "CodeLine",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Source line",
+          "default": "score = 10"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.code import CodeLine\nmob = CodeLine(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Single line, no lexer. Full highlighters belong in Part 10.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.equation",
+      "name": "Equation",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "math",
+      "tags": [
+        "equation",
+        "math",
+        "tex"
+      ],
+      "aliases": [
+        "mathematical expression",
+        "equation"
+      ],
+      "description": "A single equation. Uses manim.MathTex, falling back to Text if LaTeX fails.",
+      "use_cases": [
+        "Show score as a named quantity without a full math lecture"
+      ],
+      "module": "quonitron_manim.components.text.math",
+      "class_name": "EquationText",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "tex": {
+          "type": "string",
+          "description": "TeX body, without surrounding $$",
+          "default": "score = 10"
+        },
+        "color_role": {
+          "type": "string",
+          "description": "Palette role",
+          "default": "equation"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.math import EquationText\nmob = EquationText(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "MathTex needs a LaTeX install. Without it the component renders the source as Text.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "motion.appearance.write"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.annotation",
+      "name": "Annotation Callout",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "emphasis",
+      "tags": [
+        "annotation",
+        "callout",
+        "label"
+      ],
+      "aliases": [
+        "annotation",
+        "explanatory label",
+        "callout"
+      ],
+      "description": "Accent-bar callout for a short explanation beside a figure.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.emphasis",
+      "class_name": "AnnotationCallout",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Callout copy"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.emphasis import AnnotationCallout\nmob = AnnotationCallout(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.highlighted_phrase",
+      "name": "Highlighted Phrase",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "emphasis",
+      "tags": [
+        "highlight",
+        "phrase",
+        "emphasis"
+      ],
+      "aliases": [
+        "highlighted words",
+        "emphasize a phrase"
+      ],
+      "description": "A sentence with one phrase in the highlight color, exposed as ``.phrase``.",
+      "use_cases": [
+        "Color the identifier in a spoken sentence while keeping the rest readable"
+      ],
+      "module": "quonitron_manim.components.text.emphasis",
+      "class_name": "HighlightedPhrase",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "text": {
+          "type": "string",
+          "description": "Full sentence"
+        },
+        "phrase": {
+          "type": "string",
+          "description": "Substring to highlight"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.emphasis import HighlightedPhrase\nmob = HighlightedPhrase(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.counter",
+      "name": "Counter Label",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "emphasis",
+      "tags": [
+        "counter",
+        "number",
+        "value"
+      ],
+      "aliases": [
+        "numeric label",
+        "counter"
+      ],
+      "description": "Numeric value with an optional caption. Value is ``.value_mob`` for transforms.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.emphasis",
+      "class_name": "CounterLabel",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "value": {
+          "type": "string",
+          "description": "Displayed value",
+          "default": "10"
+        },
+        "label": {
+          "type": "string",
+          "description": "Caption under the number",
+          "default": ""
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.emphasis import CounterLabel\nmob = CounterLabel(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "motion.util.changing_decimal",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.bullet_list",
+      "name": "Bullet List",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "list",
+      "tags": [
+        "list",
+        "bullets",
+        "recap"
+      ],
+      "aliases": [
+        "bullet points",
+        "bullet list"
+      ],
+      "description": "Vertical bullet list with wrapped items.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.lists",
+      "class_name": "BulletList",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "items": {
+          "type": "array",
+          "description": "List of item strings"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.lists import BulletList\nmob = BulletList(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.step_list",
+      "name": "Step List",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "list",
+      "tags": [
+        "list",
+        "steps",
+        "procedure"
+      ],
+      "aliases": [
+        "step-by-step list",
+        "numbered steps"
+      ],
+      "description": "Numbered steps for a short procedure.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.lists",
+      "class_name": "StepList",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "items": {
+          "type": "array",
+          "description": "Steps in order"
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.lists import StepList\nmob = StepList(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "text.group",
+      "name": "Text Stack",
+      "version": "0.5.0",
+      "category": "text",
+      "subcategory": "layout",
+      "tags": [
+        "group",
+        "stack",
+        "layout"
+      ],
+      "aliases": [
+        "text grouping",
+        "stack text"
+      ],
+      "description": "Vertical stack of already-built mobjects using theme spacing.",
+      "use_cases": [],
+      "module": "quonitron_manim.components.text.emphasis",
+      "class_name": "TextStack",
+      "parameters": {
+        "max_width": {
+          "type": "number",
+          "description": "Maximum width in scene units. Defaults to the content area (above captions).",
+          "minimum": 0.5
+        },
+        "buff": {
+          "type": "number",
+          "description": "Gap in scene units. Default is theme.spacing.md",
+          "minimum": 0
+        }
+      },
+      "dependencies": [
+        "manim>=0.18.1"
+      ],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.components.text.emphasis import TextStack\nmob = TextStack(text='Hello').get()",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "build() needs Manim Text. Unit tests cover wrapping and parameters, not a preview render.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "timeline.shared",
+        "foundation.subtitle_overlay"
       ],
       "license": "MIT"
     }

@@ -7,9 +7,9 @@ working code, tests, and an honest limitations note.
 | --- | --- | --- |
 | 0 | Repository bootstrap | superseded by Part 1 layout |
 | 1 | Foundation and design system | done |
-| 2 | Basic motion library + shared subtitle timeline | **this milestone** |
-| 3 | Transitions and scene changes | not started |
-| 4 | Text and typography | not started |
+| 2 | Basic motion library + shared subtitle timeline | done |
+| 3 | Transitions and scene changes | done |
+| 4 | Text and typography | **this milestone** |
 | 5 | Subtitle system (full planner + sidecar metadata) | not started |
 | 6 | Shapes and 2D graphics | not started |
 | 7 | Charts and data visualization | not started |

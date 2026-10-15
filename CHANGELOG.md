@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.0 — 2026-10-15
+
+### Part 4 — text and typography
+
+- 14 `text.*` components (title, heading, paragraph wrap, code line, equation, highlight, lists, counter)
+- `content_area()` keeps lesson copy above the subtitle band
+- Demo `AssignmentInType` on the shared timeline (`examples/text_timeline.json`)
+- Notebook `notebooks/part04_text_typography_demo.ipynb` (no inline Manim magic in this workspace)
+- Catalog 1.4.0
+
+## 0.4.0 — 2026-10-15
+
+### Part 3 — transitions
+
+- 30 transition recipes on the shared timeline
+- Optional beats; camera recipes need `QuonitronMovingCameraScene`
+- Demo `CodeToMemoryJourney`
+
 ## 0.3.0 — 2026-10-15
 
 ### Part 2 — motion library and shared timeline

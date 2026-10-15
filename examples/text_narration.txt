@@ -1,0 +1,11 @@
+A variable is a name that points at a value.
+We write that idea in code as score equals ten.
+Look at the left-hand side: the word score is the name we chose.
+That name is not the number itself; it is how we will find the number later.
+Now look at the right-hand side: ten is the value sitting in that named slot.
+An annotation helps: the name stays put even when the number changes.
+We can write the same fact as a compact equation, score equals ten.
+If the program later assigns eleven, only the stored value is replaced.
+The identifier score still labels the same slot in memory.
+So remember three pieces: a name, a slot, and a replaceable value.
+Keep the spoken captions low on the frame, and the lesson text above them.

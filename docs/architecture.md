@@ -23,7 +23,7 @@ segmenter ──► LinkedCue[] ──► Timeline (seconds)
 | `catalog/` | What exists: ids, parameters, test status |
 | `src/quonitron_manim/design/` | How it looks: color, type, space, motion |
 | `src/quonitron_manim/core/` | Scene contract, catalog loader, component base |
-| `src/quonitron_manim/components/` | Reusable building blocks |
+| `src/quonitron_manim/components/` | Foundation shells + Part 4 typography |
 | `src/quonitron_manim/motion/` | Part 2 animation recipes |
 | `src/quonitron_manim/transitions/` | Part 3 scene-change recipes |
 | `src/quonitron_manim/timeline/` | Shared seconds clock |

@@ -65,6 +65,17 @@ class Typography:
             "code", 26.0, "highlight", family="mono"
         )
     )
+    subheading: TextStyle = field(
+        default_factory=lambda: TextStyle(
+            "subheading", 30.0, "text_secondary", "MEDIUM"
+        )
+    )
+    annotation: TextStyle = field(
+        default_factory=lambda: TextStyle("annotation", 22.0, "accent")
+    )
+    equation: TextStyle = field(
+        default_factory=lambda: TextStyle("equation", 32.0, "equation")
+    )
 
     def style(self, role: str) -> TextStyle:
         if not hasattr(self, role) or role in {"font_sans", "font_mono", "line_spacing"}:
