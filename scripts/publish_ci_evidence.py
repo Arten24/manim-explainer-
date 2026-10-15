@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--preliminary', action='store_true')
+    parser.add_argument('--notebook-only', action='store_true')
     args = parser.parse_args()
     root = Path.cwd()
     repo = os.environ['GITHUB_REPOSITORY']
@@ -37,6 +38,21 @@ def main():
         with urllib.request.urlopen(request, timeout=60) as response:
             result = json.load(response)
         print(f'Published {name}: check {result["id"]}')
+
+    if args.notebook_only:
+        executed = root / 'media/environment-setup/environment_render_test.executed.ipynb'
+        data = json.loads(executed.read_text()) if executed.exists() else {'cells': []}
+        cells = [c for c in data['cells'] if c['cell_type'] == 'code']
+        outputs = [o for c in cells for o in c.get('outputs', [])]
+        errors = [{'name': o.get('ename'), 'message': o.get('evalue')} for o in outputs if o['output_type'] == 'error']
+        videos = sum('<video' in ''.join(o.get('data', {}).get('text/html', [])) for o in outputs)
+        report = dict(code_cells=len(cells), executed_cells=sum(c.get('execution_count') is not None for c in cells),
+                      errors=errors, video_html_outputs=videos,
+                      inline_browser_playback='NOT_VERIFIED', sha=sha)
+        ok = bool(cells) and report['executed_cells'] == len(cells) and not errors and videos == 7
+        publish('QUONITRON notebook evidence', 'Actual notebook backend; browser playback is not certified.',
+                json.dumps(report, indent=2), 'success' if ok else 'failure')
+        return
 
     diagnostics = root / 'media/cloud-verification/dependencies.json'
     tests = root / 'media/cloud-verification/tests.xml'

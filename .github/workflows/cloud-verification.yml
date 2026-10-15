@@ -54,12 +54,6 @@ jobs:
         run: python scripts/publish_ci_evidence.py --preliminary
       - name: Full suite (render failures and skips are reported)
         run: python -m pytest -ra --timeout=180 --durations=15 --junitxml=media/cloud-verification/tests.xml
-      - name: Actual notebook backend execution
-        if: ${{ !cancelled() }}
-        run: |
-          mkdir -p media/cloud-verification
-          set -o pipefail
-          python scripts/execute_environment_notebook.py 2>&1 | tee media/cloud-verification/notebook.log
       - name: Publish API-readable evidence (no artifact-host dependency)
         if: ${{ always() }}
         env:
@@ -69,6 +63,35 @@ jobs:
         if: always()
         with:
           name: cloud-render-evidence
+          path: media/
+          retention-days: 7
+          if-no-files-found: warn
+
+  notebook:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Native and Python notebook rendering stack
+        run: |
+          sudo apt-get update --error-on=any
+          sudo apt-get install -y --no-install-recommends libcairo2-dev libpango1.0-dev pkg-config python3-dev ffmpeg fonts-dejavu-core
+          python -m pip install -r requirements-render.txt
+          python -m pip install --no-deps -e .
+      - name: Execute real-render notebook backend
+        run: python scripts/execute_environment_notebook.py
+      - name: Publish notebook execution evidence
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/publish_ci_evidence.py --notebook-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cloud-notebook-evidence
           path: media/
           retention-days: 7
           if-no-files-found: warn
