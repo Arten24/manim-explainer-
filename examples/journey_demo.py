@@ -110,6 +110,17 @@ class CodeToMemoryJourney(QuonitronMovingCameraScene):
         preview = self.make_caption("Next: how assignment overwrites a slot.")
         preview.next_to(recap, DOWN, buff=self.theme.spacing.sm)
 
+        from quonitron_manim.design.layout import place_in
+        self.place_title(heading)
+        place_in(card, self.layout_regions["content"])
+        code.move_to(card)
+        table.move_to(card)
+        recap.move_to(card)
+        preview.move_to(card)
+        for key, mob in dict(title=title, heading=heading, card=card, code=code,
+                             table=table, recap=recap, preview=preview).items():
+            self.register_layout(key, mob)
+
         if camera_available(self):
             self.camera.frame.save_state()
 

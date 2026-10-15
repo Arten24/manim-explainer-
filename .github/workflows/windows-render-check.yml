@@ -1,0 +1,44 @@
+name: Windows rendering environment check
+
+# Explicit opt-in. This workflow has not been run just by adding this file.
+on:
+  workflow_dispatch:
+
+jobs:
+  windows-render:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: quonitron-manim-render
+          environment-file: environment.windows.yml
+          conda-solver: libmamba
+      - name: Install only the local project
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python -m pip install --no-deps --no-build-isolation -e .
+      - name: Independent dependency probes
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python scripts/verify_environment.py --json media/environment-setup/windows-diagnostics.json
+      - name: Catalog validation
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python scripts/validate_catalog.py
+      - name: Full suite including renderer tests (failures are not masked)
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python -m pytest -ra
+      - name: All preview scenes and extracted frames
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python scripts/verify_renders.py
+      - name: Backend notebook execution (not browser playback)
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: conda run --no-capture-output -n quonitron-manim-render python scripts/execute_environment_notebook.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-render-evidence
+          path: media/
+          if-no-files-found: warn
+          retention-days: 7

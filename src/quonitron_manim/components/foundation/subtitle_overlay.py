@@ -30,40 +30,17 @@ class SubtitleOverlay(Component):
         self.clock: Optional[TimelineClock] = None
 
     def build(self) -> Any:
-        from quonitron_manim.core.text import themed_text
+        from quonitron_manim.core.text import subtitle_text
 
-        text = self.param("text", " ")
-        mob = themed_text(text, "caption", self.theme)
-        area = safe_area(
-            self.theme.frame_width,
-            self.theme.frame_height,
-            self.theme.spacing.safe_margin,
-        )
-        x, y, z = subtitle_anchor(area, drop=self.theme.spacing.xs)
-        max_width = area.width * 0.96
-        if mob.width > max_width:
-            mob.width = max_width
-        mob.move_to([x, y, z])
-        overflow = area.bottom - mob.get_bottom()[1]
-        if overflow > 0:
-            mob.shift([0, overflow, 0])
-        self._mob = mob
-        return mob
+        self._canonical = subtitle_text(self.param("text", " "), self.theme)
+        self._mob = self._canonical.copy()
+        return self._mob
 
     def _restyle(self, text: str) -> None:
-        from quonitron_manim.core.text import themed_text
+        from quonitron_manim.core.text import subtitle_text
 
-        replacement = themed_text(text or " ", "caption", self.theme)
-        area = safe_area(
-            self.theme.frame_width,
-            self.theme.frame_height,
-            self.theme.spacing.safe_margin,
-        )
-        max_width = area.width * 0.96
-        if replacement.width > max_width:
-            replacement.width = max_width
-        replacement.move_to(self._mob.get_center())
-        self._mob.become(replacement)
+        self._canonical = subtitle_text(text, self.theme)
+        self._mob.become(self._canonical)
 
     def show_text(self, text: str) -> None:
         if self._mob is None:
@@ -75,16 +52,25 @@ class SubtitleOverlay(Component):
         self.clock = clock
         mob = self.get()
         scene.add(mob)
+        if hasattr(scene, "register_layout"):
+            scene.register_layout("subtitle", mob, region="subtitle")
         overlay = self
 
         def _tick(_mobject: Any, dt: float) -> None:
             clock.advance(dt)
             cue = timeline.cue_at(clock.time)
             cue_id = cue.id if cue else None
-            if cue_id == overlay._shown_id:
-                return
-            overlay._shown_id = cue_id
-            overlay.show_text(cue.text if cue else " ")
+            if cue_id != overlay._shown_id:
+                overlay._shown_id = cue_id
+                overlay.show_text(cue.text if cue else " ")
+            # MovingCamera has no fixed-in-frame API: project canonical geometry
+            # into its viewport, including at intermediate animation frames.
+            frame = getattr(getattr(scene, "camera", None), "frame", None)
+            if frame is not None:
+                projected = overlay._canonical.copy()
+                projected.scale(frame.width / overlay.theme.frame_width, about_point=[0, 0, 0])
+                projected.shift(frame.get_center())
+                mob.become(projected)
 
         mob.add_updater(_tick)
         first = timeline.cue_at(0.0)

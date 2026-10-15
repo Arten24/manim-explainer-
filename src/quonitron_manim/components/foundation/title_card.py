@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from quonitron_manim.core.component import Component, register_component
-from quonitron_manim.core.text import themed_text
+from quonitron_manim.core.text import themed_text, measured_text
 from quonitron_manim.design.typography import resolve_font
 
 
@@ -26,7 +26,10 @@ class TitleCard(Component):
         include_kicker = self.param("include_kicker", True)
         theme = self.theme
 
-        title_mob = themed_text(title, "title", theme)
+        from quonitron_manim.design.layout import content_area, place_in
+        area = content_area(theme.frame_width, theme.frame_height, theme.spacing.safe_margin)
+        title_mob = measured_text(title, "title", theme, max_width=area.width,
+                                  max_height=area.height - 1.2)
         rule_width = max(title_mob.width * 0.42, 1.6)
         rule = Line(
             start=[-rule_width / 2, 0, 0],
@@ -47,4 +50,4 @@ class TitleCard(Component):
         group.move_to(ORIGIN)
         # Font is resolved so missing Inter/custom faces do not crash.
         _ = resolve_font(theme.typography.font_sans)
-        return group
+        return place_in(group, area)

@@ -75,6 +75,18 @@ class VariableMemoryTimeline(QuonitronScene):
             stroke_width=self.theme.stroke.thin,
         )
 
+        from quonitron_manim.design.layout import stack_in
+        stack_in([heading, box, recap], self.layout_regions["content"],
+                 gap=self.theme.spacing.md)
+        # The connector is constructed before reflow; recompute its endpoints.
+        arrow.put_start_and_end_on(box.name_label.get_bottom() + DOWN * 0.08,
+                                  box.value_label.get_top() + UP * 0.08)
+        for key, mob in dict(title=title, heading=heading, card=box.card,
+                             name=box.name_label, value=box.value_label, recap=recap).items():
+            self.register_layout(key, mob)
+        for key in ("name", "value"):
+            self.layout_validator.allow("card", key, reason="label contained in variable card")
+
         def duration(event):
             return {"run_time": event.animation_duration()}
 
@@ -85,6 +97,8 @@ class VariableMemoryTimeline(QuonitronScene):
                 box.value_label, new_value
             )
             box.value_label = new_value
+            from quonitron_manim.design.layout import LayoutItem
+            self.layout_items["value"] = LayoutItem("value", new_value)
             return anim
 
         def fade_end(event):

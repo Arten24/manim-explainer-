@@ -66,53 +66,50 @@ Details: [docs/architecture.md](docs/architecture.md).
 
 ## Setup
 
-Python **3.10+**. Manim Community Edition **0.18.1–0.22.x** (`manim>=0.18.1,<1.0`).
+The package permits Python **3.10+** and `manim>=0.18.1,<1.0`; that broad range
+is not a claim of render verification for every release. The dedicated rendering
+reference stack is **Python 3.11, Manim CE 0.19.0, NumPy 2.2.6**.
 
-### Cross-platform (Linux, macOS, Windows)
+### Windows + VS Code Jupyter (recommended)
 
-```bash
-git clone <this-repo>
-cd quonitron-manim-master-library
-python -m venv .venv
-```
-
-Linux / macOS:
-
-```bash
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -e ".[dev]"
-```
-
-For video rendering you also need Manim’s system libraries (Cairo, Pango,
-FFmpeg) and:
-
-```bash
-pip install -e ".[dev,render]"
-```
-
-Follow the official installer for your OS:
-[Manim Community installation](https://docs.manim.community/en/stable/installation.html).
-
-### Windows (PowerShell)
-
-1. Install Python 3.11+ from python.org and tick **Add python.exe to PATH**.
-2. Install FFmpeg and add it to PATH.
-3. Install Manim’s Windows dependencies as documented upstream
-   (Cairo / Pango come in via the Manim install path you choose).
-4. Then:
+Use the dedicated Conda-forge environment, not a mixture of Conda DLLs and pip
+render dependencies. See **[exact Windows setup commands](docs/WINDOWS_SETUP.md)**.
 
 ```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -e ".[dev,render]"
+# From a Miniforge-enabled PowerShell, in this project folder:
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
 ```
 
-If `manim` is not found after install, use `python -m manim`.
+This refuses to replace an existing environment of the same name. Select its
+QUONITRON kernel and open `notebooks/environment_render_test.ipynb`. The notebook
+fails clearly on a blocked render and embeds actual MP4s after verification.
+Windows installation and browser playback must still be verified on your PC;
+see [the actual cloud capabilities](docs/CLOUD_CAPABILITIES.md).
 
-A full Cairo/Pango toolchain is **not** required for catalog, theme, and
-subtitle unit tests.
+### Linux / WSL2
+
+Install native dependencies first (Debian/Ubuntu):
+
+```bash
+sudo apt-get update
+sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config python3-dev python3-venv ffmpeg fonts-dejavu-core
+# Choose a fresh name; do not replace an existing working environment.
+python3.11 -m venv .venv-render
+source .venv-render/bin/activate
+python -m pip install -r requirements-render.txt
+python -m pip install --no-deps -e .
+python scripts/verify_environment.py
+python scripts/verify_renders.py --only minimal themed
+```
+
+On **0.19.0**, PyAV encodes Manim video; the separate FFmpeg CLI is needed for
+this repository's render tests and frame extraction. Cairo/Pango are needed for
+these text-based demos. LaTeX is optional because EquationText has a Text fallback.
+The Windows Conda route supplies native runtime libraries without requiring
+`pkg-config` or a C compiler. Linux pip source builds do need development headers.
+
+For non-rendering work only, `python -m pip install -e ".[dev]"` remains available;
+Cairo/Pango/FFmpeg are not required for catalog, timeline and subtitle unit tests.
 
 ## Tests
 
@@ -137,7 +134,7 @@ python scripts/render_text_demo.py
 ```
 
 GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
-`continue-on-error` because system packages may fail on a runner.
+required to pass; render failures are no longer marked `continue-on-error`.
 
 ## Render the demos
 

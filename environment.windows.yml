@@ -1,0 +1,26 @@
+# Windows x86-64 reference stack; solver resolves compatible native builds.
+# Not an exact transitive lock: export an explicit win-64 lock after verification.
+name: quonitron-manim-render
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - manim=0.19.0
+  - numpy=2.2.6
+  - scipy=1.15.3
+  - av=13.1.0
+  - pycairo>=1.23,<2
+  - manimpango>=0.5,<1
+  - ffmpeg>=6,<8
+  - fonts-conda-ecosystem
+  - jsonschema=4.23.0
+  - pytest=8.3.5
+  - ipykernel=6.29.5
+  - ipython=8.32.0
+  - nbclient=0.10.2
+  - nbformat=5.10.4
+  - pip=25.0.1
+  - setuptools=75.8.0
+  - wheel
+# Install ONLY this repository with pip --no-deps after conda creates the stack.

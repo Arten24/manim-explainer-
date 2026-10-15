@@ -147,8 +147,10 @@ class BodyParagraph(TextComponent):
     def build(self) -> Any:
         self.validate()
         role = str(self.param("role", "body"))
-        group = stacked_lines(self.lines(), role, self.theme, self.theme.spacing.xs)
-        group.lines = group  # type: ignore[attr-defined]
+        from quonitron_manim.core.text import measured_text
+        group = measured_text(str(self.param("text")).strip(), role, self.theme,
+                              max_width=self.max_width(), max_height=self.content_box().height,
+                              buff=self.theme.spacing.xs)
         return self.clamp_to_content(group)
 
 

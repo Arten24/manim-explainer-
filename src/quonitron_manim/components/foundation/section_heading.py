@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from quonitron_manim.core.component import Component, register_component
-from quonitron_manim.core.text import themed_text
+from quonitron_manim.core.text import measured_text
 
 
 @register_component
@@ -22,7 +22,11 @@ class SectionHeading(Component):
 
         text = self.param("text", "Section")
         theme = self.theme
-        heading = themed_text(text, "heading", theme)
+        from quonitron_manim.design.layout import content_area, place_in
+        area = content_area(theme.frame_width, theme.frame_height, theme.spacing.safe_margin)
+        heading = measured_text(text, "heading", theme,
+                                max_width=area.width - 0.12 - theme.spacing.sm,
+                                max_height=area.height)
         marker = RoundedRectangle(
             width=0.12,
             height=heading.height,
@@ -35,4 +39,4 @@ class SectionHeading(Component):
         marker.next_to(heading, LEFT, buff=theme.spacing.sm)
         group = VGroup(marker, heading)
         group.arrange(RIGHT, buff=theme.spacing.sm)
-        return group
+        return place_in(group, area)

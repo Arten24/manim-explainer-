@@ -29,7 +29,6 @@ jobs:
 
   render:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,12 +38,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev
+            libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev fonts-dejavu-core
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
-          pip install jsonschema pytest
-          pip install "manim>=0.18.1,<1.0"
-          pip install -e .
+          pip install -r requirements-render.txt
+          pip install --no-deps -e .
       - name: Low-quality demo render test
         run: pytest -m render

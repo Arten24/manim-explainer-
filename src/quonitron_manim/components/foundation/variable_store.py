@@ -29,6 +29,9 @@ class VariableStore(Component):
         width = float(self.param("width", 4.6))
         height = float(self.param("height", 2.4))
 
+        from quonitron_manim.design.layout import LayoutError, SafeArea, stack_in
+        if width <= 2 * theme.spacing.card_padding or height <= 2 * theme.spacing.card_padding:
+            raise LayoutError("VariableStore needs positive interior dimensions")
         card = RoundedRectangle(
             width=width,
             height=height,
@@ -40,9 +43,11 @@ class VariableStore(Component):
         )
         name_mob = themed_text(name, "label", theme, color_role="text_secondary")
         value_mob = themed_text(value, "title", theme, color_role="highlight")
-        name_mob.next_to(card.get_top(), DOWN, buff=theme.spacing.sm)
-        value_mob.move_to(card.get_center())
-        value_mob.shift(DOWN * 0.12)
+        interior = SafeArea(-width / 2 + theme.spacing.card_padding,
+                            width / 2 - theme.spacing.card_padding,
+                            -height / 2 + theme.spacing.card_padding,
+                            height / 2 - theme.spacing.card_padding)
+        stack_in([name_mob, value_mob], interior, gap=theme.spacing.sm, align="center")
 
         group = VGroup(card, name_mob, value_mob)
         group.name_label = name_mob  # type: ignore[attr-defined]
@@ -52,4 +57,10 @@ class VariableStore(Component):
 
     def make_value(self, value: str) -> Any:
         """Build a replacement value mobject styled like the original."""
-        return themed_text(str(value), "title", self.theme, color_role="highlight")
+        from quonitron_manim.design.layout import LayoutError
+        replacement = themed_text(str(value), "title", self.theme, color_role="highlight")
+        original = self.get()
+        if (replacement.width > original.card.width - 2 * self.theme.spacing.card_padding
+                or replacement.height > original.value_label.height + 1e-6):
+            raise LayoutError("Replacement value exceeds its slot; reflow the variable card")
+        return replacement

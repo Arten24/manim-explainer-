@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Type
 
-from quonitron_manim.components.text.wrap import chars_for_width
+from quonitron_manim.components.text.wrap import chars_for_width, TextLayoutError
 from quonitron_manim.core.component import Component, register_component
 from quonitron_manim.design.layout import content_area
 
@@ -52,17 +52,15 @@ class TextComponent(Component):
         self.max_width()
 
     def clamp_to_content(self, mob: Any) -> Any:
-        from quonitron_manim.core.text import fit_to_width
+        from quonitron_manim.design.layout import place_in, LayoutError
 
         box = self.content_box()
-        fit_to_width(mob, box.width)
-        overflow = mob.get_bottom()[1] - box.bottom
-        if overflow < 0:
-            mob.shift([0, -overflow, 0])
-        overflow_top = mob.get_top()[1] - box.top
-        if overflow_top > 0:
-            mob.shift([0, -overflow_top, 0])
-        return mob
+        if mob.width > self.max_width() + 1e-6:
+            raise TextLayoutError("Text exceeds max_width; wrap or split instead of shrinking")
+        try:
+            return place_in(mob, box)
+        except LayoutError as exc:
+            raise TextLayoutError(str(exc)) from exc
 
     @classmethod
     def catalog_dict(cls) -> Dict[str, Any]:

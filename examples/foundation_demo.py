@@ -68,6 +68,11 @@ class VariableStoresAValue(QuonitronScene):
         box = store.get()
         box.next_to(heading, DOWN, buff=self.theme.spacing.title_to_content)
 
+        from quonitron_manim.design.layout import stack_in
+        stack_in([heading, box], self.layout_regions["content"], gap=self.theme.spacing.md)
+        self.register_layout("heading", heading)
+        self.register_layout("store", box)
+
         caption = self.show_subtitle_text(track.cues[0].text)
         self.play(
             FadeIn(box, shift=DOWN * 0.15),
@@ -80,7 +85,7 @@ class VariableStoresAValue(QuonitronScene):
         def swap_caption(index: int, extra=None) -> None:
             nonlocal caption
             nxt = self.show_subtitle_text(track.cues[index].text)
-            anims = [FadeOut(caption), FadeIn(nxt)]
+            anims = [self.readable_swap(caption, nxt, run_time=fast)]
             if extra is not None:
                 anims.append(extra)
             self.play(*anims, run_time=fast)
@@ -103,6 +108,9 @@ class VariableStoresAValue(QuonitronScene):
 
         ending = self.make_label("The name stays. The value can change.")
         ending.next_to(box, DOWN, buff=self.theme.spacing.lg)
+        from quonitron_manim.design.layout import place_in
+        place_in(ending, self.layout_regions["content"], align="bottom")
+        self.register_layout("ending", ending)
         self.play(FadeOut(caption), FadeIn(ending), run_time=normal)
         self.wait(hold)
         self.play(

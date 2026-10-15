@@ -1,0 +1,89 @@
+"""Publish compact CI evidence via GitHub Checks API when artifact hosts are blocked.
+
+Run only in Actions with explicit checks:write. Tokens are read from the process
+and never printed or written. Videos/full logs remain normal Actions artifacts.
+Checks carry actual frame images as base64 JSON, NOT a visual approval.
+"""
+from __future__ import annotations
+import base64
+import io
+import json
+import os
+from pathlib import Path
+import urllib.request
+import xml.etree.ElementTree as ET
+
+
+def main():
+    root = Path.cwd()
+    repo = os.environ['GITHUB_REPOSITORY']
+    sha = os.environ['GITHUB_SHA']
+    token = os.environ['GITHUB_TOKEN']
+    if os.environ.get('GITHUB_ACTIONS') != 'true':
+        raise RuntimeError('Evidence publication is restricted to GitHub Actions')
+
+    def publish(name, summary, text, conclusion='success'):
+        body = dict(name=name, head_sha=sha, status='completed', conclusion=conclusion,
+                    output=dict(title=name, summary=summary, text=text))
+        request = urllib.request.Request(
+            f'https://api.github.com/repos/{repo}/check-runs',
+            data=json.dumps(body).encode(), method='POST',
+            headers={'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json',
+                     'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28'})
+        with urllib.request.urlopen(request, timeout=60) as response:
+            result = json.load(response)
+        print(f'Published {name}: check {result["id"]}')
+
+    diagnostics = root / 'media/cloud-verification/dependencies.json'
+    tests = root / 'media/cloud-verification/tests.xml'
+    report = {'sha': sha, 'visual_review': 'NOT_PERFORMED_BY_CI', 'browser_playback': 'NOT_VERIFIED'}
+    if diagnostics.exists(): report['dependencies'] = json.loads(diagnostics.read_text())
+    if tests.exists():
+        suites = ET.parse(tests).getroot()
+        report['tests'] = {k: sum(int(s.get(k, 0)) for s in suites.iter('testsuite'))
+                           for k in ('tests', 'failures', 'errors', 'skipped')}
+        report['test_problems'] = [{'test': case.get('name'), 'message': failure.text[-5000:]}
+                                   for case in suites.iter('testcase')
+                                   for failure in list(case) if failure.tag in ('failure', 'error')]
+    manifests = list((root / 'media/environment-verification').rglob('report.json'))
+    renders = [result for manifest in manifests
+               for result in json.loads(manifest.read_text())['results']]
+    report['renders'] = renders
+    for result in renders:
+        if not result.get('rendered'):
+            log = Path(result['log'])
+            result['error_tail'] = log.read_text(errors='replace')[-5000:] if log.exists() else 'No log'
+    notebook = root / 'media/cloud-verification/notebook.log'
+    if notebook.exists(): report['notebook_tail'] = notebook.read_text(errors='replace')[-4000:]
+    failed = (not report.get('dependencies', {}).get('ready') or not report.get('tests')
+              or any(report.get('tests', {}).get(k, 0) for k in ('failures', 'errors', 'skipped'))
+              or len(renders) < 7 or any(r['status'] != 'RENDERED_AND_DECODED_NOT_VISUALLY_REVIEWED' for r in renders))
+    publish('QUONITRON cloud evidence', 'Actual dependency probes, tests and renders; no visual approval.',
+            json.dumps(report, indent=2)[-64000:], 'failure' if failed else 'success')
+    from PIL import Image
+    for index, result in enumerate(renders):
+        valid = [f for f in result.get('frames', []) if f['ok']]
+        if not valid: continue
+        # One settled sample per scene plus mid-transition/context samples.
+        chosen = [valid[-1]]
+        if result['scene'] in ('CodeToMemoryJourney', 'AssignmentInType', 'LayoutRepairExercise'):
+            chosen += valid[1:3]
+        for frame in chosen:
+            image = Image.open(frame['path']).convert('RGB')
+            buffer = io.BytesIO()
+            image.save(buffer, format='JPEG', quality=85)
+            if len(buffer.getvalue()) > 44000:
+                image.thumbnail((854, 480))
+                buffer = io.BytesIO(); image.save(buffer, format='JPEG', quality=65)
+            payload = dict(scene=result['scene'], timestamp=frame['time'], width=image.width,
+                           height=image.height, mime='image/jpeg',
+                           data=base64.b64encode(buffer.getvalue()).decode())
+            text = json.dumps(payload)
+            if len(text) >= 64000:
+                raise RuntimeError('Frame exceeds Checks API evidence limit; use artifact')
+            publish(f'Frame {index}: {result["scene"]} {frame["time"]}s',
+                    'Actual extracted video frame, JPEG encoded for API transport. Human review required.', text)
+
+
+if __name__ == '__main__':
+    main()

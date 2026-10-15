@@ -64,3 +64,10 @@ The report writes SRT/VTT next to the examples. Those timestamps are
 **estimates**. They are not aligned to a voice recording. Override cue
 times in the JSON (`timing_status: manual`) after you record voiceover;
 keep the same cue ids.
+
+## Overlap repair verification
+
+See [the audit and limitations](../docs/OVERLAP_AUDIT.md) and
+[VS Code notebook repair lab](../notebooks/overlap_repair_lab.ipynb).
+`python scripts/render_layout_audit.py` renders Parts 1–4 and extracts review
+frames under ignored `media/layout-audit/`. The repair exercise is not a new Part.

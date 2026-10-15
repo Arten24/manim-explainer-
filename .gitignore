@@ -242,3 +242,8 @@ Thumbs.db
 # Generated previews
 previews/
 .renders/
+
+# Dedicated environment verification (preserve existing .venv)
+.venv-*/
+# Local platform-specific resolved Conda locks (may contain machine/channel URLs)
+.local-environment-locks/

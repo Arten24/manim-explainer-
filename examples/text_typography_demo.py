@@ -32,7 +32,7 @@ from quonitron_manim.components.text import (
     Subheading,
 )
 from quonitron_manim.core.base_scene import QuonitronScene
-from quonitron_manim.design.layout import content_area, title_anchor
+from quonitron_manim.design.layout import content_area
 from quonitron_manim.motion.appearance import FadeInMotion, FadeOutMotion, WriteMotion
 from quonitron_manim.motion.emphasis import IndicateMotion
 from quonitron_manim.motion.transform import ReplacementTransformMotion
@@ -57,38 +57,29 @@ class AssignmentInType(QuonitronScene):
         )
 
         title = DisplayTitle(theme=self.theme, text="A Name for a Value").get()
-        title.move_to(title_anchor(self.safe, lift=self.theme.spacing.sm))
 
         heading = SceneHeading(theme=self.theme, text="An assignment statement").get()
-        heading.next_to(title, DOWN, buff=self.theme.spacing.md)
-        if heading.get_left()[0] < box.left:
-            heading.shift([box.left - heading.get_left()[0], 0, 0])
 
         sub = Subheading(theme=self.theme, text="Python, read as English").get()
-        sub.next_to(heading, DOWN, buff=self.theme.spacing.sm)
 
         code = CodeLine(theme=self.theme, text="score = 10").get()
-        code.move_to([0, 0.35, 0])
 
         name_line = HighlightedPhrase(
             theme=self.theme,
             text="score is the name.",
             phrase="score",
         ).get()
-        name_line.next_to(code, DOWN, buff=self.theme.spacing.md)
 
         value_line = HighlightedPhrase(
             theme=self.theme,
             text="10 is the value in that slot.",
             phrase="10",
         ).get()
-        value_line.next_to(name_line, DOWN, buff=self.theme.spacing.sm)
 
         note = AnnotationCallout(
             theme=self.theme,
             text="The name does not change when the number does.",
         ).get()
-        note.next_to(value_line, DOWN, buff=self.theme.spacing.md)
 
         equation = EquationText(theme=self.theme, tex="score = 10").get()
         equation.next_to(code, DOWN, buff=self.theme.spacing.lg)
@@ -106,7 +97,6 @@ class AssignmentInType(QuonitronScene):
                 "Replace only the value.",
             ],
         ).get()
-        steps.move_to([0, 0.55, 0])
 
         recap = BulletList(
             theme=self.theme,
@@ -116,13 +106,36 @@ class AssignmentInType(QuonitronScene):
                 "Assignment overwrites the value.",
             ],
         ).get()
-        recap.move_to([0, -0.2, 0])
 
         body = BodyParagraph(
             theme=self.theme,
             text="Keep the caption band free: this paragraph sits in the content area, not on top of the subtitles.",
         ).get()
-        body.next_to(recap, DOWN, buff=self.theme.spacing.sm)
+
+        # Measure complete co-visible beats, not components at their build origin.
+        from quonitron_manim.design.layout import SafeArea, stack_in, place_in, LayoutItem
+        header = [title, heading, sub]
+        stack_in(header, box, gap=self.theme.spacing.xs)
+        lesson = SafeArea(box.left, box.right, box.bottom,
+                          sub.get_bottom()[1] - self.theme.spacing.md)
+        stack_in([code, name_line, value_line, note], lesson, gap=self.theme.spacing.xs)
+        equation.next_to(code, DOWN, buff=self.theme.spacing.xs)
+        counter.next_to(equation, DOWN, buff=self.theme.spacing.xs)
+        eleven.move_to(counter)
+        for mob in (steps, recap, body):
+            place_in(mob, lesson)
+        objects = dict(title=title, heading=heading, sub=sub, code=code,
+                       name=name_line, value=value_line, note=note, equation=equation,
+                       counter=counter, eleven=eleven, steps=steps, recap=recap, body=body)
+        for key, mob in objects.items():
+            self.register_layout(key, mob)
+        # Layout preflight is phase-aware: replacements are not simultaneous objects.
+        for phase in (["code", "name", "value", "note"], ["code", "equation", "counter"],
+                      ["steps"], ["recap"], ["body"]):
+            issues = self.layout_validator.validate(
+                [LayoutItem(key, objects[key]) for key in ["title", "heading", "sub"] + phase])
+            if any(i.severity == "ERROR" for i in issues):
+                raise ValueError("\n".join(map(str, issues)))
 
         def rt(event):
             return event.animation_duration()
@@ -159,8 +172,8 @@ class AssignmentInType(QuonitronScene):
                 FadeOutMotion(theme=self.theme, run_time=rt(e)).animate(eleven),
             ),
             "ev-steps": lambda e: FadeInMotion(theme=self.theme, run_time=rt(e)).animate(steps),
-            "ev-recap": lambda e: FadeInMotion(theme=self.theme, run_time=rt(e)).animate(recap),
-            "ev-body": lambda e: FadeInMotion(theme=self.theme, run_time=rt(e)).animate(body),
+            "ev-recap": lambda e: self.readable_swap(steps, recap, run_time=rt(e)),
+            "ev-body": lambda e: self.readable_swap(recap, body, run_time=rt(e)),
         }
 
         play_on_scene(self, timeline, binders, overlay=overlay)

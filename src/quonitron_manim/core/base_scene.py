@@ -9,7 +9,8 @@ from typing import Any, Optional
 
 from quonitron_manim.config import get_render_profile
 from quonitron_manim.core.manim_compat import manim_available
-from quonitron_manim.design.layout import safe_area, subtitle_anchor, title_anchor
+from quonitron_manim.design.layout import (safe_area, subtitle_anchor, title_anchor,
+    layout_regions, LayoutValidator, LayoutItem)
 from quonitron_manim.design.motion import resolve_rate_function
 from quonitron_manim.design.theme import Theme, apply_theme_to_manim, get_theme
 
@@ -58,6 +59,11 @@ class QuonitronSceneMixin:
         apply_theme_to_manim(self.theme)
         profile_name = self.render_profile_name or self.theme.render_profile
         self.render_profile = get_render_profile(profile_name)
+        self.layout_regions = layout_regions(self.theme.frame_width, self.theme.frame_height,
+                                             self.theme.spacing.safe_margin)
+        self.layout_validator = LayoutValidator(self.layout_regions, scene=type(self).__name__)
+        self.layout_items = {}
+        self._layout_reported = set()
         self.safe = safe_area(
             self.theme.frame_width,
             self.theme.frame_height,
@@ -78,21 +84,21 @@ class QuonitronSceneMixin:
 
         return SectionHeading(theme=self.theme, text=text, **kwargs).get()
 
-    def make_body(self, text: str, **kwargs: Any):
-        from quonitron_manim.core.text import themed_text
+    def _make_wrapped(self, text, role, **kwargs):
+        from quonitron_manim.core.text import measured_text
+        area = self.layout_regions["content"]
+        max_width = kwargs.pop("max_width", area.width)
+        return measured_text(text, role, self.theme, max_width=min(max_width, area.width),
+                             max_height=area.height, **kwargs)
 
-        mob = themed_text(text, "body", self.theme, **kwargs)
-        return mob
+    def make_body(self, text: str, **kwargs: Any):
+        return self._make_wrapped(text, "body", **kwargs)
 
     def make_label(self, text: str, **kwargs: Any):
-        from quonitron_manim.core.text import themed_text
-
-        return themed_text(text, "label", self.theme, **kwargs)
+        return self._make_wrapped(text, "label", **kwargs)
 
     def make_caption(self, text: str, **kwargs: Any):
-        from quonitron_manim.core.text import themed_text
-
-        return themed_text(text, "caption", self.theme, **kwargs)
+        return self._make_wrapped(text, "caption", **kwargs)
 
     def place_title(self, mobject: Any) -> Any:
         x, y, z = title_anchor(self.safe, lift=self.theme.spacing.sm)
@@ -136,13 +142,53 @@ class QuonitronSceneMixin:
 
     def show_subtitle_text(self, text: str, **kwargs: Any):
         """On-screen caption. Independent of SRT/VTT export files."""
-        caption = self.make_caption(text, **kwargs)
-        # Keep captions readable: wrap is the caller's job; we only clamp width.
-        max_width = self.safe.width
-        if caption.width > max_width:
-            caption.width = max_width
-        self.place_caption(caption)
+        from quonitron_manim.core.text import subtitle_text
+        caption = subtitle_text(text, self.theme, **kwargs)
+        self.register_layout(f"subtitle-{len(self.layout_items)}", caption, region="subtitle")
         return caption
+
+    def readable_swap(self, outgoing, incoming, *, run_time=1.0):
+        """Non-overlapping editorial swap for unrelated text in the same region."""
+        from manim import Succession, FadeOut, FadeIn
+        return Succession(FadeOut(outgoing, run_time=run_time / 2),
+                          FadeIn(incoming, run_time=run_time / 2))
+
+    def register_layout(self, object_id, mobject, *, region="content"):
+        """Register semantic objects, not glyphs. IDs must be unique per scene."""
+        if object_id in self.layout_items:
+            raise ValueError(f"Duplicate layout ID: {object_id}")
+        self.layout_items[object_id] = LayoutItem(object_id, mobject, region)
+        return mobject
+
+    def check_layout(self, *, visible_only=True):
+        import warnings
+        items = list(self.layout_items.values())
+        if visible_only:
+            family = {id(m) for root in getattr(self, "mobjects", []) for m in root.get_family()}
+            items = [i for i in items if id(i.mobject) in family]
+        frame = getattr(getattr(self, "camera", None), "frame", None)
+        if frame is not None:
+            projected = []
+            for item in items:
+                mob = item.mobject.copy()
+                mob.shift(-frame.get_center())
+                mob.scale(self.theme.frame_width / frame.width, about_point=[0, 0, 0])
+                projected.append(LayoutItem(item.id, mob, item.region))
+            items = projected
+        issues = self.layout_validator.validate(items)
+        for issue in issues:
+            key = (issue.severity, issue.ids, issue.message)
+            if issue.severity != "INFO" and key not in self._layout_reported:
+                warnings.warn(str(issue), UserWarning, stacklevel=2)
+                self._layout_reported.add(key)
+        return issues
+
+    def play(self, *args, **kwargs):
+        result = super().play(*args, **kwargs)
+        if hasattr(self, "layout_items"):
+            self.check_layout()
+        return result
+
 
 
 class QuonitronScene(QuonitronSceneMixin, Scene):
