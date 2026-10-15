@@ -29,7 +29,7 @@ def main():
     saved = []
     for check in checks:
         text = check.get('output', {}).get('text')
-        if check['name'] in ('QUONITRON cloud evidence', 'QUONITRON preliminary render evidence', 'QUONITRON notebook evidence') and text:
+        if check['name'] in ('QUONITRON cloud evidence', 'QUONITRON preliminary render evidence', 'QUONITRON notebook evidence', 'QUONITRON render-test evidence') and text:
             report = json.loads(text)
             path = dest / f'report-{check["id"]}.json'
             path.write_text(json.dumps(report, indent=2), encoding='utf-8')

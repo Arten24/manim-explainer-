@@ -19,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--preliminary', action='store_true')
     parser.add_argument('--notebook-only', action='store_true')
+    parser.add_argument('--tests-only', action='store_true')
     args = parser.parse_args()
     root = Path.cwd()
     repo = os.environ['GITHUB_REPOSITORY']
@@ -51,6 +52,22 @@ def main():
                       inline_browser_playback='NOT_VERIFIED', sha=sha)
         ok = bool(cells) and report['executed_cells'] == len(cells) and not errors and videos == 7
         publish('QUONITRON notebook evidence', 'Actual notebook backend; browser playback is not certified.',
+                json.dumps(report, indent=2), 'success' if ok else 'failure')
+        return
+
+    if args.tests_only:
+        tests = root / 'media/cloud-verification/tests.xml'
+        suites = ET.parse(tests).getroot()
+        import platform
+        report = dict(sha=sha, platform=platform.platform(),
+                      tests={k: sum(int(x.get(k, 0)) for x in suites.iter('testsuite'))
+                             for k in ('tests', 'failures', 'errors', 'skipped')},
+                      problems=[{'test': case.get('name'), 'message': (failure.text or '')[-5000:]}
+                                for case in suites.iter('testcase') for failure in case
+                                if failure.tag in ('failure', 'error')],
+                      durations={case.get('name'): case.get('time') for case in suites.iter('testcase')})
+        ok = not any(report['tests'][k] for k in ('failures', 'errors', 'skipped'))
+        publish('QUONITRON render-test evidence', 'Actual JUnit counts and failures from the renderer test job.',
                 json.dumps(report, indent=2), 'success' if ok else 'failure')
         return
 

@@ -5,6 +5,10 @@ on:
     branches: [main, "arena/**"]
   pull_request:
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
           pytest -m "not render"
 
   render:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -46,4 +50,9 @@ jobs:
           pip install -r requirements-render.txt
           pip install --no-deps -e .
       - name: Low-quality demo render test
-        run: pytest -m render --timeout=180
+        run: pytest -m render --timeout=180 --junitxml=media/cloud-verification/tests.xml
+      - name: Publish API-readable renderer test results
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/publish_ci_evidence.py --tests-only
