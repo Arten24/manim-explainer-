@@ -108,6 +108,12 @@ jobs:
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
             echo "::error title=MP4 verification failed::$failure_summary"
+          else
+            while IFS= read -r line; do
+              case "$line" in
+                PASS:*) echo "::notice title=Verified render::$line" ;;
+              esac
+            done < .renders/probe.log
           fi
           exit "$probe_status"
       - name: Upload rendered videos and inspection frames
@@ -116,7 +122,7 @@ jobs:
         with:
           name: quonitron-part-1-4-render-previews
           path: |
-            .renders/tests/**/*.mp4
+            .renders/tests/**/media/videos/*/480p15/*.mp4
             .renders/frames/*.jpg
             .renders/render-tests.log
             .renders/probe.log

@@ -89,7 +89,13 @@ def main() -> int:
             print(f"FAIL: {executable} is not available on PATH", file=sys.stderr)
             return 2
 
-    videos = sorted(args.media_dir.rglob("*.mp4"))
+    all_mp4s = sorted(args.media_dir.rglob("*.mp4"))
+    # Manim's temporary animation chunks are MP4s too; validate only the final
+    # concatenated scene renders, not files under partial_movie_files/.
+    videos = [video for video in all_mp4s if "partial_movie_files" not in video.parts]
+    ignored_chunks = len(all_mp4s) - len(videos)
+    if ignored_chunks:
+        print(f"Ignoring {ignored_chunks} Manim partial movie chunk(s).")
     if len(videos) < args.min_videos:
         print(
             f"FAIL: found {len(videos)} MP4 file(s) under {args.media_dir}; "
