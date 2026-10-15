@@ -1,0 +1,44 @@
+name: Render preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, "arena/**"]
+    paths:
+      - "examples/text_typography_demo.py"
+      - "examples/text_timeline.json"
+      - "src/quonitron_manim/**"
+      - ".github/workflows/render-preview.yml"
+
+jobs:
+  render-part4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Cairo, Pango, FFmpeg, fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libcairo2-dev libpango1.0-dev ffmpeg pkg-config python3-dev \
+            fonts-dejavu-core
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema "manim>=0.18.1,<1.0"
+          pip install -e .
+      - name: Render Part 4 demo (-ql)
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+          python -m manim -ql --disable_caching \
+            examples/text_typography_demo.py AssignmentInType
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: assignment-in-type-ql
+          path: media/**/*.mp4
+          if-no-files-found: error
+          retention-days: 14

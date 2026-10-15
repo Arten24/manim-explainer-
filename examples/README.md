@@ -43,6 +43,23 @@ python scripts/timeline_report.py examples/text_timeline.json --out examples/tex
 manim -ql examples/text_typography_demo.py AssignmentInType
 ```
 
+### GitHub Codespaces
+
+This cloud agent **cannot create a Codespace** for `Arten24/manim-explainer-`
+(the token is not allowed to). On your account:
+
+1. Open the repo on GitHub → **Code** → **Codespaces** → create on this branch.
+2. Wait for `.devcontainer/devcontainer.json` (`postCreateCommand` installs Cairo, Pango, FFmpeg, Manim).
+3. In the Codespace terminal:
+
+```bash
+manim -ql examples/text_typography_demo.py AssignmentInType
+```
+
+A GitHub Actions workflow (**.github/workflows/render-preview.yml**) also
+renders that scene on `ubuntu-latest` and uploads the MP4 as an artifact
+named `assignment-in-type-ql`.
+
 The report writes SRT/VTT next to the examples. Those timestamps are
 **estimates**. They are not aligned to a voice recording. Override cue
 times in the JSON (`timing_status: manual`) after you record voiceover;
