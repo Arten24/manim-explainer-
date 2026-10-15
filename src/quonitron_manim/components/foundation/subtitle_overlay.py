@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from quonitron_manim.core.component import Component, register_component
-from quonitron_manim.design.layout import safe_area, subtitle_anchor
 from quonitron_manim.timeline.models import Timeline
 from quonitron_manim.timeline.player import TimelineClock
 
@@ -28,6 +27,8 @@ class SubtitleOverlay(Component):
         self._shown_id: Optional[str] = None
         self.timeline: Optional[Timeline] = None
         self.clock: Optional[TimelineClock] = None
+        self._projection_scale = 1.0
+        self._projection_center = (0.0, 0.0, 0.0)
 
     def build(self) -> Any:
         from quonitron_manim.core.text import subtitle_text
@@ -41,6 +42,29 @@ class SubtitleOverlay(Component):
 
         self._canonical = subtitle_text(text, self.theme)
         self._mob.become(self._canonical)
+        # Cue replacement is canonical again, not in the previous camera pose.
+        self._projection_scale = 1.0
+        self._projection_center = (0.0, 0.0, 0.0)
+
+    def _follow_viewport(self, scene: Any) -> None:
+        """Apply only the change in camera pose; never deepcopy glyphs per frame.
+
+        This is algebraically the same canonical-to-viewport transform as before,
+        but a static camera does no work and moving frames touch only point arrays.
+        """
+        frame = getattr(getattr(scene, "camera", None), "frame", None)
+        if frame is None:
+            return
+        scale = float(frame.width) / self.theme.frame_width
+        center = tuple(float(value) for value in frame.get_center())
+        if (abs(scale - self._projection_scale) <= 1e-12
+                and all(abs(a - b) <= 1e-12 for a, b in zip(center, self._projection_center))):
+            return
+        self._mob.shift([-value for value in self._projection_center])
+        self._mob.scale(scale / self._projection_scale, about_point=[0, 0, 0])
+        self._mob.shift(center)
+        self._projection_scale = scale
+        self._projection_center = center
 
     def show_text(self, text: str) -> None:
         if self._mob is None:
@@ -63,14 +87,7 @@ class SubtitleOverlay(Component):
             if cue_id != overlay._shown_id:
                 overlay._shown_id = cue_id
                 overlay.show_text(cue.text if cue else " ")
-            # MovingCamera has no fixed-in-frame API: project canonical geometry
-            # into its viewport, including at intermediate animation frames.
-            frame = getattr(getattr(scene, "camera", None), "frame", None)
-            if frame is not None:
-                projected = overlay._canonical.copy()
-                projected.scale(frame.width / overlay.theme.frame_width, about_point=[0, 0, 0])
-                projected.shift(frame.get_center())
-                mob.become(projected)
+            overlay._follow_viewport(scene)
 
         mob.add_updater(_tick)
         first = timeline.cue_at(0.0)

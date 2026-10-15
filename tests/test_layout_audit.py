@@ -160,3 +160,38 @@ def test_notebook_is_valid_and_render_gated(repo_root):
     assert "if not READY" in source
     assert "embed=True" in source
     assert "LayoutRepairExercise" in source
+
+
+@pytest.mark.render
+def test_camera_caption_projection_without_per_frame_deepcopy(monkeypatch):
+    """Preserve full glyph geometry through zoom/pan, cue replacement and restore."""
+    require_manim()
+    import numpy as np
+    from types import SimpleNamespace
+    from manim import Rectangle
+    from quonitron_manim.components.foundation.subtitle_overlay import SubtitleOverlay
+
+    overlay = SubtitleOverlay(text="A readable camera-safe caption.")
+    mob = overlay.get()
+    frame = Rectangle(width=overlay.theme.frame_width, height=overlay.theme.frame_height)
+    scene = SimpleNamespace(camera=SimpleNamespace(frame=frame))
+    canonical_points = overlay._canonical.get_all_points().copy()
+    with monkeypatch.context() as patch:
+        def no_copy(*args, **kwargs):
+            raise AssertionError("Per-frame deepcopy must not be used for camera projection")
+        patch.setattr(overlay._canonical, 'copy', no_copy)
+        patch.setattr(mob, 'become', no_copy)
+        for ratio, center in [(1, (0, 0, 0)), (.5, (2, 1, 0)),
+                              (.35, (-1, 0.5, 0)), (.35, (-1, 0.5, 0)), (1, (0, 0, 0))]:
+            frame.stretch_to_fit_width(overlay.theme.frame_width * ratio)
+            frame.move_to(center)
+            overlay._follow_viewport(scene)
+            assert np.allclose(mob.get_all_points(), canonical_points * ratio + center, atol=1e-8)
+    # Changing text while zoomed must reset the pose before applying it once.
+    frame.stretch_to_fit_width(overlay.theme.frame_width * .5)
+    frame.move_to([1, 2, 0])
+    overlay._follow_viewport(scene)
+    overlay.show_text("A different cue while the camera is close.")
+    replacement_points = overlay._canonical.get_all_points().copy()
+    overlay._follow_viewport(scene)
+    assert np.allclose(mob.get_all_points(), replacement_points * .5 + [1, 2, 0], atol=1e-8)
