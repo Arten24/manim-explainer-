@@ -4,26 +4,22 @@
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
+source .venv/bin/activate   # Windows: .\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
 ```
 
-Manim also needs Cairo, Pango, and FFmpeg. See the
-[Manim Community installation docs](https://docs.manim.community/en/stable/installation.html).
+For rendering: install Manim system dependencies, then `pip install -e ".[render]"`.
 
 ## Checks
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/search_catalog.py theme
-pytest
+pytest -m "not render"
 ```
 
 ## Rules
 
 - One development-plan part at a time.
-- Working code, not empty folders.
 - Catalog and Python must stay in sync.
+- Honest `test_status` values.
 - MIT license. Do not commit secrets or bulky generated media.

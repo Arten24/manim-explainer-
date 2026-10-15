@@ -1,18 +1,24 @@
 # Changelog
 
-## 0.1.0 — 2026-10-15
+## 0.2.0 — 2026-10-15
 
-### Added
+### Part 1 — foundation
 
-- Repository foundation, MIT license, packaging, and documentation
-- Design tokens and `quonitron_dark` theme
-- Catalog JSON Schema, master catalog, search, and integrity checks
-- Component metadata contract and in-memory registry
-- Subtitle cue model with estimated timing, SRT, and WebVTT export
-- Script-to-scene splitter
-- Unit tests and GitHub Actions QA (no Manim render required)
+- Move the installable package to `src/quonitron_manim`
+- Root `catalog/master.json` + JSON Schema 1.0.0 + `categories.json`
+- Design system: `#0D1117` background, semantic roles, type, layout, motion
+- `QuonitronScene` with title, heading, caption, and safe-area helpers
+- Foundation components: `TitleCard`, `SectionHeading`, `VariableStore`
+- Subtitle cues, overlap policy, SRT and WebVTT export
+- Demonstration scene `VariableStoresAValue`
+- Unit tests and a marked render test
+- GitHub Actions workflow `.github/workflows/tests.yml`
 
 ### Notes
 
-- Visual Manim components start in Part 1 of the development plan
-- No render tests were run in the foundation environment (Cairo/Pango/FFmpeg unavailable)
+- Visual components remain `not_tested` until a real Manim preview render passes
+- Manim/Cairo is an optional extra so catalog tests can run without system libs
+
+## 0.1.0 — 2026-10-15
+
+- Initial bootstrap under the `quonitron` package (superseded by 0.2.0 layout)

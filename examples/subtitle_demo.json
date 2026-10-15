@@ -1,0 +1,61 @@
+{
+  "language": "en",
+  "reading_wpm": 155,
+  "min_duration": 1.2,
+  "max_duration": 6.0,
+  "max_chars": 84,
+  "overlap_policy": "error",
+  "notes": "Estimated timings only. Not synchronized to a recorded speaker. Edit these cues when aligning a real voiceover.",
+  "cues": [
+    {
+      "id": "var-01",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 1,
+      "text": "Think of a variable as a labeled box in the computer's memory.",
+      "start_time": 0.0,
+      "end_time": 3.5,
+      "visual_cue": "title_card",
+      "speaker": "narrator"
+    },
+    {
+      "id": "var-02",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 2,
+      "text": "The name on the box is how your program finds it later.",
+      "start_time": 3.5,
+      "end_time": 6.6,
+      "visual_cue": "variable_name",
+      "speaker": "narrator"
+    },
+    {
+      "id": "var-03",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 3,
+      "text": "Inside the box is the value. That is the information the name currently holds.",
+      "start_time": 6.6,
+      "end_time": 10.4,
+      "visual_cue": "variable_value",
+      "speaker": "narrator"
+    },
+    {
+      "id": "var-04",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 4,
+      "text": "When we write score equals ten, we are not creating a second box.",
+      "start_time": 10.4,
+      "end_time": 14.0,
+      "visual_cue": "assignment",
+      "speaker": "narrator"
+    },
+    {
+      "id": "var-05",
+      "scene_id": "variable_stores_a_value",
+      "sequence": 5,
+      "text": "We are replacing whatever was inside. The name stays. The value can change.",
+      "start_time": 14.0,
+      "end_time": 18.2,
+      "visual_cue": "value_replaced",
+      "speaker": "narrator"
+    }
+  ]
+}

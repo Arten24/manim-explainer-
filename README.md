@@ -1,103 +1,222 @@
 # QUONITRON Manim Master Library
 
-An extensible, reusable **Manim Community Edition** animation library with a
-searchable JSON catalog, a shared design system, subtitle export, scene
-planning helpers, and automated quality checks for educational videos.
+An extensible, reusable **Manim Community Edition** library for educational
+videos: a searchable JSON catalog, a shared design system, a base scene,
+subtitle export, and automated checks.
 
-This repository is built so AI coding agents and humans can **search, reuse,
-configure, and compose** tested components instead of rewriting animations
-from scratch.
+The package name is `quonitron_manim`. Agents should **search the catalog
+and reuse tested components** before writing new animation code.
 
-> Current milestone: **Part 0 — foundation**. Visual animation parts are
-> implemented one at a time. See [docs/development-plan.md](docs/development-plan.md).
+Current milestone: **Part 1 — foundation**. Parts 2–20 are not implemented.
 
-## What works today
+## Purpose
 
-- Design tokens and a swappable `quonitron_dark` theme
-- JSON Schema + master catalog with search
-- Component metadata + in-memory registry
-- Script → scene splitting with catalog query hints
-- Subtitle cues with **estimated** timing, SRT, and WebVTT export
-- Catalog / syntax / import QA that does **not** require a video render
+Given an educational script, an author or coding agent should be able to
+split it into scenes, search this catalog, compose themed components, export
+English subtitles without audio, and render a preview.
 
-## What is not claimed yet
+## Architecture
 
-- A full motion / math / ML component library
-- Voiceover generation or audio alignment
-- Successful Manim preview renders in environments without Cairo, Pango,
-  and FFmpeg
-
-Estimated subtitle timings are **not** synchronized to a real speaker.
-
-## Install
-
-Python 3.10+ recommended.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-pip install -e .
+```
+catalog/master.json  ── searchable index (JSON Schema 1.0.0)
+src/quonitron_manim/
+  design/            color, type, layout, motion
+  core/              base scene, component contract, catalog loader
+  components/        reusable building blocks
+  subtitles/         cue model, validation, SRT / WebVTT
+examples/            foundation demo + subtitle JSON
 ```
 
-For actual video rendering you also need the Manim system dependencies
-(Cairo, Pango, FFmpeg). Follow
-[Manim installation](https://docs.manim.community/en/stable/installation.html).
+Details: [docs/architecture.md](docs/architecture.md).
 
-Pinned range: `manim>=0.18.1,<1.0` (compatible with current 0.22 APIs).
+## Repository structure
 
-## Quick start
+```text
+├── README.md
+├── LICENSE
+├── pyproject.toml
+├── manim.cfg
+├── catalog/
+│   ├── master.json
+│   ├── schema.json
+│   └── categories.json
+├── src/quonitron_manim/
+├── examples/
+│   ├── foundation_demo.py
+│   └── subtitle_demo.json
+├── tests/
+├── scripts/
+│   ├── validate_catalog.py
+│   └── render_demo.py
+└── docs/
+```
+
+## Setup
+
+Python **3.10+**. Manim Community Edition **0.18.1–0.22.x** (`manim>=0.18.1,<1.0`).
+
+### Cross-platform (Linux, macOS, Windows)
+
+```bash
+git clone <this-repo>
+cd quonitron-manim-master-library
+python -m venv .venv
+```
+
+Linux / macOS:
+
+```bash
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
+
+For video rendering you also need Manim’s system libraries (Cairo, Pango,
+FFmpeg) and:
+
+```bash
+pip install -e ".[dev,render]"
+```
+
+Follow the official installer for your OS:
+[Manim Community installation](https://docs.manim.community/en/stable/installation.html).
+
+### Windows (PowerShell)
+
+1. Install Python 3.11+ from python.org and tick **Add python.exe to PATH**.
+2. Install FFmpeg and add it to PATH.
+3. Install Manim’s Windows dependencies as documented upstream
+   (Cairo / Pango come in via the Manim install path you choose).
+4. Then:
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -e ".[dev,render]"
+```
+
+If `manim` is not found after install, use `python -m manim`.
+
+A full Cairo/Pango toolchain is **not** required for catalog, theme, and
+subtitle unit tests.
+
+## Tests
+
+Inexpensive checks (no renderer):
 
 ```bash
 python scripts/validate_catalog.py
-python scripts/search_catalog.py "dark theme"
-python examples/search_and_subtitles.py
-pytest
+pytest -m "not render"
+```
+
+Preview-render test (needs Cairo, Pango, FFmpeg, Manim):
+
+```bash
+pytest -m render
+python scripts/render_demo.py
+```
+
+GitHub Actions runs the unit job on Python 3.10–3.12. The render job is
+`continue-on-error` because system packages may fail on a runner.
+
+## Render the demo
+
+From the repository root:
+
+```bash
+manim -ql examples/foundation_demo.py VariableStoresAValue
+```
+
+`-ql` is 480p15 and is the intended smoke render. Do not use `-qh` for
+routine tests. Output lands under `media/` (gitignored).
+
+The demo uses `QuonitronScene`, `TitleCard`, `SectionHeading`, and
+`VariableStore` with the `quonitron_dark` theme. It does not hard-code
+brand hex colors.
+
+## Master JSON catalog
+
+`catalog/master.json` is the searchable index. Each entry points at a real
+Python class. The loader rejects duplicate ids, unknown categories, broken
+related-id references, and missing imports.
+
+```bash
+python scripts/search_catalog.py variable
+python scripts/search_catalog.py title --category foundation
 ```
 
 ```python
-from quonitron.design import get_theme
-from quonitron.catalog import search_catalog
-from quonitron.subtitles import cues_from_sentences, to_srt
+from quonitron_manim.core.catalog import search_catalog, resolve
 
-theme = get_theme()
-print(theme.color("accent"))
-
-hits = search_catalog("theme")
-track = cues_from_sentences(
-    ["This library keeps educational animations consistent."],
-    scene_id="intro",
-)
-print(to_srt(track))
+hits = search_catalog("variable")
+VariableStore = resolve("foundation.variable_store")
 ```
 
-## Repository layout
+Schema: [docs/catalog-schema.md](docs/catalog-schema.md).
 
-```text
-quonitron/
-  catalog/       JSON catalog, schema, loader, search
-  components/    Reusable component base + registry
-  design/        Color, type, spacing, motion tokens
-  planning/      Script-to-scene helpers
-  qa/            Automated checks
-  render/        Preview vs production render settings
-  scenes/        Scene specs (Manim templates come later)
-  subtitles/     Cue model + SRT/WebVTT
-docs/            Specification, plan, agent guide
-examples/        Runnable examples that do not need Cairo
-tests/           Unit tests
-scripts/         Catalog validate + search CLIs
+## Add a new component
+
+See [docs/component-authoring.md](docs/component-authoring.md). Short version:
+search → implement with the theme → test → register in `master.json` with an
+honest `test_status` (`not_tested` / `passed` / `failed`).
+
+## Subtitles
+
+Author cues in JSON (see `examples/subtitle_demo.json`). Export without
+touching the video:
+
+```bash
+python -c "from pathlib import Path; from quonitron_manim.subtitles import load_track, write_srt, write_vtt; t=load_track('examples/subtitle_demo.json'); write_srt(t, Path('media/demo.srt')); write_vtt(t, Path('media/demo.vtt'))"
 ```
 
-## Agent workflow
+Timings are **estimates**. They are not aligned to a recorded voice.
+No synthetic audio is generated.
 
-1. Search the catalog for a tested component.
-2. Reuse and configure it.
-3. Compose.
-4. Create a new component only if necessary.
-5. Test, then register it. Never mark untested code as tested.
+Specification: [docs/subtitle-specification.md](docs/subtitle-specification.md).
 
-Details: [docs/agent-guide.md](docs/agent-guide.md) and [docs/SPEC.md](docs/SPEC.md).
+## Design system
+
+Default background `#0D1117`, primary text `#F5F7FA`, restrained blue accent.
+[docs/design-system.md](docs/design-system.md).
+
+## Current limitations
+
+- Parts 2–20 are not built. The category list is a registry, not a fake
+  component dump.
+- Visual catalog entries (`foundation.title_card`, `section_heading`,
+  `variable_store`, `base_scene`) are `not_tested` until a Manim preview
+  render actually passes in the environment that runs the tests.
+- This cloud workspace cannot install Cairo/Pango/FFmpeg (apt mirrors are
+  unreachable). Unit tests still run. A demo **video render is not claimed**.
+- Font faces are fallbacks. Inter is optional.
+- Subtitle times are not a real speaker.
+
+## Roadmap (Parts 2–20)
+
+| Part | Focus |
+| --- | --- |
+| 2 | Basic motion library |
+| 3 | Transitions |
+| 4 | Text and typography |
+| 5 | Full subtitle planner |
+| 6 | Shapes and 2D graphics |
+| 7 | Charts |
+| 8 | Mathematics and geometry |
+| 9 | Physics and engineering |
+| 10 | Code animation |
+| 11 | Data structures and algorithms |
+| 12 | AI / ML visuals |
+| 13 | Architecture diagrams |
+| 14 | Camera and composition |
+| 15 | Advanced motion and effects |
+| 16 | 3D |
+| 17 | Voiceover-ready timing |
+| 18 | Full video templates |
+| 19 | Automated render QA |
+| 20 | Agent integration and catalog expansion |
+
+Do not start Part 2 until Part 1 is reported complete.
 
 ## License
 

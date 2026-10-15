@@ -1,0 +1,266 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_version": "1.1.0",
+  "library_version": "0.2.0",
+  "updated": "2026-10-15",
+  "notes": "Part 1 foundation catalog. Only real, implemented entries are listed. Visual components stay not_tested until a Manim preview render succeeds.",
+  "components": [
+    {
+      "id": "design.theme.quonitron_dark",
+      "name": "QUONITRON Dark Theme",
+      "version": "0.2.0",
+      "category": "design",
+      "subcategory": "theme",
+      "tags": ["theme", "palette", "typography", "dark", "editorial", "design-system"],
+      "aliases": ["default theme", "quonitron dark", "brand colors"],
+      "description": "Default premium dark editorial theme: semantic colors, type hierarchy, spacing, stroke, and motion tokens.",
+      "use_cases": [
+        "Apply a consistent look to every educational scene",
+        "Override accent colors without changing component APIs"
+      ],
+      "module": "quonitron_manim.design.theme",
+      "class_name": "Theme",
+      "parameters": {
+        "name": {
+          "type": "string",
+          "description": "Registered theme key",
+          "default": "quonitron_dark"
+        }
+      },
+      "dependencies": ["python>=3.10"],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "from quonitron_manim.design import get_theme\ntheme = get_theme()\nbg = theme.color('background')",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Does not render pixels. Font names are fallbacks; glyph metrics vary by OS.",
+      "related_components": [
+        "foundation.title_card",
+        "foundation.section_heading",
+        "foundation.base_scene"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.base_scene",
+      "name": "QUONITRON Base Scene",
+      "version": "0.2.0",
+      "category": "foundation",
+      "subcategory": "scene",
+      "tags": ["scene", "theme", "title", "safe-area", "base"],
+      "aliases": ["QuonitronScene", "base scene"],
+      "description": "Manim Scene subclass that applies the theme, safe areas, and title/caption helpers.",
+      "use_cases": [
+        "Start every explainer scene from a consistent shell",
+        "Place titles and on-screen captions inside the safe frame"
+      ],
+      "module": "quonitron_manim.core.base_scene",
+      "class_name": "QuonitronScene",
+      "parameters": {
+        "theme_name": {
+          "type": "string",
+          "description": "Registered theme to apply in setup()",
+          "default": "quonitron_dark"
+        }
+      },
+      "dependencies": ["manim>=0.18.1"],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/foundation_demo.py",
+      "preview": null,
+      "test_status": "not_tested",
+      "limitations": "Requires a working Manim Cairo renderer to construct real Text mobjects. Do not override __init__; use setup().",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "foundation.title_card",
+        "foundation.section_heading"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.title_card",
+      "name": "Title Card",
+      "version": "0.2.0",
+      "category": "foundation",
+      "subcategory": "title",
+      "tags": ["title", "opening", "branding", "typography"],
+      "aliases": ["opening title", "branded title"],
+      "description": "Centered branded title with a kicker label and a thin accent rule.",
+      "use_cases": [
+        "Opening title of an educational video",
+        "Chapter cards between sections"
+      ],
+      "module": "quonitron_manim.components.foundation.title_card",
+      "class_name": "TitleCard",
+      "parameters": {
+        "title": {
+          "type": "string",
+          "description": "Main title text",
+          "required": true
+        },
+        "kicker": {
+          "type": "string",
+          "description": "Small uppercase label above the rule",
+          "default": "QUONITRON"
+        },
+        "include_kicker": {
+          "type": "boolean",
+          "description": "Whether to show the kicker",
+          "default": true
+        }
+      },
+      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/foundation_demo.py",
+      "preview": null,
+      "test_status": "not_tested",
+      "limitations": "Needs Pango/Cairo to build Text. Long titles are not auto-wrapped.",
+      "related_components": [
+        "design.theme.quonitron_dark",
+        "foundation.section_heading"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.section_heading",
+      "name": "Section Heading",
+      "version": "0.2.0",
+      "category": "foundation",
+      "subcategory": "heading",
+      "tags": ["heading", "section", "typography"],
+      "aliases": ["section title", "h2"],
+      "description": "In-scene heading with a vertical accent marker.",
+      "use_cases": [
+        "Introduce a new beat inside a scene",
+        "Label a diagram"
+      ],
+      "module": "quonitron_manim.components.foundation.section_heading",
+      "class_name": "SectionHeading",
+      "parameters": {
+        "text": {
+          "type": "string",
+          "description": "Heading copy",
+          "required": true
+        }
+      },
+      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/foundation_demo.py",
+      "preview": null,
+      "test_status": "not_tested",
+      "limitations": "Single-line heading. Does not paginate long strings.",
+      "related_components": [
+        "foundation.title_card",
+        "design.theme.quonitron_dark"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "foundation.variable_store",
+      "name": "Variable Store",
+      "version": "0.2.0",
+      "category": "foundation",
+      "subcategory": "programming",
+      "tags": ["variable", "box", "programming", "memory", "value"],
+      "aliases": ["variable box", "named value"],
+      "description": "Rounded card showing a variable name and a replaceable stored value.",
+      "use_cases": [
+        "Explain how a variable stores a value",
+        "Show assignment as a value replacement"
+      ],
+      "module": "quonitron_manim.components.foundation.variable_store",
+      "class_name": "VariableStore",
+      "parameters": {
+        "variable_name": {
+          "type": "string",
+          "description": "Identifier drawn at the top of the card",
+          "default": "score"
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial stored value",
+          "default": "0"
+        },
+        "width": {
+          "type": "number",
+          "description": "Card width in scene units",
+          "default": 4.6,
+          "minimum": 2.0,
+          "maximum": 10.0
+        },
+        "height": {
+          "type": "number",
+          "description": "Card height in scene units",
+          "default": 2.4,
+          "minimum": 1.2,
+          "maximum": 6.0
+        }
+      },
+      "dependencies": ["manim>=0.18.1", "manimpango>=0.7"],
+      "compatibility": {
+        "python": ">=3.10",
+        "manim": ">=0.18.1,<1.0"
+      },
+      "example": "examples/foundation_demo.py",
+      "preview": null,
+      "test_status": "not_tested",
+      "limitations": "Value replacement is a Transform of a Text mobject, not a live Python interpreter.",
+      "related_components": [
+        "foundation.section_heading",
+        "utility.subtitle_track"
+      ],
+      "license": "MIT"
+    },
+    {
+      "id": "utility.subtitle_track",
+      "name": "Subtitle Track",
+      "version": "0.2.0",
+      "category": "utility",
+      "subcategory": "subtitles",
+      "tags": ["subtitles", "srt", "vtt", "caption", "voiceover-prep"],
+      "aliases": ["srt export", "webvtt", "caption track"],
+      "description": "Subtitle-first cue model with validation and SRT/WebVTT export. Timings are estimates until aligned to real voiceover.",
+      "use_cases": [
+        "Author English explainer captions without audio",
+        "Export SRT/VTT for later human voiceover alignment"
+      ],
+      "module": "quonitron_manim.subtitles.models",
+      "class_name": "SubtitleTrack",
+      "parameters": {
+        "reading_wpm": {
+          "type": "integer",
+          "description": "Estimated reading speed in words per minute",
+          "default": 155,
+          "minimum": 80,
+          "maximum": 220
+        },
+        "overlap_policy": {
+          "type": "string",
+          "description": "How overlapping cues are treated",
+          "default": "error",
+          "enum": ["error", "warn", "allow"]
+        }
+      },
+      "dependencies": ["python>=3.10"],
+      "compatibility": {
+        "python": ">=3.10"
+      },
+      "example": "examples/subtitle_demo.json",
+      "preview": null,
+      "test_status": "passed",
+      "limitations": "Does not transcribe audio or generate voice. Estimated times are not a real speaker.",
+      "related_components": ["foundation.base_scene"],
+      "license": "MIT"
+    }
+  ]
+}

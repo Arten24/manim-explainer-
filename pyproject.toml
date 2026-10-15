@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quonitron-manim-master-library"
-version = "0.1.0"
+version = "0.2.0"
 description = "An extensible, reusable Manim animation component library, JSON catalog, subtitle toolkit, scene templates, and automated quality checks for educational video production."
 readme = "README.md"
 license = { text = "MIT" }
@@ -22,25 +22,31 @@ classifiers = [
   "Topic :: Education",
 ]
 dependencies = [
-  "manim>=0.18.1,<1.0",
   "jsonschema>=4.20",
 ]
 
 [project.optional-dependencies]
+render = [
+  "manim>=0.18.1,<1.0",
+]
 dev = [
   "pytest>=8.0",
+  "jsonschema>=4.20",
 ]
 
-[tool.setuptools.packages.find]
-include = ["quonitron*"]
+[tool.setuptools.package-dir]
+"" = "src"
 
-[tool.setuptools.package-data]
-quonitron = ["catalog/*.json"]
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = ["src"]
 addopts = "-q"
+markers = [
+  "render: tests that require Cairo, Pango, FFmpeg, and Manim",
+]
 
 [tool.ruff]
 line-length = 100

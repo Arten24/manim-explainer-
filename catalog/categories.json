@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "notes": "Category registry for the master catalog. Future parts add components under these ids. An empty category is not a claim that animations exist.",
+  "categories": [
+    {"id": "design", "name": "Design system", "part": 1, "description": "Themes, palettes, type, layout, and motion tokens."},
+    {"id": "foundation", "name": "Foundation", "part": 1, "description": "Base scene, title card, headings, and other shared shells."},
+    {"id": "utility", "name": "Utilities", "part": 1, "description": "Catalog, subtitles, validation, and non-visual helpers."},
+    {"id": "motion", "name": "Motion", "part": 2, "description": "Basic motion library."},
+    {"id": "transition", "name": "Transitions", "part": 3, "description": "Scene changes and transitions."},
+    {"id": "text", "name": "Text", "part": 4, "description": "Typography components beyond the foundation heading."},
+    {"id": "timing", "name": "Timing", "part": 5, "description": "Full subtitle planner and voiceover-ready timing."},
+    {"id": "shape", "name": "Shapes", "part": 6, "description": "2D graphics primitives."},
+    {"id": "chart", "name": "Charts", "part": 7, "description": "Data visualization."},
+    {"id": "math", "name": "Mathematics", "part": 8, "description": "Equations and geometry."},
+    {"id": "physics", "name": "Physics", "part": 9, "description": "Physics and engineering diagrams."},
+    {"id": "code", "name": "Code", "part": 10, "description": "Programming and code animation."},
+    {"id": "data_structure", "name": "Data structures", "part": 11, "description": "Lists, trees, graphs, and algorithms."},
+    {"id": "ml", "name": "Machine learning", "part": 12, "description": "Neural nets, loss surfaces, training visuals."},
+    {"id": "diagram", "name": "Diagrams", "part": 13, "description": "System architecture diagrams."},
+    {"id": "camera", "name": "Camera", "part": 14, "description": "Camera and composition."},
+    {"id": "effect", "name": "Effects", "part": 15, "description": "Advanced motion and effects."},
+    {"id": "spatial", "name": "3D", "part": 16, "description": "3D and spatial visuals."},
+    {"id": "template", "name": "Templates", "part": 18, "description": "Full video templates."}
+  ]
+}

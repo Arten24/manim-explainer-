@@ -1,39 +1,44 @@
 # Architecture
 
+Part 1 establishes the spine later animation parts plug into. Visual
+libraries (motion, math, ML, …) are not implemented here.
+
 ```
-script ──► planning.split_script
-              │
-              ▼
-        PlannedScene[] ──► catalog.search_catalog
-              │                    │
-              ▼                    ▼
-        SceneSpec          ComponentMeta / Python class
-              │                    │
-              ├─ subtitles.cues_from_sentences ──► SRT / VTT
-              │
-              └─ later: Manim Scene + components ──► preview render
-                                                       │
-                                                       ▼
-                                                     qa checks
+educational script
+        │
+        ▼
+subtitle JSON  ──►  validation  ──►  SRT / WebVTT
+        │
+        ▼
+QuonitronScene (theme, safe area, helpers)
+        │
+        ├── TitleCard / SectionHeading / VariableStore
+        │
+        └── catalog/master.json  ──►  search / resolve / QA
 ```
 
 ## Boundaries
 
-- **Catalog JSON** describes what exists. It does not execute animations.
-- **Python components** implement behavior. They must stay importable.
-- **Design tokens** are the only source of brand color, type, and motion.
-- **Subtitles** can be regenerated without re-rendering video.
-- **QA** must fail closed on broken IDs, invalid JSON, and missing modules.
+| Piece | Responsibility |
+| --- | --- |
+| `catalog/` | What exists: ids, parameters, test status |
+| `src/quonitron_manim/design/` | How it looks: color, type, space, motion |
+| `src/quonitron_manim/core/` | Scene contract, catalog loader, component base |
+| `src/quonitron_manim/components/` | Reusable building blocks |
+| `src/quonitron_manim/subtitles/` | Cue model and file export |
+| `examples/` | Runnable demo, not the library itself |
 
-## Search
+JSON never contains the implementation. Python never is the search index.
 
-Agents should query by concept, not by filename:
+## Import path
 
-```text
-python scripts/search_catalog.py "gradient descent"
-python scripts/search_catalog.py "camera zoom" --category camera
-python scripts/search_catalog.py linked --tag "data-structure"
-```
+The installable package is `quonitron_manim` (under `src/`). The repository
+root still holds `catalog/`, `examples/`, `tests/`, and `scripts/`.
 
-Foundation catalog entries are limited to the design theme and the base
-component. Later parts add entries only after tests exist.
+## Manim
+
+`QuonitronScene` subclasses `manim.Scene` when Cairo is actually usable.
+Unit tests that only check catalog JSON, theme tokens, and subtitle export
+do not require Cairo, Pango, or FFmpeg.
+
+Do not override `Scene.__init__`. Put theme application in `setup()`.
